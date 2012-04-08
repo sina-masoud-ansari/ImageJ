@@ -37,10 +37,23 @@
   </target>
 
 
-  <target name="run" depends="build" description="Build and run ImageJ.">
+  <target name="headless" depends="build" description="Build and run ImageJ in Headless mode.">
     <copy file="ij.jar" toDir=".." />
-    <java maxmemory="640m" classpath="headless.jar:ij.jar" classname="ij.ImageJ" fork="yes">
+    <java maxmemory="1024m" classpath="headless.jar:ij.jar" classname="ij.ImageJ" fork="yes">
       <arg value="-batch" />
+    </java>
+  </target>	
+	
+ <target name="run" depends="build" description="Build and run ImageJ.">
+    <copy file="ij.jar" toDir=".." />
+    <java maxmemory="1024m" jar="ij.jar" fork="yes"/>
+  </target>	
+	
+  <target name="debug" depends="build" description="Build and debug ImageJ.">
+    <copy file="ij.jar" toDir=".." />
+    <java maxmemory="1024m" jar="ij.jar" fork="yes">
+	  <jvmarg value="-Xdebug" />
+	  <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000" /> 
     </java>
   </target>
     
