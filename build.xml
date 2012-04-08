@@ -6,7 +6,8 @@
     <!-- First, ensure the build directory exists. -->
     <mkdir dir="build" />
     <!-- Build everything; add debug="on" to debug -->
-    <javac srcdir="." destdir="build" optimize="on" source="1.5" target="1.5" debug="on" bootclasspath="/usr/lib/jvm/java-1.6.0-openjdk/jre/lib/rt.jar" encoding="UTF-8">
+  	<javac srcdir="." destdir="build" optimize="on" source="1.6" target="1.6" debug="on" encoding="UTF-8">
+  	<!-- <javac srcdir="." destdir="build" optimize="on" source="1.6" target="1.6" debug="on" bootclasspath="/usr/lib/jvm/java-1.6.0-openjdk/jre/lib/rt.jar" encoding="UTF-8"> -->
       <!-- The plugins directory only needs to be 
              present at runtime, not at build time. -->
       <exclude name="plugins/**"/>
