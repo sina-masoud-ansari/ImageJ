@@ -17,7 +17,8 @@ each with a group of lines to process. For colour images it seems this is done f
 **Where multithreading can be helpful**
 
 Not all functions have been multithreaded and there may be room to imporve the existing approach. 
-The "Add Noise" process is not multithreaded and takes a considerable amount of time to process. 
-This would require modifying the ij.process.ColourProcessor which calls ij.process.ByteProcessor.noise 
-for each R, G, B channel in a colour image. It does not divide the image into lines and use multiple threads 
-to process them nor does it use multiple threads to process each channel.
+The ij.plugins.filter.Filters class implements several functions in serial. For example the "Add Noise" filter
+is not multithreaded and takes a considerable amount of time to process. This would require modifying
+ij.process.ByteProcessor.noise for each channel in an image. It does not divide the image into lines and use 
+multiple threads to process them nor does it use multiple threads to process each channel. We could restrict our scope
+to images whose channels are multiples of a byte which means we can focus on the ByteProcessor only.
