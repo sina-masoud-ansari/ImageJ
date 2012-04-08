@@ -568,6 +568,7 @@ public class ByteProcessor extends ImageProcessor {
         int rowOffset = width;
         int count;
         int binaryForeground = 255 - binaryBackground;
+        // we can parallelise here by rows
 		for (int y=yMin; y<=yMax; y++) {
 			offset = xMin + y * width;
 			p2 = pixels2[offset-rowOffset-1]&0xff;
