@@ -1,4 +1,5 @@
 SOFTENG 751 Assignment: Improve performance of ImageJ on large images using multithreading
+==========================================================================================
 
 ImageJ uses multiple threads to process images where they can be treated as stacks of independent images.
 A process or filter is applied to each image in the stack in parallel using a group of threads.
