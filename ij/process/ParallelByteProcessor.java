@@ -82,10 +82,7 @@ public class ParallelByteProcessor extends ByteProcessor {
 		showProgress(1.0);
     }	
 
-    // TODO: There are two problems here:
-    // 			1. There are linear artificats when the underlying image is not white.
-    //			  		- This could be due to incorrect starting indices
-    //			2. It is about 2x slower than the serial version
+    // TODO: This is about 2x slower than the serial version on a dual core machine
     public void simple_noise(double r) {	
 		final double range = r;	
 		//Divide the number of rows by the number of threads
