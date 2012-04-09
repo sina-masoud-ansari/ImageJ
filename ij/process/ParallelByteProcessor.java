@@ -107,21 +107,24 @@ public class ParallelByteProcessor extends ByteProcessor {
 					int yStart = roiY+yIndex*numRowsPerThread;
 					int yLimit = yStart + numRowsPerThread;
 					int xEnd = roiX + roiWidth;
+					int p, v, ran;
+					boolean inRange;
+					Random rnd = new Random();
 					// for each row
 					for (int y = yStart; y < yLimit; y++){
 						// process pixels in ROI
 						for (int x = roiX; x < xEnd; x++){
 							// pixels is a 1D array so need to map to it
-							int p = y * roiWidth + roiX + x;
-							Random rnd = new Random();
-							int v, ran;
-							boolean inRange;
-							do{
+							p = y * roiWidth + roiX + x;
+							inRange = false;
+							while (!inRange){
 								ran = (int)Math.round(rnd.nextGaussian()*range);
 								v = (pixels[p] & 0xff) + ran;
 								inRange = v>=0 && v<=255;
-								if (inRange) pixels[p] = (byte)v;								
-							} while (!inRange);				
+								if (inRange){
+									pixels[p] = (byte)v;								
+								}
+							}			
 						} // end x loop
 						if (y%20==0) {
 							showProgress((double)(y-roiY)/roiHeight);
