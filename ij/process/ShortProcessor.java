@@ -1030,7 +1030,10 @@ public class ShortProcessor extends ImageProcessor {
 		System.arraycopy(pixels2, 0, pixels, 0, pixels.length);
 	}
 
-    public void noise(double range, String type) {
+	/**
+	 *  Only one mode is implemented, no need to switch
+	 */
+    public void noise(double range, int mode) {
 		Random rnd=new Random();
 		int v, ran;
 		boolean inRange;

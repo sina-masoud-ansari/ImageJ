@@ -59,7 +59,7 @@ public class Filters implements PlugInFilter {
 		}
 						
 	 	if (arg.equals("add")) {
-	 		ip.noise(25.0, "original");
+	 		ip.noise(25.0, ImageProcessor.P_NONE);
 	 		return;
 	 	}
 	 	
@@ -69,14 +69,16 @@ public class Filters implements PlugInFilter {
 	 	
 	 	// TODO: Need a way to test our implementations for correctness
 	 	
+	    // TODO: Exception when type is not correct?
+	 	
 	 	if (arg.equals("add serial")) {
-	 		ip.noise(25.0, "serial");
+	 		ip.noise(25.0, ImageProcessor.P_SERIAL);
 	 		return;
 	 	}	
 	 	
 	    // Adds noise in parallel using the ParallelByteProcessor and simple thread launching
 	 	if (arg.equals("add simple")) {
-	 		ip.noise(25.0, "simple");
+	 		ip.noise(25.0, ImageProcessor.P_SIMPLE);
 	 		return;
 	 	}	 	
 	 	
@@ -95,7 +97,7 @@ public class Filters implements PlugInFilter {
 				sd = gd.getNextNumber();
 			}
 	 		// TODO: Extend for custom noise to use parallel approaches
-	 		ip.noise(sd, "original");
+	 		ip.noise(sd, ImageProcessor.P_NONE);
 	 		IJ.register(Filters.class);
 	 		return;
 	 	}

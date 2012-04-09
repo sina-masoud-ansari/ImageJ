@@ -627,12 +627,14 @@ public class ColorProcessor extends ImageProcessor {
 		RGB_RESIZE=11,
 		RGB_TRANSLATE=12;
 
- 	/** Performs the specified filter on the red, green and blue planes of this image. */
- 	public void filterRGB(int type, double arg) {
- 		filterRGB(type, arg, 0.0);
+ 	/** Performs the specified filter on the red, green and blue planes of this image.
+ 	 *  The mode is the parallelisation approach to be used. Default is P_NONE.
+ 	 *  */
+ 	public void filterRGB(int type, int mode, double arg) {
+ 		filterRGB(type, mode, arg, 0.0);
  	}
 
- 	final ImageProcessor filterRGB(int type, double arg, double arg2) {
+ 	final ImageProcessor filterRGB(int type, int mode, double arg, double arg2) {
 		showProgress(0.01);
 		byte[] R = new byte[width*height];
 		byte[] G = new byte[width*height];
@@ -642,26 +644,19 @@ public class ColorProcessor extends ImageProcessor {
 		
 		// Initialise Image Processors
 		ByteProcessor r, g, b;
-		switch (type) {
-			case RGB_NOISE_SERIAL:
-				// Add noise with a single thread -- would be the same as using ByteProcessor and has been added
-				// for completeness and ease of performance testing
-				r = new ParallelByteProcessor(width, height, R, null, ParallelByteProcessor.Type.SERIAL);
-				g = new ParallelByteProcessor(width, height, G, null, ParallelByteProcessor.Type.SERIAL);	
-				b = new ParallelByteProcessor(width, height, B, null, ParallelByteProcessor.Type.SERIAL);				
-				break;
-			case RGB_NOISE_SIMPLE:	
-				// Add Noise with simple thread launching
-				r = new ParallelByteProcessor(width, height, R, null, ParallelByteProcessor.Type.SIMPLE);
-				g = new ParallelByteProcessor(width, height, G, null, ParallelByteProcessor.Type.SIMPLE);	
-				b = new ParallelByteProcessor(width, height, B, null, ParallelByteProcessor.Type.SIMPLE);				
-				break;
-			default:
+		switch (mode) {
+			case P_NONE:
 				// ORIGINAL IMPLEMENTATION
 				r = new ByteProcessor(width, height, R, null);
 				g = new ByteProcessor(width, height, G, null);	
 				b = new ByteProcessor(width, height, B, null);				
-				break;		
+				break;	
+			default:
+				// PARALLEL IMPLEMENTATION
+				r = new ParallelByteProcessor(width, height, R, null);
+				g = new ParallelByteProcessor(width, height, G, null);	
+				b = new ParallelByteProcessor(width, height, B, null);				
+				break;
 		}	
 		
 		// Set region of interest for each Image Processor
@@ -669,6 +664,7 @@ public class ColorProcessor extends ImageProcessor {
 		g.setRoi(roi);
 		b.setRoi(roi);
 		
+		// Set background value and interpolation method
 		r.setBackgroundValue((bgColor&0xff0000)>>16);
 		g.setBackgroundValue((bgColor&0xff00)>>8);
 		b.setBackgroundValue(bgColor&0xff);
@@ -678,10 +674,10 @@ public class ColorProcessor extends ImageProcessor {
 		
 		showProgress(0.15);
 		switch (type) {
-			case RGB_NOISE: case RGB_NOISE_SERIAL: case RGB_NOISE_SIMPLE:
-				r.noise(arg, null); showProgress(0.40);
-				g.noise(arg, null); showProgress(0.65);
-				b.noise(arg, null); showProgress(0.90);				
+			case RGB_NOISE:
+				r.noise(arg, mode); showProgress(0.40);
+				g.noise(arg, mode); showProgress(0.65);
+				b.noise(arg, mode); showProgress(0.90);				
 				break;
 			case RGB_MEDIAN:
 				r.medianFilter(); showProgress(0.40);
@@ -758,43 +754,29 @@ public class ColorProcessor extends ImageProcessor {
 		return null;
 	}
 
-    public void noise(double range, String type) {
-	    if (type.equals("original")){
-	    	filterRGB(RGB_NOISE, range);
-	    	return;
-	    }
-
-	    if (type.equals("serial")){
-	    	filterRGB(RGB_NOISE_SERIAL, range);
-	    	return;
-	    }
-	    
-	    if (type.equals("simple")){
-	    	filterRGB(RGB_NOISE_SIMPLE, range);
-	    	return;
-	    }	    
-	    
+    public void noise(double range, int mode) {
+    	filterRGB(RGB_NOISE, mode, range);    
     }
 
 	public void medianFilter() {
-    	filterRGB(RGB_MEDIAN, 0.0);
+    	filterRGB(RGB_MEDIAN, P_NONE, 0.0);
 	}
 	
 	public void findEdges() {
-    	filterRGB(RGB_FIND_EDGES, 0.0);
+    	filterRGB(RGB_FIND_EDGES, P_NONE, 0.0);
 	}		
 		
 	public void erode() {
-    	filterRGB(RGB_ERODE, 0.0);
+    	filterRGB(RGB_ERODE, P_NONE, 0.0);
 	}
 			
 	public void dilate() {
-    	filterRGB(RGB_DILATE, 0.0);
+    	filterRGB(RGB_DILATE, P_NONE, 0.0);
 
 	}
 			
 	public void autoThreshold() {
-   		filterRGB(RGB_THRESHOLD, 0.0);
+   		filterRGB(RGB_THRESHOLD, P_NONE, 0.0);
 	}
 	
 	/** Scales the image or selection using the specified scale factors.
@@ -802,7 +784,7 @@ public class ColorProcessor extends ImageProcessor {
 	*/
 	public void scale(double xScale, double yScale) {
         if (interpolationMethod==BICUBIC) {
-        	filterRGB(RGB_SCALE, xScale, yScale);
+        	filterRGB(RGB_SCALE, P_NONE, xScale, yScale);
         	return;
         }
 		double xCenter = roiX + roiWidth/2.0;
@@ -936,7 +918,7 @@ public class ColorProcessor extends ImageProcessor {
 	*/
 	public ImageProcessor resize(int dstWidth, int dstHeight) {
         if (interpolationMethod==BICUBIC)
-        	return filterRGB(RGB_RESIZE, dstWidth, dstHeight);
+        	return filterRGB(RGB_RESIZE, P_NONE, dstWidth, dstHeight);
 		double srcCenterX = roiX + roiWidth/2.0;
 		double srcCenterY = roiY + roiHeight/2.0;
 		double dstCenterX = dstWidth/2.0;
@@ -992,7 +974,7 @@ public class ColorProcessor extends ImageProcessor {
         if (angle%360==0)
         	return;
         if (interpolationMethod==BICUBIC) {
-        	filterRGB(RGB_ROTATE, angle);
+        	filterRGB(RGB_ROTATE, P_NONE, angle);
         	return;
         }
 		int[] pixels2 = (int[])getPixelsCopy();

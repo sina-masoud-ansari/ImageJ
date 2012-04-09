@@ -9,52 +9,44 @@ import java.util.Random;
 
 /**
  * Class designed to implement ByteProcessor filters in parallel using a variety of approaches.
+ * This is for development and testing of parallelisation approaches.
  * 
  * @author Sina Masoud-Ansari
  *
  */
 public class ParallelByteProcessor extends ByteProcessor {
-	
-	public enum Type {SERIAL, SIMPLE, FORK_JOIN, EXECUTOR, PARALLEL_TASK}
-	private Type type;
 
-	public ParallelByteProcessor(Image img, Type t) {
+	public ParallelByteProcessor(Image img) {
 		super(img);
-		type = t;
 	}
 
-	public ParallelByteProcessor(int width, int height, Type t) {
+	public ParallelByteProcessor(int width, int height) {
 		super(width, height);
-		type = t;
 	}
 
-	public ParallelByteProcessor(int width, int height, byte[] pixels, Type t) {
+	public ParallelByteProcessor(int width, int height, byte[] pixels) {
 		super(width, height, pixels);
-		type = t;
 	}
 
-	public ParallelByteProcessor(int width, int height, byte[] pixels, ColorModel cm, Type t) {
+	public ParallelByteProcessor(int width, int height, byte[] pixels, ColorModel cm) {
 		super(width, height, pixels, cm);
-		type = t;
 	}
 
-	public ParallelByteProcessor(BufferedImage bi, Type t) {
+	public ParallelByteProcessor(BufferedImage bi) {
 		super(bi);
-		type = t;
 	}
 
-	public ParallelByteProcessor(ImageProcessor ip, boolean scale, Type t) {
+	public ParallelByteProcessor(ImageProcessor ip, boolean scale) {
 		super(ip, scale);
-		type = t;
 	}
 	
 	@Override
-	public void noise(double range, String t){
-		switch (type) {
-			case SERIAL:
+	public void noise(double range, int mode){
+		switch (mode) {
+			case P_SERIAL:
 				serial_noise(range);
 				break;
-			case SIMPLE:
+			case P_SIMPLE:
 				simple_noise(range);
 				break;
 		}

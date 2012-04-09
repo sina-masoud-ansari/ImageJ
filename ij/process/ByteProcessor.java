@@ -852,7 +852,10 @@ public class ByteProcessor extends ImageProcessor {
 		filter(MEDIAN_FILTER);
 	}
 
-    public void noise(double range, String type) {
+	/**
+	 *  Only one mode is implemented, no need to switch
+	 */
+    public void noise(double range, int mode) {
 		Random rnd=new Random();
 		int v, ran;
 		boolean inRange;
