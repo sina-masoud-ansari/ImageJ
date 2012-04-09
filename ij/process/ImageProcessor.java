@@ -1921,8 +1921,9 @@ public abstract class ImageProcessor implements Cloneable {
 	
     /** Adds random noise to the image or ROI.
     	@param range	the range of random numbers
+    	@param type		the parallelisation approach to be used by underlying ImageProcessors
     */
-    public abstract void noise(double range);
+    public abstract void noise(double range, String type);
     
 	/** Creates a new processor containing an image
 		that corresponds to the current ROI. */

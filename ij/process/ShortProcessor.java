@@ -1030,7 +1030,7 @@ public class ShortProcessor extends ImageProcessor {
 		System.arraycopy(pixels2, 0, pixels, 0, pixels.length);
 	}
 
-    public void noise(double range) {
+    public void noise(double range, String type) {
 		Random rnd=new Random();
 		int v, ran;
 		boolean inRange;

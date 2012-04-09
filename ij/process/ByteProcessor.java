@@ -852,7 +852,7 @@ public class ByteProcessor extends ImageProcessor {
 		filter(MEDIAN_FILTER);
 	}
 
-    public void noise(double range) {
+    public void noise(double range, String type) {
 		Random rnd=new Random();
 		int v, ran;
 		boolean inRange;

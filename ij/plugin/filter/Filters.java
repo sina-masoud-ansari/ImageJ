@@ -59,9 +59,24 @@ public class Filters implements PlugInFilter {
 		}
 						
 	 	if (arg.equals("add")) {
-	 		ip.noise(25.0);
+	 		ip.noise(25.0, "original");
 	 		return;
 	 	}
+	 	
+	 	// Adds noise in serial using the ParallelByteProcessor and a single thread
+	 	
+	 	// TODO: This approach is messy, need a better way
+	 	
+	 	if (arg.equals("add serial")) {
+	 		ip.noise(25.0, "serial");
+	 		return;
+	 	}	
+	 	
+	    // Adds noise in parallel using the ParallelByteProcessor and simple thread launching
+	 	if (arg.equals("add simple")) {
+	 		ip.noise(25.0, "simple");
+	 		return;
+	 	}	 	
 	 	
 	 	if (arg.equals("noise")) {
 	 		if (canceled)
@@ -77,7 +92,8 @@ public class Filters implements PlugInFilter {
 				}
 				sd = gd.getNextNumber();
 			}
-	 		ip.noise(sd);
+	 		// TODO: Extend for custom noise to use parallel approaches
+	 		ip.noise(sd, "original");
 	 		IJ.register(Filters.class);
 	 		return;
 	 	}

@@ -615,9 +615,17 @@ public class ColorProcessor extends ImageProcessor {
 		}
 	}
 	
-	public static final int RGB_NOISE=0, RGB_MEDIAN=1, RGB_FIND_EDGES=2,
-		RGB_ERODE=3, RGB_DILATE=4, RGB_THRESHOLD=5, RGB_ROTATE=6,
-		RGB_SCALE=7, RGB_RESIZE=8, RGB_TRANSLATE=9;
+	public static final int
+		RGB_NOISE=0, RGB_NOISE_SERIAL=2, RGB_NOISE_SIMPLE=3,
+		RGB_MEDIAN=4,
+		RGB_FIND_EDGES=5,
+		RGB_ERODE=6,
+		RGB_DILATE=7,
+		RGB_THRESHOLD=8,
+		RGB_ROTATE=9,
+		RGB_SCALE=10,
+		RGB_RESIZE=11,
+		RGB_TRANSLATE=12;
 
  	/** Performs the specified filter on the red, green and blue planes of this image. */
  	public void filterRGB(int type, double arg) {
@@ -632,12 +640,35 @@ public class ColorProcessor extends ImageProcessor {
 		getRGB(R, G, B);
 		Rectangle roi = new Rectangle(roiX, roiY, roiWidth, roiHeight);
 		
-		ByteProcessor r = new ByteProcessor(width, height, R, null);
+		// Initialise Image Processors
+		ByteProcessor r, g, b;
+		switch (type) {
+			case RGB_NOISE_SERIAL:
+				// Add noise with a single thread -- would be the same as using ByteProcessor and has been added
+				// for completeness and ease of performance testing
+				r = new ParallelByteProcessor(width, height, R, null, ParallelByteProcessor.Type.SERIAL);
+				g = new ParallelByteProcessor(width, height, G, null, ParallelByteProcessor.Type.SERIAL);	
+				b = new ParallelByteProcessor(width, height, B, null, ParallelByteProcessor.Type.SERIAL);				
+				break;
+			case RGB_NOISE_SIMPLE:	
+				// Add Noise with simple thread launching
+				r = new ParallelByteProcessor(width, height, R, null, ParallelByteProcessor.Type.SIMPLE);
+				g = new ParallelByteProcessor(width, height, G, null, ParallelByteProcessor.Type.SIMPLE);	
+				b = new ParallelByteProcessor(width, height, B, null, ParallelByteProcessor.Type.SIMPLE);				
+				break;
+			default:
+				// ORIGINAL IMPLEMENTATION
+				r = new ByteProcessor(width, height, R, null);
+				g = new ByteProcessor(width, height, G, null);	
+				b = new ByteProcessor(width, height, B, null);				
+				break;		
+		}	
+		
+		// Set region of interest for each Image Processor
 		r.setRoi(roi);
-		ByteProcessor g = new ByteProcessor(width, height, G, null);
 		g.setRoi(roi);
-		ByteProcessor b = new ByteProcessor(width, height, B, null);
 		b.setRoi(roi);
+		
 		r.setBackgroundValue((bgColor&0xff0000)>>16);
 		g.setBackgroundValue((bgColor&0xff00)>>8);
 		b.setBackgroundValue(bgColor&0xff);
@@ -647,10 +678,10 @@ public class ColorProcessor extends ImageProcessor {
 		
 		showProgress(0.15);
 		switch (type) {
-			case RGB_NOISE:
-				r.noise(arg); showProgress(0.40);
-				g.noise(arg); showProgress(0.65);
-				b.noise(arg); showProgress(0.90);				
+			case RGB_NOISE: case RGB_NOISE_SERIAL: case RGB_NOISE_SIMPLE:
+				r.noise(arg, null); showProgress(0.40);
+				g.noise(arg, null); showProgress(0.65);
+				b.noise(arg, null); showProgress(0.90);				
 				break;
 			case RGB_MEDIAN:
 				r.medianFilter(); showProgress(0.40);
@@ -727,8 +758,22 @@ public class ColorProcessor extends ImageProcessor {
 		return null;
 	}
 
-   public void noise(double range) {
-    	filterRGB(RGB_NOISE, range);
+    public void noise(double range, String type) {
+	    if (type.equals("original")){
+	    	filterRGB(RGB_NOISE, range);
+	    	return;
+	    }
+
+	    if (type.equals("serial")){
+	    	filterRGB(RGB_NOISE_SERIAL, range);
+	    	return;
+	    }
+	    
+	    if (type.equals("simple")){
+	    	filterRGB(RGB_NOISE_SIMPLE, range);
+	    	return;
+	    }	    
+	    
     }
 
 	public void medianFilter() {

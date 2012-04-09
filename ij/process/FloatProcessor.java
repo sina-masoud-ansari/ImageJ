@@ -709,7 +709,7 @@ public class FloatProcessor extends ImageProcessor {
 		}
 	}
 	
-	public void noise(double range) {
+	public void noise(double range, String type) {
 		Random rnd=new Random();
 		for (int y=roiY; y<(roiY+roiHeight); y++) {
 			int i = y * width + roiX;

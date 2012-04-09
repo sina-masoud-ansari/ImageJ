@@ -56,13 +56,6 @@
 	  <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000" /> 
     </java>
   </target>
-    
-
-  <target name="run2" depends="build" description="Build and run ImageJ.">
-    <!-- Run in ImageJ directory -->
-    <copy file="ij.jar" toDir=".." />
-    <java maxmemory="640m" dir=".." jar="ij.jar" fork="yes" />
-  </target>
 
   <target name="zip" depends="clean" description="Build zrc.zip.">
     <zip zipfile="../src.zip"
