@@ -83,7 +83,8 @@ public class ParallelByteProcessor extends ByteProcessor {
     }	
 
     // TODO: There are two problems here:
-    // 			1. There are linear artificats when the underlying image is not white
+    // 			1. There are linear artificats when the underlying image is not white.
+    //			  		- This could be due to incorrect starting indices
     //			2. It is about 2x slower than the serial version
     public void simple_noise(double r) {	
 		final double range = r;	
@@ -114,13 +115,13 @@ public class ParallelByteProcessor extends ByteProcessor {
 							int p = y * roiWidth + roiX + x;
 							Random rnd = new Random();
 							int v, ran;
-							boolean inRange = false;
-							while (!inRange){
+							boolean inRange;
+							do{
 								ran = (int)Math.round(rnd.nextGaussian()*range);
 								v = (pixels[p] & 0xff) + ran;
 								inRange = v>=0 && v<=255;
 								if (inRange) pixels[p] = (byte)v;								
-							}					
+							} while (!inRange);				
 						} // end x loop
 						if (y%20==0) {
 							showProgress((double)(y-roiY)/roiHeight);
