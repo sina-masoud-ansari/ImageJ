@@ -650,7 +650,7 @@ public class ColorProcessor extends ImageProcessor {
 			case RGB_NOISE:
 				r.noise(arg); showProgress(0.40);
 				g.noise(arg); showProgress(0.65);
-				b.noise(arg); showProgress(0.90);
+				b.noise(arg); showProgress(0.90);				
 				break;
 			case RGB_MEDIAN:
 				r.medianFilter(); showProgress(0.40);
