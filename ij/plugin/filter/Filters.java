@@ -67,6 +67,8 @@ public class Filters implements PlugInFilter {
 	 	
 	 	// TODO: This approach is messy, perhaps there is a better way?
 	 	
+	 	// TODO: Need a way to test our implementations for correctness
+	 	
 	 	if (arg.equals("add serial")) {
 	 		ip.noise(25.0, "serial");
 	 		return;
