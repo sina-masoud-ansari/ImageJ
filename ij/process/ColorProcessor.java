@@ -676,9 +676,6 @@ public class ColorProcessor extends ImageProcessor {
 		switch (type) {
 			case RGB_NOISE:
 				// TODO: we may want to add primary and seconday parallelisation
-				// Primary would be at the channel level e.g one thread per channel
-				// Secondary would be the underlying image processor dividing the task on a channel
-				// This would potentially allow us to demonstrate work-stealing etc.
 				r.noise(arg, mode); showProgress(0.40);
 				g.noise(arg, mode); showProgress(0.65);
 				b.noise(arg, mode); showProgress(0.90);				

@@ -74,11 +74,11 @@ public class ParallelByteProcessor extends ByteProcessor {
 		showProgress(1.0);
     }	
 
-    // TODO: This is about 2x slower than the serial version on a dual core machine
     public void simple_noise(double r) {	
 		final double range = r;	
 		//Divide the number of rows by the number of threads
 		int numThreads = Math.min(roiHeight, Prefs.getThreads());
+		//numThreads = 1;
 		int ratio = roiHeight / numThreads;
 		Thread[] threads = new Thread[numThreads];
 		for (int i = 0; i < numThreads; i++){

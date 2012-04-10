@@ -39,7 +39,7 @@
 
   <target name="headless" depends="build" description="Build and run ImageJ in Headless mode.">
     <copy file="ij.jar" toDir=".." />
-    <java maxmemory="1024m" classpath="headless.jar:ij.jar" classname="ij.ImageJ" fork="yes">
+    <java maxmemory="1024m" classpath="lib/headless.jar:ij.jar" classname="ij.ImageJ" fork="yes">
       <arg value="-batch" />
     </java>
   </target>	
