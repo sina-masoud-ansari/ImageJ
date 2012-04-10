@@ -16,6 +16,15 @@
 		<!-- HEXA verion -->
 		<!-- <javac srcdir="." destdir="build" optimize="on" source="1.6" target="1.6" debug="on" bootclasspath="/usr/lib/jvm/java-1.6.0-openjdk/jre/lib/rt.jar" encoding="UTF-8" /> -->
 	</target>
+	
+	<!-- Shouldn't need this really, just copy ${bin.dir} to ~/hexa.ece.auckland.ac.nz and run it there -->
+	<target name="compile_hexa" description="Compile everything for hexa">
+		<!-- First, ensure the build directory exists. -->
+		<mkdir dir="${build.dir}" />
+		<!-- Build everything; add debug="on" to debug -->
+		<javac srcdir="${src.dir}" destdir="${build.dir}" optimize="on" source="1.6" target="1.6" debug="on" encoding="UTF-8" bootclasspath="/usr/lib/jvm/java-1.6.0-openjdk/jre/lib/rt.jar"/>
+	</target>
+		
 
 	<target name="build" depends="compile" description="Build ij.jar.">
 		<!-- Copy needed files into the build directory. -->
