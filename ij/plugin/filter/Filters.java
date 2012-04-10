@@ -64,9 +64,7 @@ public class Filters implements PlugInFilter {
 	 	}
 	 	
 	 	// Adds noise in serial using the ParallelByteProcessor and a single thread
-	 	
-	 	// TODO: This approach is messy, perhaps there is a better way?
-	 	
+	 		 	
 	 	// TODO: Need a way to test our implementations for correctness
 	 	
 	    // TODO: Exception when type is not correct?
