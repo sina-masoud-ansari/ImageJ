@@ -1,8 +1,9 @@
 <!-- Ant makefile for ImageJ -->
 
-<project name="ImageJ" default="run" basedir=".">
-	<property name="main.dir" location="src/main"/>
-	<property name="test.dir" location="src/test"/>
+<project name="ImageJ" default="test" basedir=".">
+	<property name="src.main" location="src/main"/>
+	<property name="src.test" location="src/test"/>
+	<property name="reports.test" location="reports"/>
 	<property name="build.dir" location="build"/>
 	<property name="lib.dir" location="lib"/>
 	<property name="bin.dir" location="bin"/>
@@ -15,19 +16,18 @@
 		<mkdir dir="${build.dir}" />
 		<!-- Build everything; add debug="on" to debug -->
 		<javac destdir="${build.dir}" classpath="${lib.dir}/junit-4.10.jar" optimize="on" source="1.6" target="1.6" debug="on" encoding="UTF-8">
-			<src path="${main.dir}"/>
-			<src path="${test.dir}"/>
+			<src path="${src.main}"/>
+			<src path="${src.test}"/>
 		</javac>
 	</target>
-	
+
 	<!-- Shouldn't need this really, just copy ${bin.dir} to ~/hexa.ece.auckland.ac.nz and run it there -->
-	
 	<!-- <target name="compile_hexa" description="Compile everything for hexa"> -->
-		<!-- First, ensure the build directory exists. -->
-		<!-- <mkdir dir="${build.dir}" /> -->
-		<!-- Build everything; add debug="on" to debug -->
-		<!-- <javac srcdir="${main.dir}" destdir="${build.dir}" optimize="on" source="1.6" target="1.6" debug="on" encoding="UTF-8" bootclasspath="/usr/lib/jvm/java-1.6.0-openjdk/jre/lib/rt.jar"/> -->
-	<!-- </target> -->	
+	<!-- First, ensure the build directory exists. -->
+	<!-- <mkdir dir="${build.dir}" /> -->
+	<!-- Build everything; add debug="on" to debug -->
+	<!-- <javac srcdir="${src.main}" destdir="${build.dir}" optimize="on" source="1.6" target="1.6" debug="on" encoding="UTF-8" bootclasspath="/usr/lib/jvm/java-1.6.0-openjdk/jre/lib/rt.jar"/> -->
+	<!-- </target> -->
 
 	<target name="build" depends="compile" description="Build ij.jar.">
 		<!-- Copy needed files into the build directory. -->
@@ -58,6 +58,22 @@
 		</java>
 	</target>
 
+	<target name="test" depends="compile" description="Compile source and initiate tests">
+		<junit printsummary="yes" haltonfailure="yes">
+			<classpath>
+				<pathelement location="${lib.dir}/junit-4.10.jar" />
+				<pathelement location="${build.dir}"/>
+			</classpath>
+			<formatter type="plain"/>
+			<batchtest fork="yes" todir="${reports.test}">
+				<fileset dir="${src.test}">
+					<include name="**/*Test*.java"/>
+					<!-- <exclude name="**/AllTests.java"/> -->
+				</fileset>
+			</batchtest>
+		</junit>
+	</target>
+	
 	<target name="run" depends="build" description="Build and run ImageJ.">
 		<java maxmemory="1024m" jar="${bin.dir}/ij.jar" fork="yes"/>
 	</target>
@@ -67,14 +83,7 @@
 			<jvmarg value="-Xdebug" />
 			<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000" />
 		</java>
-	</target>
-	
-	<target name="test" depends="compile" description="Compile source and initiate tests">
-		<junit printsummary="yes" fork="yes" haltonfailure="yes">
-		  <formatter type="plain"/>
-		  <test name="my.test.TestCase"/>
-		</junit>
-	</target>
+	</target>	
 
 	<!-- NOT USED -->
 	<target name="zip" depends="clean" description="Build zrc.zip.">
