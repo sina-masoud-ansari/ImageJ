@@ -2,29 +2,32 @@
 
 <project name="ImageJ" default="run" basedir=".">
 	<property name="src.dir" location="src"/>
+	<property name="test.dir" location="test"/>
 	<property name="build.dir" location="build"/>
+	<property name="lib.dir" location="lib"/>
 	<property name="bin.dir" location="bin"/>
 	<property name="images.dir" location="images"/>
 	<property name="plugins.dir" location="plugins"/>
 	<property name="macros.dir" location="macros"/>
 
-	<target name="compile" description="Compile everything.">
+	<target name="compile" description="Compile everything">
 		<!-- First, ensure the build directory exists. -->
 		<mkdir dir="${build.dir}" />
 		<!-- Build everything; add debug="on" to debug -->
-		<javac srcdir="${src.dir}" destdir="${build.dir}" optimize="on" source="1.6" target="1.6" debug="on" encoding="UTF-8"/>
-		<!-- HEXA verion -->
-		<!-- <javac srcdir="." destdir="build" optimize="on" source="1.6" target="1.6" debug="on" bootclasspath="/usr/lib/jvm/java-1.6.0-openjdk/jre/lib/rt.jar" encoding="UTF-8" /> -->
+		<javac destdir="${build.dir}" classpath="${lib.dir}/junit-4.10.jar" optimize="on" source="1.6" target="1.6" debug="on" encoding="UTF-8">
+			<src path="${src.dir}"/>
+			<src path="${test.dir}"/>
+		</javac>
 	</target>
 	
 	<!-- Shouldn't need this really, just copy ${bin.dir} to ~/hexa.ece.auckland.ac.nz and run it there -->
-	<target name="compile_hexa" description="Compile everything for hexa">
+	
+	<!-- <target name="compile_hexa" description="Compile everything for hexa"> -->
 		<!-- First, ensure the build directory exists. -->
-		<mkdir dir="${build.dir}" />
+		<!-- <mkdir dir="${build.dir}" /> -->
 		<!-- Build everything; add debug="on" to debug -->
-		<javac srcdir="${src.dir}" destdir="${build.dir}" optimize="on" source="1.6" target="1.6" debug="on" encoding="UTF-8" bootclasspath="/usr/lib/jvm/java-1.6.0-openjdk/jre/lib/rt.jar"/>
-	</target>
-		
+		<!-- <javac srcdir="${src.dir}" destdir="${build.dir}" optimize="on" source="1.6" target="1.6" debug="on" encoding="UTF-8" bootclasspath="/usr/lib/jvm/java-1.6.0-openjdk/jre/lib/rt.jar"/> -->
+	<!-- </target> -->	
 
 	<target name="build" depends="compile" description="Build ij.jar.">
 		<!-- Copy needed files into the build directory. -->
@@ -64,6 +67,13 @@
 			<jvmarg value="-Xdebug" />
 			<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000" />
 		</java>
+	</target>
+	
+	<target name="test" depends="compile" description="Compile source and initiate tests">
+		<junit printsummary="yes" fork="yes" haltonfailure="yes">
+		  <formatter type="plain"/>
+		  <test name="my.test.TestCase"/>
+		</junit>
 	</target>
 
 	<!-- NOT USED -->
