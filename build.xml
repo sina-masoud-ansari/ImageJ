@@ -1,8 +1,8 @@
 <!-- Ant makefile for ImageJ -->
 
 <project name="ImageJ" default="run" basedir=".">
-	<property name="src.dir" location="src"/>
-	<property name="test.dir" location="test"/>
+	<property name="main.dir" location="src/main"/>
+	<property name="test.dir" location="src/test"/>
 	<property name="build.dir" location="build"/>
 	<property name="lib.dir" location="lib"/>
 	<property name="bin.dir" location="bin"/>
@@ -15,7 +15,7 @@
 		<mkdir dir="${build.dir}" />
 		<!-- Build everything; add debug="on" to debug -->
 		<javac destdir="${build.dir}" classpath="${lib.dir}/junit-4.10.jar" optimize="on" source="1.6" target="1.6" debug="on" encoding="UTF-8">
-			<src path="${src.dir}"/>
+			<src path="${main.dir}"/>
 			<src path="${test.dir}"/>
 		</javac>
 	</target>
@@ -26,7 +26,7 @@
 		<!-- First, ensure the build directory exists. -->
 		<!-- <mkdir dir="${build.dir}" /> -->
 		<!-- Build everything; add debug="on" to debug -->
-		<!-- <javac srcdir="${src.dir}" destdir="${build.dir}" optimize="on" source="1.6" target="1.6" debug="on" encoding="UTF-8" bootclasspath="/usr/lib/jvm/java-1.6.0-openjdk/jre/lib/rt.jar"/> -->
+		<!-- <javac srcdir="${main.dir}" destdir="${build.dir}" optimize="on" source="1.6" target="1.6" debug="on" encoding="UTF-8" bootclasspath="/usr/lib/jvm/java-1.6.0-openjdk/jre/lib/rt.jar"/> -->
 	<!-- </target> -->	
 
 	<target name="build" depends="compile" description="Build ij.jar.">
