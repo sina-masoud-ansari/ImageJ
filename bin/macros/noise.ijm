@@ -1,3 +1,3 @@
-open(getArgument());
+sopen(getArgument());
 run("Add Noise");
 close();
