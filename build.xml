@@ -10,6 +10,7 @@
 	<property name="images.dir" location="images"/>
 	<property name="plugins.dir" location="plugins"/>
 	<property name="macros.dir" location="macros"/>
+	<property name="reports.dir" location="reports"/>
 
 	<target name="compile" description="Compile everything">
 		<!-- First, ensure the build directory exists. -->
@@ -58,7 +59,8 @@
 		</java>
 	</target>
 
-	<target name="test" depends="compile" description="Compile source and initiate tests">
+	<target name="test" depends="compile" description="Compile source and initiate tests">	
+		<mkdir dir="${reports.dir}" />		
 		<junit printsummary="yes" haltonfailure="yes">
 			<classpath>
 				<pathelement location="${lib.dir}/junit-4.10.jar" />
