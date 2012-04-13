@@ -42,6 +42,7 @@
 			<fileset dir="${macros.dir}"/>
 		</copy>
 		<!-- Build ij.jar. -->
+		<mkdir dir="${bin.dir}" />
 		<jar jarfile="${bin.dir}/ij.jar" basedir="${build.dir}" manifest="MANIFEST.MF" />
 	</target>
 
