@@ -60,7 +60,7 @@
 		</java>
 	</target>
 
-	<target name="test" depends="compile" description="Compile source and initiate tests">	
+	<target name="test" depends="build" description="Compile source and initiate tests">	
 		<mkdir dir="${reports.dir}" />		
 		<junit printsummary="yes" haltonfailure="yes">
 			<classpath>
