@@ -1,0 +1,104 @@
+<!-- Ant makefile for ImageJ -->
+
+<project name="ImageJ" default="headless" basedir=".">
+	<property name="src.main" location="src/main"/>
+	<property name="src.test" location="src/test"/>
+	<property name="reports.test" location="reports"/>
+	<property name="build.dir" location="build"/>
+	<property name="lib.dir" location="lib"/>
+	<property name="bin.dir" location="bin"/>
+	<property name="images.dir" location="images"/>
+	<property name="plugins.dir" location="plugins"/>
+	<property name="macros.dir" location="macros"/>
+	<property name="reports.dir" location="reports"/>
+
+	<target name="compile" description="Compile everything">
+		<!-- First, ensure the build directory exists. -->
+		<mkdir dir="${build.dir}" />
+		<!-- Build everything; add debug="on" to debug -->
+		<javac destdir="${build.dir}" classpath="${lib.dir}/junit-4.10.jar" optimize="on" source="1.6" target="1.6" debug="on" encoding="UTF-8" bootclasspath="/usr/lib/jvm/java-1.6.0-openjdk/jre/lib/rt.jar">
+			<src path="${src.main}"/>
+			<src path="${src.test}"/>
+		</javac>
+	</target>
+
+	<target name="build" depends="compile" description="Build ij.jar.">
+		<!-- Copy needed files into the build directory. -->
+		<copy file="IJ_Props.txt" todir="${build.dir}" />
+		<copy file="${images.dir}/microscope.gif" tofile="${build.dir}/microscope.gif" />
+		<copy file="${images.dir}/about.jpg" tofile="${build.dir}/about.jpg" />
+		<copy file="${plugins.dir}/MacAdapter.class" tofile="${build.dir}/MacAdapter.class" />
+		<copy file="${plugins.dir}/JavaScriptEvaluator.class" tofile="${build.dir}/JavaScriptEvaluator.class" />
+		<copy file="${plugins.dir}/MacClipboard.class" tofile="${build.dir}/MacClipboard.class" />
+		<copy todir="${build.dir}/macros">
+			<fileset dir="${macros.dir}"/>
+		</copy>
+		<!-- Build ij.jar. -->
+		<mkdir dir="${bin.dir}" />
+		<jar jarfile="${bin.dir}/ij.jar" basedir="${build.dir}" manifest="MANIFEST.MF" />
+	</target>
+
+	<!-- NOT USED AT THIS STAGE -->
+	<target name="clean" description="Delete the build files.">
+		<delete dir="${build.dir}" />
+		<!-- <delete file="ij.jar" /> -->
+	</target>
+
+	<target name="headless" depends="build" description="Build and run ImageJ in headless mode">
+		<!-- WHY IS THIS NEEDED ? -->
+		<!-- <copy file="ij.jar" toDir=".." /> -->
+		<java maxmemory="1024m" classpath="${bin.dir}/headless.jar:${bin.dir}/ij.jar" classname="ij.ImageJ" fork="yes">
+			<arg value="-batch" />
+		</java>
+	</target>
+
+	<target name="test" depends="compile" description="Compile source and initiate tests">	
+		<mkdir dir="${reports.dir}" />		
+		<junit printsummary="yes" haltonfailure="yes">
+			<classpath>
+				<pathelement location="${lib.dir}/junit-4.10.jar" />
+				<pathelement location="${build.dir}"/>
+			</classpath>
+			<formatter type="plain"/>
+			<batchtest fork="yes" todir="${reports.test}">
+				<fileset dir="${src.test}">
+					<include name="**/*Test*.java"/>
+					<!-- <exclude name="**/AllTests.java"/> -->
+				</fileset>
+			</batchtest>
+		</junit>
+	</target>
+	
+	<target name="run" depends="build" description="Build and run ImageJ.">
+		<java maxmemory="1024m" jar="${bin.dir}/ij.jar" fork="yes"/>
+	</target>
+
+	<target name="debug" depends="build" description="Build and debug ImageJ.">
+		<java maxmemory="1024m" jar="${bin.dir}/ij.jar" fork="yes">
+			<jvmarg value="-Xdebug" />
+			<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000" />
+		</java>
+	</target>	
+
+	<!-- NOT USED -->
+	<target name="zip" depends="clean" description="Build zrc.zip.">
+		<zip zipfile="../src.zip" basedir=".." includes="source/**" />
+	</target>
+
+	<!-- NOT USED -->
+	<target name="javadocs" description="Build the JavaDocs.">
+		<delete dir="../api" />
+		<mkdir dir="../api" />
+		<javadoc 
+           sourcepath="."
+           packagenames="ij.*"
+           destdir="../api"
+           author="true"
+           version="true"
+           use="true"
+           windowtitle="ImageJ API">
+		</javadoc>
+	</target>
+
+</project>
+
