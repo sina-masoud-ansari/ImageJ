@@ -13,33 +13,47 @@
 	<property name="resources.build" location="resources/build"/>
 	<property name="resources.test" location="resources/test" />
 	<property name="hexa.rt" location="/usr/lib/jvm/java-1.6.0-openjdk/jre/lib/rt.jar" />
-	
+
 	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
-	  <classpath>
-	    <pathelement location="${lib.dir}/ant-contrib-0.6.jar"/>
-	  </classpath>
-	</taskdef>	
+		<classpath>
+			<pathelement location="${lib.dir}/ant-contrib-0.6.jar"/>
+		</classpath>
+	</taskdef>
+
+	<path id="build.classpath">
+		<fileset dir="${lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+	
+	<path id="run.classpath">
+		<fileset dir="${bin.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>	
+	
+	
 
 	<target name="compile" description="Compile everything">
 		<!-- First, ensure the build directory exists. -->
 		<mkdir dir="${build.dir}" />
 		<!-- Build everything; add debug="on" to debug -->
 		<!-- If compiling on hexa.ece.auckland.ac.nz use bootclasspath parameter -->
-	    <if>
-	        <available file="$(hexa.rt)"/>
-	        <then>
-	    		<javac destdir="${build.dir}" classpath="${lib.dir}/junit-4.10.jar" optimize="on" source="1.6" target="1.6" debug="on" encoding="UTF-8" bootclasspath="/usr/lib/jvm/java-1.6.0-openjdk/jre/lib/rt.jar">
-	    			<src path="${src.main}"/>
-	    			<src path="${src.test}"/>
-	    		</javac>	            
-	        </then>
-	        <else>
-	    		<javac destdir="${build.dir}" classpath="${lib.dir}/junit-4.10.jar" optimize="on" source="1.6" target="1.6" debug="on" encoding="UTF-8">
-	    			<src path="${src.main}"/>
-	    			<src path="${src.test}"/>
-	    		</javac>
-	        </else>
-	    </if>		
+		<if>
+			<available file="${hexa.rt}"/>
+			<then>
+				<javac destdir="${build.dir}" classpathref="build.classpath" optimize="on" source="1.6" target="1.6" debug="on" encoding="UTF-8" bootclasspath="/usr/lib/jvm/java-1.6.0-openjdk/jre/lib/rt.jar">
+					<src path="${src.main}"/>
+					<src path="${src.test}"/>
+				</javac>
+			</then>
+			<else>
+				<javac destdir="${build.dir}" classpathref="build.classpath" optimize="on" source="1.6" target="1.6" debug="on" encoding="UTF-8">
+					<src path="${src.main}"/>
+					<src path="${src.test}"/>
+				</javac>
+			</else>
+		</if>
 
 	</target>
 
@@ -59,27 +73,28 @@
 		<jar jarfile="${bin.dir}/ij.jar" basedir="${build.dir}" manifest="MANIFEST.MF" />
 	</target>
 
-	<!-- NOT USED AT THIS STAGE -->
 	<target name="clean" description="Delete the build files.">
 		<delete dir="${build.dir}" />
-		<!-- <delete file="ij.jar" /> -->
 	</target>
 
 	<target name="headless" depends="build" description="Build and run ImageJ in headless mode">
 		<!-- WHY IS THIS NEEDED ? -->
 		<!-- <copy file="ij.jar" toDir=".." /> -->
-		<java maxmemory="1024m" classpath="${bin.dir}/headless.jar:${bin.dir}/ij.jar" classname="ij.ImageJ" fork="yes">
+		<java maxmemory="1024m" classpathref="run.classpath" classname="ij.ImageJ" fork="yes">
 			<arg value="-batch" />
 		</java>
 	</target>
 
-	<target name="test" depends="build" description="Compile source and initiate tests">	
-		<mkdir dir="${reports.dir}" />		
-		<junit printsummary="yes" haltonfailure="yes">
-			<classpath>
-				<pathelement location="${lib.dir}/junit-4.10.jar" />
-				<pathelement location="${build.dir}"/>
-			</classpath>
+	<target name="test" depends="build" description="Compile source and initiate tests">
+		<mkdir dir="${reports.dir}" />
+		<mkdir dir="${build.dir}/resources" />
+		<copy todir="${build.dir}/resources">
+			<fileset dir="${resources.test}"/>
+		</copy>
+		<junit printsummary="withOutAndErr" haltonfailure="yes">
+			<classpath path="${build.dir}" />
+			<classpath refid="build.classpath" />
+			<classpath refid="run.classpath" />
 			<formatter type="plain"/>
 			<batchtest fork="yes" todir="${reports.test}">
 				<fileset dir="${src.test}">
@@ -89,7 +104,7 @@
 			</batchtest>
 		</junit>
 	</target>
-	
+
 	<target name="run" depends="build" description="Build and run ImageJ.">
 		<java maxmemory="1024m" jar="${bin.dir}/ij.jar" fork="yes"/>
 	</target>
@@ -99,7 +114,7 @@
 			<jvmarg value="-Xdebug" />
 			<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000" />
 		</java>
-	</target>	
+	</target>
 
 	<!-- NOT USED -->
 	<target name="zip" depends="clean" description="Build zrc.zip.">
