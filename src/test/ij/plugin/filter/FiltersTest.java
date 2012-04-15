@@ -2,11 +2,7 @@ package ij.plugin.filter;
 
 import java.net.URL;
 import java.util.ArrayList;
-
-import ij.Executer;
-import ij.ImageListener;
 import ij.ImagePlus;
-import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
 import junit.framework.TestCase;
 
@@ -56,7 +52,7 @@ public class FiltersTest extends TestCase {
 		}
 	}
 	
-	// need to write a test for this
+	// TODO: need to write a test for this
 	private ArrayList<double[]> getChannels(ImagePlus imp, int nChannels) {
 		
 		ArrayList<double[]> list = new ArrayList<double[]>();
