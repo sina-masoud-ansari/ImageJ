@@ -36,7 +36,7 @@
 		<copy file="${resources.build}/IJ_Props.txt" todir="${build.dir}" />
 		<copy file="${resources.build}/images/microscope.gif" tofile="${build.dir}/microscope.gif" />
 		<copy file="${resources.build}/images/about.jpg" tofile="${build.dir}/about.jpg" />
-		<copy file="${resources.build}/images/MacAdapter.class" tofile="${build.dir}/MacAdapter.class" />
+		<copy file="${resources.build}/plugins/MacAdapter.class" tofile="${build.dir}/MacAdapter.class" />
 		<copy file="${resources.build}/plugins/JavaScriptEvaluator.class" tofile="${build.dir}/JavaScriptEvaluator.class" />
 		<copy file="${resources.build}/plugins/MacClipboard.class" tofile="${build.dir}/MacClipboard.class" />
 		<copy todir="${build.dir}/macros">
