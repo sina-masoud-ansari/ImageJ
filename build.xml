@@ -7,10 +7,11 @@
 	<property name="build.dir" location="build"/>
 	<property name="lib.dir" location="lib"/>
 	<property name="bin.dir" location="bin"/>
-	<property name="images.dir" location="images"/>
 	<property name="plugins.dir" location="plugins"/>
 	<property name="macros.dir" location="macros"/>
 	<property name="reports.dir" location="reports"/>
+	<property name="resources.build" location="resources/build"/>
+	<property name="resources.test" location="resources/test" />
 
 	<target name="compile" description="Compile everything">
 		<!-- First, ensure the build directory exists. -->
@@ -32,14 +33,14 @@
 
 	<target name="build" depends="compile" description="Build ij.jar.">
 		<!-- Copy needed files into the build directory. -->
-		<copy file="IJ_Props.txt" todir="${build.dir}" />
-		<copy file="${images.dir}/microscope.gif" tofile="${build.dir}/microscope.gif" />
-		<copy file="${images.dir}/about.jpg" tofile="${build.dir}/about.jpg" />
-		<copy file="${plugins.dir}/MacAdapter.class" tofile="${build.dir}/MacAdapter.class" />
-		<copy file="${plugins.dir}/JavaScriptEvaluator.class" tofile="${build.dir}/JavaScriptEvaluator.class" />
-		<copy file="${plugins.dir}/MacClipboard.class" tofile="${build.dir}/MacClipboard.class" />
+		<copy file="${resources.build}/IJ_Props.txt" todir="${build.dir}" />
+		<copy file="${resources.build}/images/microscope.gif" tofile="${build.dir}/microscope.gif" />
+		<copy file="${resources.build}/images/about.jpg" tofile="${build.dir}/about.jpg" />
+		<copy file="${resources.build}/images/MacAdapter.class" tofile="${build.dir}/MacAdapter.class" />
+		<copy file="${resources.build}/plugins/JavaScriptEvaluator.class" tofile="${build.dir}/JavaScriptEvaluator.class" />
+		<copy file="${resources.build}/plugins/MacClipboard.class" tofile="${build.dir}/MacClipboard.class" />
 		<copy todir="${build.dir}/macros">
-			<fileset dir="${macros.dir}"/>
+			<fileset dir="${resources.build}/macros"/>
 		</copy>
 		<!-- Build ij.jar. -->
 		<mkdir dir="${bin.dir}" />
@@ -60,7 +61,7 @@
 		</java>
 	</target>
 
-	<target name="test" depends="build" description="Compile source and initiate tests">	
+	<target name="test" depends="compile" description="Compile source and initiate tests">	
 		<mkdir dir="${reports.dir}" />		
 		<junit printsummary="yes" haltonfailure="yes">
 			<classpath>

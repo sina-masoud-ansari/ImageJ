@@ -1,11 +1,12 @@
 package ij;
 
-import static org.junit.Assert.*;
+import junit.framework.TestCase;
+
 import org.junit.Test;
 
-public class ExampleTest {
+public class ExampleTest extends TestCase {
 	@Test
-	public void testIJ(){
-		assertEquals(1,1);
+	public void testIJ() {
+		assertEquals(1, 1);
 	}
 }
