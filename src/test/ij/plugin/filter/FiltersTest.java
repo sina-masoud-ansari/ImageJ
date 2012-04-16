@@ -112,7 +112,7 @@ public class FiltersTest {
 	}
 	
 	/**
-	 * Add your test here
+	 * Add your ij.plugin.filters class test here
 	 */
 	//@Test
 	//public void testMyFilter() {
