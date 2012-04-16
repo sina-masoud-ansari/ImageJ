@@ -64,7 +64,7 @@ public class FiltersTest {
 
 	//TODO: javadoc
 	/**
-	 * Image paths and the number of channels
+	 * Image paths, number of channels and mode
 	 * 
 	 * @return
 	 */
@@ -105,11 +105,19 @@ public class FiltersTest {
 			System.out.println("Channel: "+i+", p-value: "+Double.valueOf(DP3.format(pValue))+", alpha: "+ALPHA);
 			reject = test.homoscedasticTTest(aChannles.get(i), bChannles.get(i), ALPHA);
 			if (reject){			
-				System.out.println("\tRejected with confidence: "+(1 - ALPHA));			
+				System.out.println("\tRejected with confidence: " + (1 - ALPHA));			
 			}
 			assertEquals(false, reject);
 		}
 	}
+	
+	/**
+	 * Add your test here
+	 */
+	//@Test
+	//public void testMyFilter() {
+	//	assertEquals(true, true);
+	//}
 	
 	// TODO: need to write a test for this?
 	private ArrayList<double[]> getChannels(ImagePlus imp, int nChannels) {
