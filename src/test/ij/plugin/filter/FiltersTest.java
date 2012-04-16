@@ -1,46 +1,67 @@
 package ij.plugin.filter;
 
-import java.net.URL;
-import java.util.ArrayList;
+import static org.junit.Assert.*;
 import ij.ImagePlus;
 import ij.process.ImageProcessor;
-import junit.framework.TestCase;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+
+import java.net.URL;
 
 import org.apache.commons.math3.stat.inference.TTest;
-import org.junit.*;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
-public class FiltersTest extends TestCase {
+@RunWith(value = Parameterized.class)
+public class FiltersTest {
+
+	private final static double RANGE = 25;
+	private final static double ALPHA = 0.05;
 	
-	protected URL url; // will need to be a collection
-	protected final static double RANGE = 25;
-	protected final static double ALPHA = 0.05;
-	
-	@Before
-	public void setUp() {	
-		// TODO: need a collection of images for all iamge types 0-4
-		url = this.getClass().getResource("/resources/images/eso0650a.jpg");
+	private final ImagePlus imgA, imgB;
+	private final int nChannels;
+
+
+	public FiltersTest(String s, int n) {	
+		URL url = this.getClass().getResource(s);
+		imgA = new ImagePlus(url.getPath());
+		imgB = new ImagePlus(url.getPath());
+		nChannels = n;
 	}
-	
+
+	//TODO: javadoc
+	/**
+	 * Image paths and the number of channels
+	 * 
+	 * @return
+	 */
+	@Parameters
+	public static Collection<Object[]> testImages() {
+		
+		Object[][] images = new Object[][] { 
+				{ "/resources/images/COLOR_RGB.jpg", 3 }, 
+				{ "/resources/images/COLOR_256.jpg", 3 }, 
+				{ "/resources/images/GRAY8.jpg", 1 },
+				{ "/resources/images/GRAY16.jpg", 1 },
+				{ "/resources/images/GRAY32.jpg", 1 }
+		};
+		return Arrays.asList(images);
+	}
+
 	@Test
 	public void testAddNoiseSERIAL() {
-		ImagePlus a = new ImagePlus(url.getPath());
-		// iterate through collection
-		ImagePlus b = new ImagePlus(url.getPath());	
-		a.getProcessor().noise(RANGE, ImageProcessor.P_NONE);
-		b.getProcessor().noise(RANGE, ImageProcessor.P_SERIAL);
-	
 		
-		// TODO: This looks like a bug??
-		//System.out.println("Type: "+a.getType()+" Total Channels: "+a.getNChannels()); //problem here, returns 1 channel for RGB
-		int nChannels;
-		if (a.getType() == ImagePlus.COLOR_256 || a.getType() == ImagePlus.COLOR_RGB) {
-			nChannels = 3;
-		} else {
-			nChannels = 1;
-		}
+		System.out.println("Image: "+imgA.getTitle());
 		
-		ArrayList<double[]> aChannles = getChannels(a, nChannels);
-		ArrayList<double[]> bChannles = getChannels(b, nChannels);
+		imgA.getProcessor().noise(RANGE, ImageProcessor.P_NONE);
+		imgB.getProcessor().noise(RANGE, ImageProcessor.P_SERIAL);
+		
+		ArrayList<double[]> aChannles = getChannels(imgA, nChannels);
+		ArrayList<double[]> bChannles = getChannels(imgB, nChannels);
 		
 		TTest test = new TTest();
 		boolean reject;
@@ -48,11 +69,11 @@ public class FiltersTest extends TestCase {
 			//double pValue = test.pairedTTest(aChannles.get(i), bChannles.get(i));
 			//System.out.println("Channel: "+i+", p-value: "+pValue);
 			reject = test.pairedTTest(aChannles.get(i), bChannles.get(i), ALPHA);
-			assertEquals(reject, false);
+			assertEquals(false, reject);
 		}
 	}
 	
-	// TODO: need to write a test for this
+	// TODO: need to write a test for this?
 	private ArrayList<double[]> getChannels(ImagePlus imp, int nChannels) {
 		
 		ArrayList<double[]> list = new ArrayList<double[]>();
@@ -74,11 +95,7 @@ public class FiltersTest extends TestCase {
 			}
 		}
 		
-		return list;
-		
-		
-		
+		return list;	
 	}
-
-
+	
 }
