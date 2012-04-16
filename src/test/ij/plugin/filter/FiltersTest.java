@@ -8,6 +8,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import java.net.URL;
 
@@ -95,8 +96,8 @@ public class FiltersTest {
 		imgA.getProcessor().noise(RANGE, ImageProcessor.P_NONE);
 		imgB.getProcessor().noise(RANGE, mode);
 		
-		ArrayList<double[]> aChannles = getChannels(imgA, nChannels);
-		ArrayList<double[]> bChannles = getChannels(imgB, nChannels);
+		ArrayList<double[]> aChannles = getChannels(imgA);
+		ArrayList<double[]> bChannles = getChannels(imgB);
 		
 		TTest test = new TTest();
 		boolean reject;
@@ -120,7 +121,8 @@ public class FiltersTest {
 	//}
 	
 	// TODO: need to write a test for this?
-	private ArrayList<double[]> getChannels(ImagePlus imp, int nChannels) {
+	// TODO: consider generics
+	private ArrayList<double[]> getChannels(ImagePlus imp) {
 		
 		ArrayList<double[]> list = new ArrayList<double[]>();
 		int size = imp.getWidth()*imp.getHeight();
@@ -143,5 +145,4 @@ public class FiltersTest {
 		
 		return list;	
 	}
-	
 }
