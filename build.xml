@@ -25,14 +25,14 @@
 			<include name="**/*.jar" />
 		</fileset>
 	</path>
-	
+
 	<path id="run.classpath">
 		<fileset dir="${bin.dir}">
 			<include name="**/*.jar" />
 		</fileset>
-	</path>	
-	
-	
+	</path>
+
+
 
 	<target name="compile" description="Compile everything">
 		<!-- First, ensure the build directory exists. -->
@@ -86,23 +86,32 @@
 	</target>
 
 	<target name="test" depends="build" description="Compile source and initiate tests">
+		<delete dir="${reports.dir}" />
 		<mkdir dir="${reports.dir}" />
+		<mkdir dir="${build.dir}/dump" />
 		<mkdir dir="${build.dir}/resources" />
 		<copy todir="${build.dir}/resources">
-			<fileset dir="${resources.test}"/>
+			<fileset dir="${resources.test}" />
 		</copy>
 		<junit printsummary="withOutAndErr" haltonfailure="yes">
 			<classpath path="${build.dir}" />
 			<classpath refid="build.classpath" />
 			<classpath refid="run.classpath" />
-			<formatter type="plain"/>
+			<formatter type="xml" />
 			<batchtest fork="yes" todir="${reports.test}">
 				<fileset dir="${src.test}">
-					<include name="**/*Test*.java"/>
+					<include name="**/*Test*.java" />
 					<!-- <exclude name="**/AllTests.java"/> -->
 				</fileset>
 			</batchtest>
 		</junit>
+		<junitreport todir="${reports.test}">
+			<fileset dir="${reports.test}">
+				<include name="TEST-*.xml" />
+			</fileset>
+			<report todir="${reports.test}" />
+		</junitreport>
+
 	</target>
 
 	<target name="run" depends="build" description="Build and run ImageJ.">
