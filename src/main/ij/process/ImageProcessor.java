@@ -51,7 +51,7 @@ public abstract class ImageProcessor implements Cloneable {
 	/** Filter functions **/
 	public static final int BLUR_MORE=0, FIND_EDGES=1, MEDIAN_FILTER=2, MIN=3, MAX=4, CONVOLVE=5;
 	
-	/** Parallelisation approach to be used for the filters
+	/** Parallelisation approach to be used for the filters 
 	 *  P_NONE is the original Image Processor method
 	 *  P_SERIAL is original method implemented in the parallel subclass of the Image Processor
 	 *  P_SIMPLE is using simple thread launching
@@ -1936,6 +1936,13 @@ public abstract class ImageProcessor implements Cloneable {
     	@param mode		the parallelisation approach to be used
     */
     public abstract void noise(double range, int mode);
+    
+    /**
+     * Adds random salt and pepper noise to the image or ROI.
+     * @param percent 	the percent of black and white pixels to add
+     * @param mode		the parallelisation approach to be used
+     */
+    //public abstract void addSaltAndPepper(double percent, int mode);
     
 	/** Creates a new processor containing an image
 		that corresponds to the current ROI. */

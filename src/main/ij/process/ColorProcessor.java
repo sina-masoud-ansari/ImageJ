@@ -758,7 +758,7 @@ public class ColorProcessor extends ImageProcessor {
     public void noise(double range, int mode) {
     	filterRGB(RGB_NOISE, mode, range);    
     }
-
+    
 	public void medianFilter() {
     	filterRGB(RGB_MEDIAN, P_NONE, 0.0);
 	}
@@ -1336,6 +1336,12 @@ public class ColorProcessor extends ImageProcessor {
 			pixels[i] = (pixels[i]&resetMask) | ((int)value<<shift);
 		}
 	}
+	
+	/**
+	 * Adds salt and pepper filter. This filter does not apply to RGB images.
+	 */
+	public void addSaltAndPepper(double percent, int mode)
+	{return;}
 	
 }
 
