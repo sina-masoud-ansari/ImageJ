@@ -86,7 +86,7 @@ public class ParallelByteProcessor extends ByteProcessor {
 			final int numRowsPerThread;
 			if ( (i == numThreads - 1)){
 				// add an additional row for the last thread if the roiY is not a multiple of numThreads
-				numRowsPerThread = roiY % numThreads == 0 ? ratio : ratio + 1;
+				numRowsPerThread = roiHeight % numThreads == 0 ? ratio : ratio + 1;
 			} else {
 				numRowsPerThread = ratio;
 			}
