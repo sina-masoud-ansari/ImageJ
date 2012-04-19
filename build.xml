@@ -30,17 +30,15 @@
 			<include name="**/*.jar" />
 		</fileset>
 	</path>
-
+<!--
 	<target name="compile_test" description="Compile everything">
-		<!-- First, ensure the build directory exists. -->
 		<mkdir dir="${build.dir}" />
-		<!-- Build everything; add debug="on" to debug -->
-		<!-- If compiling on hexa.ece.auckland.ac.nz use bootclasspath parameter -->
 		<javac destdir="${build.dir}" classpathref="build.classpath" optimize="on" source="1.6" target="1.6" debug="on" encoding="UTF-8">
 			<src path="${src.main}"/>
 			<src path="${src.test}"/>
 		</javac>
 	</target>
+-->
 
 	<target name="compile" description="Compile everything">
 		<!-- First, ensure the build directory exists. -->
