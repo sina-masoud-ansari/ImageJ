@@ -223,8 +223,8 @@ lookup15="Red/Green",ij.plugin.LutLoader("redgreen")
 # Plug-ins installed in the Process/Noise submenu
 noise01="Add Noise",ij.plugin.filter.Filters("add")
 noise02=-
-noise03="Add Noise SERIAL",ij.plugin.filter.Filters("add serial")
-noise04="Add Noise SIMPLE",ij.plugin.filter.Filters("add simple")
+noise03="Add Noise SERIAL",ij.parallel.plugin.filter.ParallelFilters("add serial")
+noise04="Add Noise SIMPLE",ij.parallel.plugin.filter.ParallelFilters("add simple")
 noise05=-
 noise06="Add Specified Noise...",ij.plugin.filter.Filters("noise")
 noise07="Salt and Pepper",ij.plugin.filter.SaltAndPepper("salt_and_pepper")

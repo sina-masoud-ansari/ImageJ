@@ -2,17 +2,15 @@ package ij.parallel.process;
 
 import static org.junit.Assert.*;
 import ij.ImagePlus;
-import ij.process.ImageProcessor;
+import ij.process.ByteProcessor;
+import ij.process.ColorProcessor;
+import ij.process.FloatProcessor;
+import ij.process.ShortProcessor;
 
-import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
-
 import java.net.URL;
 
-import org.apache.commons.math3.stat.inference.TTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,121 +20,82 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(value = Parameterized.class)
 public class ParallelImageProcessorTest {
 
-	private final static int
-	
-		// Parallelisation approaches
-		P_NONE = ImageProcessor.P_NONE,
-		P_SERIAL = ImageProcessor.P_SERIAL,
-		P_SIMPLE = ImageProcessor.P_SIMPLE,
-		
-		//Number of channels per image type
-		CH_COLOR_RGB = 3,
-		CH_COLOR_256 = 3,
-		CH_GRAY8 = 1,
-		CH_GRAY16 = 1,
-		CH_GRAY32 = 1;
-
 	private final static String 
 	
-		// Example images of each image type
-		COLOR_RGB = "/resources/images/COLOR_RGB.jpg",
-		COLOR_256 = "/resources/images/COLOR_256.jpg",
-		GRAY8 = "/resources/images/GRAY8.jpg",
-		GRAY16 = "/resources/images/GRAY16.jpg",
-		GRAY32 = "/resources/images/GRAY32.jpg";
+		// Example image paths for each image type
+		P_COLOR_RGB = "/resources/images/tif/COLOR_RGB.tif",
+		P_COLOR_256 = "/resources/images/tif/COLOR_256.tif",
+		P_GRAY8 = "/resources/images/tif/GRAY8.tif",
+		P_GRAY16 = "/resources/images/tif/GRAY16.tif",
+		P_GRAY32 = "/resources/images/tif/GRAY32.tif";
 	
-	private final static DecimalFormat DP3 = new DecimalFormat("#.###");
-	
-	private ImagePlus imgA, imgB;
-	private final int nChannels, mode;
+	private ImagePlus img;
 	private final URL url;
 
-	public ParallelImageProcessorTest(String s, int n, int m) {	
+	public ParallelImageProcessorTest(String s) {	
 		url = this.getClass().getResource(s);
-		nChannels = n;
-		mode = m;
 	}
 
-	//TODO: javadoc
-	/**
-	 * Image paths, number of channels and mode
-	 * 
-	 * @return
-	 */
 	@Parameters
 	public static Collection<Object[]> testImages() {
 		
 		Object[][] images = new Object[][] { 
-				{ COLOR_RGB, CH_COLOR_RGB, P_NONE }, { COLOR_RGB, CH_COLOR_RGB, P_SERIAL }, { COLOR_RGB, CH_COLOR_RGB, P_SIMPLE },
-				{ COLOR_256, CH_COLOR_256, P_NONE }, { COLOR_256, CH_COLOR_256, P_SERIAL }, { COLOR_256, CH_COLOR_256, P_SIMPLE },
-				{ GRAY8, CH_GRAY8, P_NONE }, { GRAY8, CH_GRAY8, P_SERIAL }, { GRAY8, CH_GRAY8, P_SIMPLE },
-				{ GRAY16, CH_GRAY16 , P_NONE }, { GRAY16, CH_GRAY16 , P_SERIAL }, { GRAY16, CH_GRAY16 , P_SIMPLE },
-				{ GRAY32, CH_GRAY32, P_NONE }, { GRAY32, CH_GRAY32, P_SERIAL }, { GRAY32, CH_GRAY32, P_SIMPLE }
+				{ P_COLOR_RGB }, 
+				{ P_COLOR_256 }, 
+				{ P_GRAY8 }, 
+				{ P_GRAY16 },
+				{ P_GRAY32 }, 
 		};
 		return Arrays.asList(images);
 	}
 	
 	@Before
 	public void setUp(){
-		imgA = new ImagePlus(url.getPath());
-		imgB = new ImagePlus(url.getPath());		
+		img = new ImagePlus(url.getPath());	
 	}
 
 	@Test
-	public void testAddNoise() {
-		
-		System.out.println("Image: "+imgA.getTitle()+", mode: "+mode);
-		
-		imgA.getProcessor().noise(25, ImageProcessor.P_NONE);
-		imgB.getProcessor().noise(25, mode);
-		
-		ArrayList<double[]> aChannles = getChannels(imgA);
-		ArrayList<double[]> bChannles = getChannels(imgB);
-		
-		TTest test = new TTest();
-		boolean reject;
-		for (int i = 0; i < nChannels; i++){
-			double pValue = test.homoscedasticTTest(aChannles.get(i), bChannles.get(i));
-			System.out.println("Channel: "+i+", p-value: "+Double.valueOf(DP3.format(pValue))+", alpha: "+0.05);
-			reject = test.homoscedasticTTest(aChannles.get(i), bChannles.get(i), 0.05);
-			if (reject){			
-				System.out.println("\tRejected with confidence: " + (1 - 0.05));			
-			}
-			assertEquals(false, reject);
+	public void testBitDepth(){
+		int type = img.getType();
+		int bDepth = img.getBitDepth();
+		switch (type){
+		case ImagePlus.COLOR_RGB:
+			assertEquals(24, bDepth);
+			break;
+		case ImagePlus.COLOR_256:
+			assertEquals(8, bDepth);
+			break;
+		case ImagePlus.GRAY8:
+			assertEquals(8, bDepth);
+			break;
+		case ImagePlus.GRAY16:
+			assertEquals(16, bDepth);
+			break;
+		case ImagePlus.GRAY32:
+			assertEquals(32, bDepth);
+			break;		
 		}
-	}
-	
-	/**
-	 * Add your ij.plugin.filters class test here
-	 */
-	//@Test
-	//public void testMyFilter() {
-	//	assertEquals(true, true);
-	//}
-	
-	// TODO: need to write a test for this?
-	// TODO: consider generics
-	private ArrayList<double[]> getChannels(ImagePlus imp) {
-		
-		ArrayList<double[]> list = new ArrayList<double[]>();
-		int size = imp.getWidth()*imp.getHeight();
-		for (int i = 0; i < nChannels; i++){
-			list.add(new double[size]);
+	}	
+
+	@Test
+	public void testProcessorClass(){
+		int type = img.getType();
+		switch (type){
+		case ImagePlus.COLOR_RGB:
+			assertTrue(img.getProcessor() instanceof ColorProcessor);
+			break;
+		case ImagePlus.COLOR_256:
+			assertTrue(img.getProcessor() instanceof ColorProcessor);
+			break;
+		case ImagePlus.GRAY8:
+			assertTrue(img.getProcessor() instanceof ByteProcessor);
+			break;
+		case ImagePlus.GRAY16:
+			assertTrue(img.getProcessor() instanceof ShortProcessor);
+			break;
+		case ImagePlus.GRAY32:
+			assertTrue(img.getProcessor() instanceof FloatProcessor);
+			break;		
 		}
-		
-		//create channels
-		int[] pixel;
-		int index;
-		for (int y = 0; y < imp.getHeight(); y++){
-			for (int x = 0; x < imp.getWidth(); x++){
-				pixel = imp.getPixel(x, y);
-				index = y*imp.getWidth() + x;
-				for (int i = 0; i < list.size(); i++){
-					list.get(i)[index] = pixel[i];
-				}
-			}
-		}
-		
-		return list;	
-	}
+	}		
 }

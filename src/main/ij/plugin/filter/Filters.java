@@ -10,7 +10,7 @@ public class Filters implements PlugInFilter {
 	
 	protected static double sd = Prefs.getDouble(Prefs.NOISE_SD, 25.0);
 	protected String arg;
-	private ImagePlus imp;
+	protected ImagePlus imp;
 	protected int slice;
 	protected boolean canceled;
 
@@ -29,7 +29,7 @@ public class Filters implements PlugInFilter {
 		}
 		return flags;
 	}
-
+	
 	public void run(ImageProcessor ip) {
 	
 		if (arg.equals("invert")) {
@@ -59,7 +59,7 @@ public class Filters implements PlugInFilter {
 		}
 						
 	 	if (arg.equals("add")) {
-	 		ip.noise(25.0);
+	 		ip.noise_P_NONE(25.0);
 	 		return;
 	 	}
 	 	
@@ -77,14 +77,14 @@ public class Filters implements PlugInFilter {
 				}
 				sd = gd.getNextNumber();
 			}
-	 		ip.noise(sd);
+	 		ip.noise_P_NONE(sd);
 	 		IJ.register(Filters.class);
 	 		return;
 	 	}
         	 	
 	}
 	
-	void invert16BitStack(ImagePlus imp) {
+	protected void invert16BitStack(ImagePlus imp) {
 		imp.killRoi();
 		imp.getCalibration().disableDensityCalibration();
 		ImageStatistics stats = new StackStatistics(imp);

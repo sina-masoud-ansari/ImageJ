@@ -3,6 +3,8 @@ package ij.process;
 import java.util.*;
 import java.awt.*;
 import java.awt.image.*;
+
+import ij.Prefs;
 import ij.gui.*;
 
 /** This is an 32-bit floating-point image and methods that operate on that image. */
@@ -710,7 +712,7 @@ public class FloatProcessor extends ImageProcessor {
 	}
 	
 
-	public void noise(double range) {
+	public void noise_P_NONE(double range) {
 		Random rnd=new Random();
 		for (int y=roiY; y<(roiY+roiHeight); y++) {
 			int i = y * width + roiX;
@@ -722,6 +724,126 @@ public class FloatProcessor extends ImageProcessor {
 		}
 		resetMinAndMax();
 	}
+	
+	@Override
+	public void noise_P_SERIAL(double r) {
+		final double range = r;	
+		//Divide the number of rows by the number of threads
+		int numThreads = Math.min(roiHeight, 1);
+		int ratio = roiHeight / numThreads;
+		int mod = roiHeight % numThreads;
+		Thread[] threads = new Thread[numThreads];
+		for (int i = 0; i < numThreads; i++){
+			final int yIndex = i;
+			final int numRowsPerThread;
+			if ( i == (numThreads - 1)){
+				// add remainder rows for the last thread if the roiHeight is not a multiple of numThreads
+				numRowsPerThread = mod == 0 ? ratio : ratio + mod;
+			} else {
+				numRowsPerThread = ratio;
+			}
+			threads[i] = new Thread(new Runnable(){
+				@Override
+				public void run() {
+					int yStart = roiY+yIndex*numRowsPerThread;
+					int yLimit = yStart + numRowsPerThread;
+					int xEnd = roiX + roiWidth;
+					int p;
+					float RandomBrightness;
+					Random rnd = new Random();
+					// for each row
+					for (int y = yStart; y < yLimit; y++){
+						// process pixels in ROI
+						for (int x = roiX; x < xEnd; x++){
+							// pixels is a 1D array so need to map to it
+							p = y * roiWidth + roiX + x;
+							RandomBrightness = (float)(rnd.nextGaussian()*range);
+							pixels[p] = pixels[p] + RandomBrightness;			
+						} // end x loop
+						if (y%20==0) {
+							showProgress((double)(y-roiY)/roiHeight);
+						}
+					} // end y loop
+				} // end run				
+			}); // end new thread definition
+		}
+		// start threads
+		for (Thread t : threads){
+			t.start();
+		}
+		// wait for threads to finish
+		for (Thread t : threads){
+			try {
+				t.join();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		// indicate processing is finished
+		showProgress(1.0);
+		
+	}    
+    
+	@Override
+    public void noise_P_SIMPLE(double r) {	
+		final double range = r;	
+		//Divide the number of rows by the number of threads
+		int numThreads = Math.min(roiHeight, Prefs.getThreads());
+		//numThreads = 1;
+		int ratio = roiHeight / numThreads;
+		int mod = roiHeight % numThreads;
+		Thread[] threads = new Thread[numThreads];
+		for (int i = 0; i < numThreads; i++){
+			final int yIndex = i;
+			final int numRowsPerThread;
+			if ( i == (numThreads - 1)){
+				// add remainder rows for the last thread if the roiHeight is not a multiple of numThreads
+				numRowsPerThread = mod == 0 ? ratio : ratio + mod;
+			} else {
+				numRowsPerThread = ratio;
+			}
+			threads[i] = new Thread(new Runnable(){
+				@Override
+				public void run() {
+					int yStart = roiY+yIndex*numRowsPerThread;
+					int yLimit = yStart + numRowsPerThread;
+					int xEnd = roiX + roiWidth;
+					int p;
+					float RandomBrightness;
+					Random rnd = new Random();
+					// for each row
+					for (int y = yStart; y < yLimit; y++){
+						// process pixels in ROI
+						for (int x = roiX; x < xEnd; x++){
+							// pixels is a 1D array so need to map to it
+							p = y * roiWidth + roiX + x;
+							RandomBrightness = (float)(rnd.nextGaussian()*range);
+							pixels[p] = pixels[p] + RandomBrightness;		
+						} // end x loop
+						if (y%20==0) {
+							showProgress((double)(y-roiY)/roiHeight);
+						}
+					} // end y loop
+				} // end run				
+			}); // end new thread definition
+		}
+		// start threads
+		for (Thread t : threads){
+			t.start();
+		}
+		// wait for threads to finish
+		for (Thread t : threads){
+			try {
+				t.join();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		// indicate processing is finished
+		showProgress(1.0);
+    } 
 
 	public ImageProcessor crop() {
 		ImageProcessor ip2 = createProcessor(roiWidth, roiHeight);
