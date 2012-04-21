@@ -1935,14 +1935,12 @@ public abstract class ImageProcessor implements Cloneable {
     	@param range	the range of random numbers
     	@param mode		the parallelisation approach to be used
     */
-    public abstract void noise(double range, int mode);
+    public abstract void noise(double range);
     
     /**
      * Adds random salt and pepper noise to the image or ROI.
      * @param percent 	the percent of black and white pixels to add
-     * @param mode		the parallelisation approach to be used
      */
-    //public abstract void addSaltAndPepper(double percent, int mode);
     
 	/** Creates a new processor containing an image
 		that corresponds to the current ROI. */

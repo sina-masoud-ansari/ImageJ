@@ -1,11 +1,7 @@
 package ij.plugin.filter;
 import ij.*;
 import ij.gui.*;
-import ij.parallel.process.*;
-import ij.process.ImageProcessor;
-import ij.process.ImageStatistics;
-import ij.process.StackStatistics;
-
+import ij.process.*;
 import java.awt.*;
 
 /** This plugin implements the Invert, Smooth, Sharpen, Find Edges, 
@@ -63,26 +59,9 @@ public class Filters implements PlugInFilter {
 		}
 						
 	 	if (arg.equals("add")) {
-	 		ip.noise(25.0, ImageProcessor.P_NONE);
+	 		ip.noise(25.0);
 	 		return;
 	 	}
-	 	
-	 	// Adds noise in serial using the ParallelByteProcessor and a single thread
-	 		 	
-	 	// TODO: Need a way to test our implementations for correctness
-	 	
-	    // TODO: Exception when type is not correct?
-	 	
-	 	if (arg.equals("add serial")) {
-	 		ip.noise(25.0, ImageProcessor.P_SERIAL);
-	 		return;
-	 	}	
-	 	
-	    // Adds noise in parallel using the ParallelByteProcessor and simple thread launching
-	 	if (arg.equals("add simple")) {
-	 		ip.noise(25.0, ImageProcessor.P_SIMPLE);
-	 		return;
-	 	}	 	
 	 	
 	 	if (arg.equals("noise")) {
 	 		if (canceled)
@@ -98,8 +77,7 @@ public class Filters implements PlugInFilter {
 				}
 				sd = gd.getNextNumber();
 			}
-	 		// TODO: Extend for custom noise to use parallel approaches
-	 		ip.noise(sd, ImageProcessor.P_NONE);
+	 		ip.noise(sd);
 	 		IJ.register(Filters.class);
 	 		return;
 	 	}

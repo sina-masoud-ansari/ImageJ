@@ -16,7 +16,7 @@ import java.util.Random;
  * @author Sina Masoud-Ansari
  *
  */
-public class ParallelByteProcessor extends ByteProcessor {
+public class ParallelByteProcessor extends ByteProcessor implements ParallelImageProcessor {
 
 	public ParallelByteProcessor(Image img) {
 		super(img);
@@ -42,7 +42,7 @@ public class ParallelByteProcessor extends ByteProcessor {
 		super(ip, scale);
 	}
 	
-	@Override
+	
 	public void noise(double range, int mode){
 		switch (mode) {
 			case P_SERIAL:
