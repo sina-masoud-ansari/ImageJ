@@ -41,42 +41,20 @@ public class ParallelByteProcessor extends ByteProcessor implements ParallelImag
 	public ParallelByteProcessor(ImageProcessor ip, boolean scale) {
 		super(ip, scale);
 	}
-	
-	
-	public void noise(double range, int mode){
-		switch (mode) {
-			case P_SERIAL:
-				serial_noise(range);
-				break;
-			case P_SIMPLE:
-				simple_noise(range);
-				break;
-		}
-	}
-	
-    public void serial_noise(double range) {
-		Random rnd=new Random();
-		int v, ran;
-		boolean inRange;
-		for (int y=roiY; y<(roiY+roiHeight); y++) {
-			int i = y * width + roiX;
-			for (int x=roiX; x<(roiX+roiWidth); x++) {
-				inRange = false;
-				do {
-					ran = (int)Math.round(rnd.nextGaussian()*range);
-					v = (pixels[i] & 0xff) + ran;
-					inRange = v>=0 && v<=255;
-					if (inRange) pixels[i] = (byte)v;
-				} while (!inRange);
-				i++;
-			}
-			if (y%20==0)
-				showProgress((double)(y-roiY)/roiHeight);
-		}
-		showProgress(1.0);
+
+	@Override
+    public void noise_P_NONE(double range) {
+    	super.noise(range);
     }	
 
-    public void simple_noise(double r) {	
+	@Override
+	public void noise_P_SERIAL(double range) {
+		// TODO Auto-generated method stub
+		
+	}    
+    
+	@Override
+    public void noise_P_SIMPLE(double r) {	
 		final double range = r;	
 		//Divide the number of rows by the number of threads
 		int numThreads = Math.min(roiHeight, Prefs.getThreads());
@@ -140,6 +118,8 @@ public class ParallelByteProcessor extends ByteProcessor implements ParallelImag
 		}
 		// indicate processing is finished
 		showProgress(1.0);
-    }	
+    }
+
+	
 	
 }

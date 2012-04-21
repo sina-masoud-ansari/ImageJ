@@ -1928,6 +1928,7 @@ public abstract class ImageProcessor implements Cloneable {
 	     MEDIAN_FILTER, MIN or MAX) determines the filter type. */
 	public abstract void filter(int type);
 	
+	// TODO: Check median filter
 	/** A 3x3 median filter. Requires 8-bit or RGB image. */
 	public abstract void medianFilter();
 	
@@ -1941,6 +1942,7 @@ public abstract class ImageProcessor implements Cloneable {
      * Adds random salt and pepper noise to the image or ROI.
      * @param percent 	the percent of black and white pixels to add
      */
+
     
 	/** Creates a new processor containing an image
 		that corresponds to the current ROI. */
@@ -2027,7 +2029,7 @@ public abstract class ImageProcessor implements Cloneable {
 			}
 		} else {
 			if (interpolationMethod==BICUBIC && (this instanceof ColorProcessor))
-				((ColorProcessor)this).filterRGB(ColorProcessor.RGB_TRANSLATE, P_NONE, xOffset, yOffset);
+				((ColorProcessor)this).filterRGB(ColorProcessor.RGB_TRANSLATE, xOffset, yOffset);
 			else {
 				for (int y=roiY; y<(roiY + roiHeight); y++) {
 					if (y%30==0) showProgress((double)(y-roiY)/roiHeight);

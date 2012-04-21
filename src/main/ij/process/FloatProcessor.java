@@ -709,10 +709,8 @@ public class FloatProcessor extends ImageProcessor {
 		}
 	}
 	
-	/**
-	 *  Only one mode is implemented, no need to switch
-	 */
-	public void noise(double range, int mode) {
+
+	public void noise(double range) {
 		Random rnd=new Random();
 		for (int y=roiY; y<(roiY+roiHeight); y++) {
 			int i = y * width + roiX;
