@@ -12,11 +12,11 @@ import java.awt.*;
 	and Add Noise commands. */
 public class Filters implements PlugInFilter {
 	
-	private static double sd = Prefs.getDouble(Prefs.NOISE_SD, 25.0);
-	private String arg;
+	protected static double sd = Prefs.getDouble(Prefs.NOISE_SD, 25.0);
+	protected String arg;
 	private ImagePlus imp;
-	private int slice;
-	private boolean canceled;
+	protected int slice;
+	protected boolean canceled;
 
 	public int setup(String arg, ImagePlus imp) {
 		this.arg = arg;
