@@ -1,8 +1,8 @@
 package ij.plugin;
 import ij.*;
-import ij.process.*;
 import ij.io.*;
 import ij.text.*;
+import ij.parallel.process.*;
 import ij.plugin.frame.Editor;
 import java.awt.*;
 

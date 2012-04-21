@@ -1,7 +1,13 @@
 package ij;
 import java.awt.*;
 import java.awt.image.*;
-import ij.process.*;
+
+import ij.parallel.process.*;
+import ij.process.ByteProcessor;
+import ij.process.ColorProcessor;
+import ij.process.FloatProcessor;
+import ij.process.ImageProcessor;
+import ij.process.ShortProcessor;
 
 /**
 This class represents an expandable array of images.

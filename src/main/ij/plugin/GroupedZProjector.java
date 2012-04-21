@@ -1,7 +1,7 @@
 package ij.plugin; 
 import ij.*; 
 import ij.gui.GenericDialog; 
-import ij.process.*;
+import ij.parallel.process.*;
 
 /** This plugin implements the Image>Stacks>Tools>Grouped Z Project command. */
 

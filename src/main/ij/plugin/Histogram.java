@@ -1,8 +1,11 @@
 package ij.plugin;
 import ij.*;
-import ij.process.*;
+import ij.process.ImageProcessor;
+import ij.process.ImageStatistics;
+import ij.process.StackStatistics;
 import ij.gui.*;
 import ij.util.Tools;
+import ij.parallel.process.*;
 import ij.plugin.filter.PlugInFilter;
 import ij.plugin.frame.Recorder;
 import ij.measure.Calibration;

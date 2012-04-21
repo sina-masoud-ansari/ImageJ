@@ -1,7 +1,8 @@
 package ij.plugin.filter;
 import java.awt.*;
 import ij.*;
-import ij.process.*;
+import ij.parallel.process.*;
+import ij.process.ImageProcessor;
 import ij.gui.*;
 import ij.text.*;
 /** Implements the Plugins/Utilities/Run Benchmark command. 

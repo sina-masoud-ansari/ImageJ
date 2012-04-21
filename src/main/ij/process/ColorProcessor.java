@@ -4,6 +4,7 @@ import java.util.*;
 import java.awt.*;
 import java.awt.image.*;
 import ij.gui.*;
+import ij.parallel.process.ParallelByteProcessor;
 import ij.ImageStack;
 
 /**

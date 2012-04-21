@@ -3,7 +3,8 @@ import java.awt.*;
 import java.io.*;
 import ij.*;
 import ij.gui.*;
-import ij.process.*;
+import ij.parallel.process.*;
+import ij.process.ImageProcessor;
 
 /** This plugin, which implements the Image>Stacks>Insert 
 	command, inserts an image or stack into a stack. */

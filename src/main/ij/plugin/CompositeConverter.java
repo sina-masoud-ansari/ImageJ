@@ -1,9 +1,11 @@
 package ij.plugin;
 import ij.*;
-import ij.process.*;
+import ij.process.ColorProcessor;
 import ij.gui.*;
 import java.awt.*;
 import java.awt.image.*;
+
+import ij.parallel.process.*;
 import ij.plugin.frame.ContrastAdjuster;
 
 /** This plugin implements the Image/Color/Make Composite command. */

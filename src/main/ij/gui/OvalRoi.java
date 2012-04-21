@@ -3,7 +3,9 @@ package ij.gui;
 import java.awt.*;
 import java.awt.image.*;
 import ij.*;
-import ij.process.*;
+import ij.parallel.process.*;
+import ij.process.ByteProcessor;
+import ij.process.ImageProcessor;
 import ij.measure.Calibration;
 
 /** Oval region of interest */

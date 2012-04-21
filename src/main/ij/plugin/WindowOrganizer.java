@@ -1,7 +1,7 @@
 package ij.plugin;
 import ij.*;
-import ij.process.*;
 import ij.gui.*;
+import ij.parallel.process.*;
 import ij.plugin.frame.ThresholdAdjuster;
 import java.awt.*;
 

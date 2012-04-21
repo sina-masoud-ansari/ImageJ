@@ -3,8 +3,16 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
 import ij.*;
+import ij.parallel.process.*;
 import ij.plugin.*;
-import ij.process.*;
+import ij.process.ByteProcessor;
+import ij.process.ColorProcessor;
+import ij.process.FloatProcessor;
+import ij.process.ImageProcessor;
+import ij.process.ImageStatistics;
+import ij.process.LUT;
+import ij.process.ShortProcessor;
+import ij.process.StackStatistics;
 import ij.gui.*;
 import ij.measure.*;
 

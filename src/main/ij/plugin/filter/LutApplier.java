@@ -1,9 +1,11 @@
 package ij.plugin.filter;
 import ij.*;
 import ij.gui.*;
-import ij.process.*;
+import ij.process.ImageProcessor;
+import ij.process.StackProcessor;
 import ij.measure.*;
 import ij.util.*;
+import ij.parallel.process.*;
 import ij.plugin.frame.ContrastAdjuster;
 import java.awt.*;
 import java.util.*;

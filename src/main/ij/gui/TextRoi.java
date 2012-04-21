@@ -1,7 +1,8 @@
 package ij.gui;
 import java.awt.*;
 import ij.*;
-import ij.process.*;
+import ij.parallel.process.*;
+import ij.process.ImageProcessor;
 import ij.util.*;
 import ij.macro.Interpreter;
 

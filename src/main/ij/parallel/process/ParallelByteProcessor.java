@@ -1,6 +1,8 @@
-package ij.process;
+package ij.parallel.process;
 
 import ij.Prefs;
+import ij.process.ByteProcessor;
+import ij.process.ImageProcessor;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -80,13 +82,14 @@ public class ParallelByteProcessor extends ByteProcessor {
 		int numThreads = Math.min(roiHeight, Prefs.getThreads());
 		//numThreads = 1;
 		int ratio = roiHeight / numThreads;
+		int mod = roiHeight % numThreads;
 		Thread[] threads = new Thread[numThreads];
 		for (int i = 0; i < numThreads; i++){
 			final int yIndex = i;
 			final int numRowsPerThread;
-			if ( (i == numThreads - 1)){
-				// add an additional row for the last thread if the roiY is not a multiple of numThreads
-				numRowsPerThread = roiHeight % numThreads == 0 ? ratio : ratio + 1;
+			if ( i == (numThreads - 1)){
+				// add remainder rows for the last thread if the roiHeight is not a multiple of numThreads
+				numRowsPerThread = mod == 0 ? ratio : ratio + mod;
 			} else {
 				numRowsPerThread = ratio;
 			}

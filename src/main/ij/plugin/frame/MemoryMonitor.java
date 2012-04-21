@@ -1,7 +1,8 @@
 package ij.plugin.frame;
 import ij.*;
 import ij.gui.*;
-import ij.process.*;
+import ij.parallel.process.*;
+
 import java.awt.*;
 import java.awt.image.*;
 import java.awt.event.*;

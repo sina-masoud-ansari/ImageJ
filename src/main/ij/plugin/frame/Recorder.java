@@ -4,13 +4,13 @@ import java.awt.event.*;
 import java.util.*;
 import java.io.*;
 import ij.*;
+import ij.parallel.process.*;
 import ij.plugin.*;
 import ij.plugin.frame.*; 
 import ij.text.*;
 import ij.gui.*;
 import ij.util.*;
 import ij.io.*;
-import ij.process.*;
 import ij.measure.*;
 
 /** This is ImageJ's macro recorder. */

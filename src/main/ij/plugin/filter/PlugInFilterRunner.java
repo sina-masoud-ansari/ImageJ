@@ -1,9 +1,11 @@
 package ij.plugin.filter;
 import ij.*;
-import ij.process.*;
+import ij.process.FloatProcessor;
+import ij.process.ImageProcessor;
 import ij.gui.*;
+import ij.parallel.plugin.filter.*;
+import ij.parallel.process.*;
 import ij.plugin.filter.PlugInFilter.*;
-import ij.plugin.filter.*;
 import ij.measure.Calibration;
 import ij.macro.Interpreter;
 import java.awt.*;

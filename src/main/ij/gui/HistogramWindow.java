@@ -6,8 +6,13 @@ import java.awt.event.*;
 import java.io.*;
 import java.awt.datatransfer.*;
 import ij.*;
-import ij.process.*;
+import ij.process.ColorProcessor;
+import ij.process.FloatProcessor;
+import ij.process.ImageProcessor;
+import ij.process.ImageStatistics;
+import ij.process.LUT;
 import ij.measure.*;
+import ij.parallel.process.*;
 import ij.plugin.filter.Analyzer;
 import ij.text.TextWindow;
 

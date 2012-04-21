@@ -1,9 +1,13 @@
 package ij.plugin;
 import ij.*;
 import ij.gui.*;
-import ij.process.*;
+import ij.process.ColorProcessor;
+import ij.process.FloatBlitter;
+import ij.process.ImageConverter;
+import ij.process.ImageProcessor;
 import ij.io.*;
-import ij.plugin.filter.*;
+import ij.parallel.plugin.filter.*;
+import ij.parallel.process.*;
 import ij.plugin.frame.LineWidthAdjuster;
 import java.awt.*;
 

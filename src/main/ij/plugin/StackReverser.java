@@ -1,6 +1,6 @@
 package ij.plugin;
 import ij.*;
-import ij.process.*;
+import ij.parallel.process.*;
 
 /** Implements the Image/Transform/Flip Z command. */
 public class StackReverser implements PlugIn {

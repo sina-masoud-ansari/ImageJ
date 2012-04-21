@@ -1,6 +1,11 @@
 package ij.plugin;
 import ij.*;
-import ij.process.*;
+import ij.parallel.process.*;
+import ij.process.FloatProcessor;
+import ij.process.ImageProcessor;
+import ij.process.ImageStatistics;
+import ij.process.ShortProcessor;
+import ij.process.StackStatistics;
 import ij.gui.*;
 import ij.measure.*;
 import java.awt.*;

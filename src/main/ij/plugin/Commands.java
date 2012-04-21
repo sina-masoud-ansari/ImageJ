@@ -1,8 +1,8 @@
 package ij.plugin;
 import ij.*;
-import ij.process.*;
 import ij.gui.*;
 import ij.io.*;
+import ij.parallel.process.*;
 import ij.plugin.frame.*;
 import ij.text.TextWindow;
 import ij.macro.Interpreter;

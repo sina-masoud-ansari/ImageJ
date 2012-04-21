@@ -1,7 +1,9 @@
 package ij.plugin.filter;
 import ij.*;
 import ij.gui.*;
-import ij.process.*;
+import ij.parallel.process.*;
+import ij.process.ImageProcessor;
+
 import java.awt.*;
 import java.awt.geom.*;
 

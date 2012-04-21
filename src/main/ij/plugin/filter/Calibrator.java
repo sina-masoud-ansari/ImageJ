@@ -1,10 +1,11 @@
 package ij.plugin.filter;
 import ij.*;
 import ij.gui.*;
-import ij.process.*;
+import ij.process.ImageProcessor;
 import ij.measure.*;
 import ij.util.*;
 import ij.io.*;
+import ij.parallel.process.*;
 import ij.plugin.TextReader;
 import java.awt.*;
 import java.util.*;

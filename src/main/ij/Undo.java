@@ -1,7 +1,9 @@
 /**Implements the Edit/Undo command.*/
 
 package ij;
-import ij.process.*;
+import ij.parallel.process.*;
+import ij.process.ImageProcessor;
+
 import java.awt.*;
 import java.awt.image.*;
 import ij.gui.*;

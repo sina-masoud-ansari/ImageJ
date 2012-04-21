@@ -1,7 +1,11 @@
 package ij.plugin.filter;
 import ij.*;
 import ij.gui.*;
-import ij.process.*;
+import ij.parallel.process.*;
+import ij.process.ImageProcessor;
+import ij.process.ImageStatistics;
+import ij.process.StackStatistics;
+
 import java.awt.*;
 
 /** This plugin implements the Invert, Smooth, Sharpen, Find Edges, 

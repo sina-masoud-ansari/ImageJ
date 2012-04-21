@@ -5,9 +5,9 @@ import java.awt.image.*;
 import java.util.Properties;
 import java.awt.event.*;
 import ij.*;
-import ij.process.*;
 import ij.io.*;
 import ij.measure.*;
+import ij.parallel.process.*;
 import ij.plugin.frame.*;
 import ij.macro.Interpreter;
 

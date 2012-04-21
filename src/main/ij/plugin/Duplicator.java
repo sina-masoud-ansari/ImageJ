@@ -3,9 +3,11 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.Vector;
 import ij.*;
-import ij.process.*;
+import ij.process.ImageProcessor;
+import ij.process.LUT;
 import ij.gui.*;
 import ij.util.Tools;
+import ij.parallel.process.*;
 import ij.plugin.frame.Recorder;
 import ij.measure.Calibration;
 

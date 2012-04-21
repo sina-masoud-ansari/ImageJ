@@ -1,5 +1,7 @@
 package ij;
-import ij.process.*;
+import ij.parallel.process.*;
+import ij.process.ByteProcessor;
+import ij.process.ImageProcessor;
 import ij.io.*;
 import ij.gui.ImageCanvas;
 import ij.util.Tools;

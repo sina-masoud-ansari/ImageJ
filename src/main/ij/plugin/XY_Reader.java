@@ -1,9 +1,11 @@
 package ij.plugin;
 import ij.*;
-import ij.process.*;
+import ij.process.ByteProcessor;
+import ij.process.ImageProcessor;
 import ij.gui.*;
 import java.awt.*;
 import ij.measure.*;
+import ij.parallel.process.*;
 import ij.plugin.TextReader;
 
 /** This plugin implements the File/Import/XY Coordinates command. It reads a

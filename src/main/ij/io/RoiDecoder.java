@@ -1,7 +1,9 @@
 package ij.io;
 import ij.gui.*;
 import ij.ImagePlus;
-import ij.process.*;
+import ij.parallel.process.*;
+import ij.process.FloatPolygon;
+
 import java.io.*;
 import java.util.*;
 import java.net.*;

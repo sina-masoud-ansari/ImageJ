@@ -1,9 +1,9 @@
 package ij;
-import ij.process.*;
 import ij.gui.*;
 import ij.io.*;
 import ij.measure.*;
-import ij.plugin.filter.*;
+import ij.parallel.plugin.filter.*;
+import ij.parallel.process.*;
 import ij.macro.Interpreter;
 import java.awt.*;
 import java.awt.image.*;

@@ -1,9 +1,13 @@
 package ij.plugin.filter;
-import ij.plugin.filter.*;
+import ij.parallel.plugin.filter.*;
+import ij.parallel.process.*;
 import ij.*;
 import ij.gui.*;
 import ij.measure.*;
-import ij.process.*;
+import ij.process.ByteProcessor;
+import ij.process.FloatProcessor;
+import ij.process.ImageProcessor;
+
 import java.awt.*;
 import java.util.*;
 

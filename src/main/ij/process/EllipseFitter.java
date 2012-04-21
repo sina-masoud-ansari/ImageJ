@@ -2,7 +2,8 @@ package ij.process;
 import ij.*;
 import ij.gui.*;
 import java.awt.*;
-import ij.plugin.filter.*;
+
+import ij.parallel.plugin.filter.*;
 
 /*
 Best-fitting ellipse routines by:

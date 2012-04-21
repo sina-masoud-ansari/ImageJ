@@ -1,6 +1,7 @@
 package ij.util;
 import ij.*;
-import ij.process.*;
+import ij.process.ImageProcessor;
+import ij.parallel.process.*;
 import ij.plugin.DICOM;
 
 /** DICOM utilities */

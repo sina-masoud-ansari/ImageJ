@@ -1,4 +1,4 @@
-package ij.plugin.filter;
+package ij.parallel.plugin.filter;
 
 import static org.junit.Assert.*;
 import ij.ImagePlus;
@@ -20,7 +20,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(value = Parameterized.class)
-public class FiltersTest {
+public class ParallelFiltersTest {
 
 	private final static int
 	
@@ -48,8 +48,8 @@ public class FiltersTest {
 		COLOR_RGB = "/resources/images/COLOR_RGB.jpg",
 		COLOR_256 = "/resources/images/COLOR_256.jpg",
 		GRAY8 = "/resources/images/GRAY8.jpg",
-		GRAY16 = "/resources/images/GRAY8.jpg",
-		GRAY32 = "/resources/images/GRAY8.jpg";
+		GRAY16 = "/resources/images/GRAY16.jpg",
+		GRAY32 = "/resources/images/GRAY32.jpg";
 	
 	private final static DecimalFormat DP3 = new DecimalFormat("#.###");
 	
@@ -57,7 +57,7 @@ public class FiltersTest {
 	private final int nChannels, mode;
 	private final URL url;
 
-	public FiltersTest(String s, int n, int m) {	
+	public ParallelFiltersTest(String s, int n, int m) {	
 		url = this.getClass().getResource(s);
 		nChannels = n;
 		mode = m;

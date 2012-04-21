@@ -2,7 +2,10 @@ package ij.plugin;
 import ij.*;
 import ij.io.*;
 import ij.gui.*;
-import ij.process.*;
+import ij.parallel.process.*;
+import ij.process.ByteProcessor;
+import ij.process.ImageProcessor;
+
 import java.io.*;
 import java.awt.*;
 

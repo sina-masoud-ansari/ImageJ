@@ -1,6 +1,6 @@
 package ij.plugin;
 import ij.*;
-import ij.process.*;
+import ij.parallel.process.*;
 import ij.io.FileSaver;
 import java.awt.image.*;
 import java.awt.*;

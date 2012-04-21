@@ -1,7 +1,9 @@
 package ij.plugin;
 import ij.*;
 import ij.gui.*;
-import ij.process.*;
+import ij.process.ImageProcessor;
+import ij.process.StackProcessor;
+import ij.parallel.process.*;
 import ij.plugin.*;
 
 /** The plugin implements the Image/Stacks/Tools/Montage to Stack command.
