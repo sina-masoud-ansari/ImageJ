@@ -1030,10 +1030,8 @@ public class ShortProcessor extends ImageProcessor {
 		System.arraycopy(pixels2, 0, pixels, 0, pixels.length);
 	}
 
-	/**
-	 *  Only one mode is implemented, no need to switch
-	 */
-    public void noise(double range, int mode) {
+
+    public void noise(double range) {
 		Random rnd=new Random();
 		int v, ran;
 		boolean inRange;
@@ -1116,6 +1114,7 @@ public class ShortProcessor extends ImageProcessor {
 	public void erode() {}
 	/** Not implemented. */
 	public void dilate() {}
+
 
 }
 
