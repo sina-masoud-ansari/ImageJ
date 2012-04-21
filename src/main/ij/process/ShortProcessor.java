@@ -6,6 +6,8 @@ import java.awt.image.*;
 
 import ij.Prefs;
 import ij.gui.*;
+import ij.parallel.Division;
+import ij.parallel.ImageDivision;
 
 /** ShortProcessors contain a 16-bit unsigned image
 	and methods that operate on that image. */
@@ -1052,138 +1054,70 @@ public class ShortProcessor extends ImageProcessor {
 		}
 		resetMinAndMax();
     }
+    
+    private Runnable getNoiseRunnable(final double range, final Division div){
+    	 	
+    	return new Runnable(){
+			@Override
+			public void run() {
+				int p, v, ran;
+				boolean inRange;
+				Random rnd = new Random();
+				// for each row
+				for (int y = div.yStart; y < div.yLimit; y++){
+					// process pixels in ROI
+					for (int x = roiX; x < div.xEnd; x++){
+						// pixels is a 1D array so need to map to it
+						p = y * roiWidth + roiX + x;
+						inRange = false;
+						while (!inRange){
+							ran = (int)Math.round(rnd.nextGaussian()*range);
+							v = (pixels[p] & 0xffff) + ran;
+							inRange = v>=0 && v<=255;
+							if (inRange){
+								pixels[p] = (short)v;								
+							}
+						}			
+					} // end x loop
+					if (y%20==0) {
+						showProgress((double)(y-roiY)/roiHeight);
+					}
+				} // end y loop
+			} 				
+		}; 		
+    	
+    }
+
    
 	@Override
-	public void noise_P_SERIAL(double r) {
-		final double range = r;	
-		//Divide the number of rows by the number of threads
-		int numThreads = Math.min(roiHeight, 1);
-		int ratio = roiHeight / numThreads;
-		int mod = roiHeight % numThreads;
-		Thread[] threads = new Thread[numThreads];
-		for (int i = 0; i < numThreads; i++){
-			final int yIndex = i;
-			final int numRowsPerThread;
-			if ( i == (numThreads - 1)){
-				// add remainder rows for the last thread if the roiHeight is not a multiple of numThreads
-				numRowsPerThread = mod == 0 ? ratio : ratio + mod;
-			} else {
-				numRowsPerThread = ratio;
-			}
-			threads[i] = new Thread(new Runnable(){
-				@Override
-				public void run() {
-					int yStart = roiY+yIndex*numRowsPerThread;
-					int yLimit = yStart + numRowsPerThread;
-					int xEnd = roiX + roiWidth;
-					int p, v, ran;
-					boolean inRange;
-					Random rnd = new Random();
-					// for each row
-					for (int y = yStart; y < yLimit; y++){
-						// process pixels in ROI
-						for (int x = roiX; x < xEnd; x++){
-							// pixels is a 1D array so need to map to it
-							p = y * roiWidth + roiX + x;
-							inRange = false;
-							while (!inRange){
-								ran = (int)Math.round(rnd.nextGaussian()*range);
-								v = (pixels[p] & 0xffff) + ran;
-								inRange = v>=0 && v<=255;
-								if (inRange){
-									pixels[p] = (short)v;								
-								}
-							}			
-						} // end x loop
-						if (y%20==0) {
-							showProgress((double)(y-roiY)/roiHeight);
-						}
-					} // end y loop
-				} // end run				
-			}); // end new thread definition
+	public void noise_P_SERIAL(double range) {
+		
+		//Divide the number of rows by the number of threads, max threads is 1 in this case
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, 1);
+	
+		Thread[] threads = new Thread[div.numThreads];
+		for (int i = 0; i < div.numThreads; i++){
+			threads[i] = new Thread(getNoiseRunnable(range, div.getDivision(i))); 
 		}
-		// start threads
-		for (Thread t : threads){
-			t.start();
-		}
-		// wait for threads to finish
-		for (Thread t : threads){
-			try {
-				t.join();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		// indicate processing is finished
+		
+		div.processThreads(threads);
+		// indicate processing is finished	
 		showProgress(1.0);
 		
 	}    
     
 	@Override
-    public void noise_P_SIMPLE(double r) {	
-		final double range = r;	
-		//Divide the number of rows by the number of threads
-		int numThreads = Math.min(roiHeight, Prefs.getThreads());
-		//numThreads = 1;
-		int ratio = roiHeight / numThreads;
-		int mod = roiHeight % numThreads;
-		Thread[] threads = new Thread[numThreads];
-		for (int i = 0; i < numThreads; i++){
-			final int yIndex = i;
-			final int numRowsPerThread;
-			if ( i == (numThreads - 1)){
-				// add remainder rows for the last thread if the roiHeight is not a multiple of numThreads
-				numRowsPerThread = mod == 0 ? ratio : ratio + mod;
-			} else {
-				numRowsPerThread = ratio;
-			}
-			threads[i] = new Thread(new Runnable(){
-				@Override
-				public void run() {
-					int yStart = roiY+yIndex*numRowsPerThread;
-					int yLimit = yStart + numRowsPerThread;
-					int xEnd = roiX + roiWidth;
-					int p, v, ran;
-					boolean inRange;
-					Random rnd = new Random();
-					// for each row
-					for (int y = yStart; y < yLimit; y++){
-						// process pixels in ROI
-						for (int x = roiX; x < xEnd; x++){
-							// pixels is a 1D array so need to map to it
-							p = y * roiWidth + roiX + x;
-							inRange = false;
-							while (!inRange){
-								ran = (int)Math.round(rnd.nextGaussian()*range);
-								v = (pixels[p] & 0xffff) + ran;
-								inRange = v>=0 && v<=255;
-								if (inRange){
-									pixels[p] = (short)v;								
-								}
-							}			
-						} // end x loop
-						if (y%20==0) {
-							showProgress((double)(y-roiY)/roiHeight);
-						}
-					} // end y loop
-				} // end run				
-			}); // end new thread definition
+    public void noise_P_SIMPLE(double range) {	
+		//Divide the number of rows by the number of threads, max threads is roiHeight
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, roiHeight);
+	
+		Thread[] threads = new Thread[div.numThreads];
+		for (int i = 0; i < div.numThreads; i++){
+			threads[i] = new Thread(getNoiseRunnable(range, div.getDivision(i))); 
 		}
-		// start threads
-		for (Thread t : threads){
-			t.start();
-		}
-		// wait for threads to finish
-		for (Thread t : threads){
-			try {
-				t.join();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		// indicate processing is finished
+		
+		div.processThreads(threads);
+		// indicate processing is finished	
 		showProgress(1.0);
     } 
     

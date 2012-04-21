@@ -53,11 +53,34 @@ public class ParallelImageProcessorTest {
 	public void setUp(){
 		img = new ImagePlus(url.getPath());	
 	}
+	
+	@Test
+	public void testImageType(){
+		
+		String u = url.toString();	
+		int type = img.getType();
+		
+		if (u.contains(P_COLOR_RGB)){
+			assertEquals(ImagePlus.COLOR_RGB, type);
+		} else if (u.contains(P_COLOR_256)){
+			assertEquals(ImagePlus.GRAY8, type); // ImagePlus sets 8-bit color images to GRAY8
+		} else if (u.contains(P_GRAY8)){
+			assertEquals(ImagePlus.GRAY8, type);
+		} else if (u.contains(P_GRAY16)){
+			assertEquals(ImagePlus.GRAY16, type);
+		} else if (u.contains(P_GRAY32)){
+			assertEquals(ImagePlus.GRAY32, type);
+		} else {
+			fail("Bad image path");
+		}
+	}		
 
 	@Test
-	public void testBitDepth(){
+	public void testImageBitDepth(){
+		
 		int type = img.getType();
 		int bDepth = img.getBitDepth();
+		
 		switch (type){
 		case ImagePlus.COLOR_RGB:
 			assertEquals(24, bDepth);
@@ -75,11 +98,13 @@ public class ParallelImageProcessorTest {
 			assertEquals(32, bDepth);
 			break;		
 		}
-	}	
+	}		
 
 	@Test
-	public void testProcessorClass(){
+	public void testImageProcessorType(){
+		
 		int type = img.getType();
+		
 		switch (type){
 		case ImagePlus.COLOR_RGB:
 			assertTrue(img.getProcessor() instanceof ColorProcessor);

@@ -81,6 +81,22 @@ public class ParallelFiltersTest {
 		imgB = new ImagePlus(url.getPath());	
 	}
 	
+	//@Test
+	public void testImageDivision() {
+		
+		switch (mode){
+		case ImageProcessor.P_NONE:
+			
+			break;
+		case ImageProcessor.P_SERIAL:
+			
+			break;
+		case ImageProcessor.P_SIMPLE:
+			
+			break;	
+		}
+	}
+	
 	@Test
 	public void testAddNoise() {
 		
@@ -126,7 +142,6 @@ public class ParallelFiltersTest {
 	//}
 	
 	// TODO: need to write a test for this?
-	// TODO: consider generics
 	private ArrayList<double[]> getChannels(ImagePlus imp) {
 		
 		ArrayList<double[]> list = new ArrayList<double[]>();
