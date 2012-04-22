@@ -94,7 +94,6 @@
 	<target name="test" depends="build" description="Compile source and initiate tests">
 		<delete dir="${reports.dir}" />
 		<mkdir dir="${reports.dir}" />
-		<mkdir dir="${build.dir}/dump" />
 		<mkdir dir="${build.dir}/resources" />
 		<copy todir="${build.dir}/resources">
 			<fileset dir="${resources.test}" />

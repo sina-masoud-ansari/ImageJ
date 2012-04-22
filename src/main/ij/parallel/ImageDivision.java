@@ -1,5 +1,7 @@
 package ij.parallel;
 
+import ij.Prefs;
+
 public class ImageDivision {
 	
 	public final int numThreads, mod, ratio;
@@ -7,13 +9,23 @@ public class ImageDivision {
 
 	public ImageDivision(int roiX, int roiY, int roiWidth, int roiHeight, int limit) {
 		// TODO Auto-generated constructor stub
-		numThreads = Math.min(roiHeight, limit);
+		numThreads = Math.min(Prefs.getThreads(), limit);
 		ratio = roiHeight / numThreads;
 		mod = roiHeight % numThreads;
 		divs = new Division[numThreads];
 		
 		setDivsions(roiX, roiY, roiWidth);
 	}
+	
+	public ImageDivision(int roiX, int roiY, int roiWidth, int roiHeight, int threads, int limit) {
+		// TODO Auto-generated constructor stub
+		numThreads = Math.min(threads, limit);
+		ratio = roiHeight / numThreads;
+		mod = roiHeight % numThreads;
+		divs = new Division[numThreads];
+		
+		setDivsions(roiX, roiY, roiWidth);
+	}	
 	
 	private void setDivsions(int roiX, int roiY, int roiWidth){
 		int numRows, yStart, yLimit, xEnd;
@@ -35,6 +47,10 @@ public class ImageDivision {
 	public Division getDivision(int index){
 		return divs[index];
 	}
+	
+	public Division[] getDivisions(){
+		return divs;
+	}	
 	
 	public void processThreads(Thread[] threads){
 		
