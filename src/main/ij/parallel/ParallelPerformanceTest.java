@@ -21,14 +21,7 @@ public class ParallelPerformanceTest {
 		tests.add(t);
 	}
 	
-	private void prepare(){
-		for (PerformanceTest t : tests){
-			t.reset(iter);
-		}
-	}
-	
 	public void start(){
-		prepare();
 		for (PerformanceTest t : tests){ // for each test
 			for (int n = 1; n < maxt; n++){ // for each thread arrangement
 				for (int i = 0; i < iter; i++){ // repeat trials for average
@@ -70,13 +63,10 @@ abstract class PerformanceTest {
 		
 	}
 	
-	public void reset(){
-		results = new Object();
-	}
-	
 	public void setup(){
 		img = new ImagePlus(path);
 		ip = img.getProcessor();
+		results = new Object();
 	}
 	
 	public void schedule(){
