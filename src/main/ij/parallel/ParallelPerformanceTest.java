@@ -3,8 +3,6 @@ package ij.parallel;
 import ij.ImagePlus;
 import ij.process.ImageProcessor;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 
 public class ParallelPerformanceTest {
@@ -63,7 +61,7 @@ abstract class PerformanceTest {
 	private String path;
 	private ImagePlus img;
 	private ImageProcessor ip;
-	private Object[] results;
+	private Object results; // holds results of test iteration.
 	
 	public PerformanceTest(String name, String path){
 		this.name = name;
@@ -72,8 +70,8 @@ abstract class PerformanceTest {
 		
 	}
 	
-	public void reset(int length){
-		results = new Object[length];
+	public void reset(){
+		results = new Object();
 	}
 	
 	public void setup(){
@@ -106,6 +104,8 @@ abstract class PerformanceTest {
 
 class NoiseFilterPerformanceTest extends PerformanceTest {
 
+	private static final double RANGE = 25.0;
+	
 	public NoiseFilterPerformanceTest(String name, String path) {
 		super(name, path);
 		// TODO Auto-generated constructor stub
@@ -113,6 +113,7 @@ class NoiseFilterPerformanceTest extends PerformanceTest {
 
 	@Override
 	public void run_P_NONE(ImageProcessor ip) {
+		ip.noise_P_NONE(RANGE);
 		// TODO Auto-generated method stub
 		
 	}
@@ -120,13 +121,13 @@ class NoiseFilterPerformanceTest extends PerformanceTest {
 	@Override
 	public void run_P_SERIAL(ImageProcessor ip) {
 		// TODO Auto-generated method stub
-		
+		ip.noise_P_SERIAL(RANGE);
 	}
 
 	@Override
 	public void run_P_SIMPLE(ImageProcessor ip) {
 		// TODO Auto-generated method stub
-		
+		ip.noise_P_SIMPLE(RANGE);
 	}
 
 
