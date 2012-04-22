@@ -30,7 +30,7 @@
 			<include name="**/*.jar" />
 		</fileset>
 	</path>
-<!--
+	<!--
 	<target name="compile_test" description="Compile everything">
 		<mkdir dir="${build.dir}" />
 		<javac destdir="${build.dir}" classpathref="build.classpath" optimize="on" source="1.6" target="1.6" debug="on" encoding="UTF-8">
@@ -117,7 +117,7 @@
 			<report todir="${reports.test}" />
 		</junitreport>
 	</target>
-	
+
 	<target name="test-debug" depends="build" description="Compile source and initiate tests">
 		<delete dir="${reports.dir}" />
 		<mkdir dir="${reports.dir}" />
@@ -146,8 +146,8 @@
 			</fileset>
 			<report todir="${reports.test}" />
 		</junitreport>
-	</target>	
-	
+	</target>
+
 
 	<target name="run" depends="build" description="Build and run ImageJ.">
 		<java maxmemory="1024m" jar="${bin.dir}/ij.jar" fork="yes"/>
@@ -158,6 +158,37 @@
 			<jvmarg value="-Xdebug" />
 			<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000" />
 		</java>
+	</target>
+
+	<condition property="os" value="unix">
+		<os family="unix"/>
+	</condition>
+	<condition property="os" value="windows">
+		<os family="windows"/>
+	</condition>
+
+	<target name="performance" depends="test" description="Initiate performance testing">
+		<echo message="${os.name} ${os.arch}" />
+		<if>
+			<equals arg1="${os}" arg2="windows" />
+			<then>
+				<!-- see http://ant.apache.org/manual/Tasks/exec.html -->
+				<exec executable="cmd">
+					<arg value="/c"/>
+					<arg value="performance.bat"/> <!-- SOMEONE NEEDS TO WRITE THIS -->
+				</exec>
+			</then>
+			<elseif>
+				<equals arg1="${os}" arg2="unix" />
+				<then>
+					<exec executable="bash">
+						<arg value="performance.sh"/>
+						<arg value="${bin.dir}"/>
+					</exec>
+				</then>
+			</elseif>
+		</if>
+
 	</target>
 
 	<!-- NOT USED -->
