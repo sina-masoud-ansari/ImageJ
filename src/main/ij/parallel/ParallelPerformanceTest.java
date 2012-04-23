@@ -60,7 +60,6 @@ abstract class PerformanceTest {
 	public PerformanceTest(String n, String p){
 		name = n;
 		path = p;
-		res = new Results(name);
 		
 	}
 	
@@ -71,7 +70,7 @@ abstract class PerformanceTest {
 	}
 	
 	public void schedule(){
-		
+		res = new Results(name);
 		try {
 			time(ImageProcessor.P_NONE, "P_NONE");
 			time(ImageProcessor.P_SERIAL, "P_SERIAL");
@@ -81,6 +80,26 @@ abstract class PerformanceTest {
 			e.printStackTrace();
 		}
 	}
+	
+	public void repeat(int n){
+		setup();
+		res = new Results(name, n);
+		try {
+			for (int i = 0; i < n; i++){
+				time(ImageProcessor.P_NONE, "P_NONE", i);
+			}
+			for (int i = 0; i < n; i++){
+				time(ImageProcessor.P_SERIAL, "P_SERIAL", i);
+			}
+			for (int i = 0; i < n; i++){
+				time(ImageProcessor.P_SIMPLE, "P_SIMPLE", i);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();			
+		}
+		
+	}	
 	
 	private void time(int mode, String modeName) throws Exception{
 		res.newCategory(modeName);
@@ -103,20 +122,28 @@ abstract class PerformanceTest {
 		}
 		res.stop(modeName, "Run");		
 	}
-	
-	public void repeat(int n){
+
+	private void time(int mode, String modeName, int t) throws Exception{
+		res.newCategory(modeName);
+		res.start(modeName, "Setup");
 		setup();
-		for (int i = 0; i < n; i++){
+		res.stop(modeName, "Setup", t);
+		res.start(modeName, "Run");
+		switch (mode){
+		case ImageProcessor.P_NONE:
 			run_P_NONE(ip);
-		}
-		for (int i = 0; i < n; i++){
+			break;
+		case ImageProcessor.P_SERIAL:
 			run_P_SERIAL(ip);
-		}
-		for (int i = 0; i < n; i++){
+			break;
+		case ImageProcessor.P_SIMPLE:
 			run_P_SIMPLE(ip);
+			break;
+		default:
+			throw new Exception("Unknown ImageProcessor mode: "+mode);	
 		}
-		
-	}
+		res.stop(modeName, "Run", t);		
+	}	
 	
 	public Results getResults(){
 		return res;
