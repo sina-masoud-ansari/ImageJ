@@ -1,5 +1,7 @@
 package ij.parallel;
 
+import java.io.File;
+
 import ij.ImagePlus;
 import ij.process.ImageProcessor;
 
@@ -7,7 +9,7 @@ import ij.process.ImageProcessor;
 public abstract class PerformanceTest {
 
 	private String name;
-	public final String path;
+	protected String path;
 	private ImagePlus img;
 	private ImageProcessor ip;
 	private Results res; // holds results of test iteration.
@@ -22,6 +24,7 @@ public abstract class PerformanceTest {
 	public void setup(){
 		img = new ImagePlus(path);
 		ip = img.getProcessor();
+		res.setImageType(img.getTypeString());
 
 	}
 	
@@ -30,7 +33,8 @@ public abstract class PerformanceTest {
 	}
 
 	public void schedule(int repeat, boolean indep){
-		res = new Results(name, proc, repeat);
+		String fname = new File(path).getName();
+		res = new Results(name, fname, proc, repeat, indep);
 		if (indep){
 			for (int i=0; i< repeat; i++){
 				try {
@@ -42,8 +46,7 @@ public abstract class PerformanceTest {
 					e.printStackTrace();
 				}			
 			}
-		} else {
-			res = new Results(name, proc, repeat);		
+		} else {		
 			try {
 				for (int i = 0; i < repeat; i++){
 					timeDependent(ImageProcessor.P_NONE, "P_NONE", i);
@@ -109,7 +112,7 @@ public abstract class PerformanceTest {
 		res.newCategory(modeName);
 		res.start(modeName, "Setup");
 		setup();
-		res.stop(modeName, "Setup", i);		
+		res.stop(modeName, "Setup", i);	
 	}
 
 	public Results getResults(){

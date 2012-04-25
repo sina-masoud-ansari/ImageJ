@@ -22,29 +22,28 @@ public class ParallelPerformanceTest {
 	
 	public void start(){
 		for (PerformanceTest t : tests){ // for each test
-			System.out.println(new File(t.path).getName()+"\n");
 			runIndependent(t);
 			runDependent(t);
 		}
 	}
 	
 	private void runIndependent(PerformanceTest t){
-		System.out.println("Single setup, single run:\n");
-		for (int n = 1; n <= maxt; n++){ // for each thread arrangement
-			t.setProcessors(n);
-			t.schedule(iter, false);
-			Results r = t.getResults();
-			System.out.println(r.collate());
-		}		
-	}
-	
-	private void runDependent(PerformanceTest t){
-		System.out.println("Single setup, multiple run:\n");
+		//System.out.println("Single setup, single run:\n");
 		for (int n = 1; n <= maxt; n++){ // for each thread arrangement
 			t.setProcessors(n);
 			t.schedule(iter, true);
 			Results r = t.getResults();
-			System.out.println(r.collate());
+			System.out.println(r.collateCSV());
+		}		
+	}
+	
+	private void runDependent(PerformanceTest t){
+		//System.out.println("Single setup, multiple run:\n");
+		for (int n = 1; n <= maxt; n++){ // for each thread arrangement
+			t.setProcessors(n);
+			t.schedule(iter, false);
+			Results r = t.getResults();
+			System.out.println(r.collateCSV());
 		}		
 	}
 	
@@ -54,10 +53,11 @@ public class ParallelPerformanceTest {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		int maxt = Runtime.getRuntime().availableProcessors(); // max number of threads to use.
+		int iter = Integer.parseInt(args[1]);
 		String url = args[0];
 		
-		ParallelPerformanceTest test = new ParallelPerformanceTest(5, maxt);
-		test.add(new NoiseFilterPerformanceTest("Add Noise Filter", url));
+		ParallelPerformanceTest test = new ParallelPerformanceTest(iter, maxt);
+		test.add(new NoiseFilterPerformanceTest(url));
 		test.start();
 	}
 

@@ -15,28 +15,27 @@ public class Results {
 	private int numEvents;
 	private int numTrials;
 	public final String title;
+	private String type;
+	private String fname;
+	private boolean indep;
 	private int proc; //processors
 	private HashMap<String, HashMap<String, ArrayList<long[]>>> cats;
-	
-	/*
-	public Results(String s, int p){
-		title = s;
-		proc = p;
-		numCat = DEF_NUM_CAT;
-		numEvents = DEF_NUM_EVENTS;
-		numTrials = DEF_NUM_TRIALS;
-		cats = new HashMap<String, HashMap<String, ArrayList<long[]>>>(numCat);
-	}
-	*/
 
-	public Results(String s, int p, int t){
+	public Results(String s, String fn, int p, int t, boolean i){
 		title = s;
 		proc = p;
+		type = "UNKNOWN";
+		fname = fn;
+		indep = i;
 		numCat = DEF_NUM_CAT;
 		numEvents = DEF_NUM_EVENTS;
 		numTrials = t;
 		cats = new HashMap<String, HashMap<String, ArrayList<long[]>>>(numCat);
-	}	
+	}
+	
+	public void setImageType(String t){
+		type = t;
+	}
 	
 	public void newCategory(String c){
 		if (!cats.containsKey(c)) {
@@ -60,21 +59,6 @@ public class Results {
 		}
 	}
 	
-	/*
-	// assuming 1 trial
-	public void stop(String c, String e) throws Exception{
-		if (numTrials != DEF_NUM_TRIALS) {
-			throw new Exception("Number of trials must be "+DEF_NUM_TRIALS+". See Results.stop(String, String, int) for multiple trials");
-		} else {
-			ArrayList<long[]> times = cats.get(c).get(e);
-			long[] trial = times.get(0);
-			trial[1] = System.currentTimeMillis();	
-			trial[2] = trial[1] - trial[0];
-		}
-	}
-	*/
-	
-	// for multiple trials
 	public void stop(String c, String e, int t) throws Exception{
 		if (t > numTrials) {
 			throw new Exception("Trial index is out of bounds: "+t);
@@ -88,6 +72,8 @@ public class Results {
 	
 	public String collate(){
 		
+		long sum = 0;
+		int size = 0;
 		String summary = title+" "+proc+" cores\n";
 		// print results from each category
 		for (String c : cats.keySet()){
@@ -97,13 +83,46 @@ public class Results {
 				summary += "\t"+e+": ";
 				// print results from each trial
 				for (long[] t : cats.get(c).get(e)){
-					summary += (float)(t[2])/1000+" ";
+					sum += t[2];
 				}
-				summary += "\n";
+				size = cats.get(c).get(e).size();
+				summary += (float)sum/(1000*size)+"\n";
 			}
 			summary += "\n";
 		}
 		return summary;
 	}
+	
+	public String collateCSV(){
+		
+		long sum = 0;
+		int size = 0;
+		String header="FName,IType,Proc,Filter,Series";
+		String akey = cats.keySet().toArray(new String[]{})[0];
+		for (String e : cats.get(akey).keySet()){
+			header += ","+e;
+		}
+		header+=",PType\n";
+		String results = "";
+		String rb = fname+","+type+","+proc+","+title+","+(indep?"INDEP":"DEP");
+		String rt;
+		
+		// print results from each category
+		for (String c : cats.keySet()){
+			// print results from each event
+			rt = "";
+			for (String e : cats.get(c).keySet()){
+				// print results from each trial
+				for (long[] t : cats.get(c).get(e)){
+					sum += t[2];
+				}
+				size = cats.get(c).get(e).size();
+				rt += ","+(float)sum/(1000*size);
+			}
+			results += rb +rt +","+c+"\n";
+		}
+		return header+results;
+		
+	}	
 	
 }

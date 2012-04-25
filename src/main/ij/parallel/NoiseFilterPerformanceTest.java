@@ -7,8 +7,8 @@ class NoiseFilterPerformanceTest extends PerformanceTest {
 
 	private static final double RANGE = 25.0;
 	
-	public NoiseFilterPerformanceTest(String name, String path) {
-		super(name, path);
+	public NoiseFilterPerformanceTest(String path) {
+		super("Add Noise", path);
 		// TODO Auto-generated constructor stub
 	}
 
