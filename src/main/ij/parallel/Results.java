@@ -18,6 +18,7 @@ public class Results {
 	private String type;
 	private String fname;
 	private boolean indep;
+	private int width, height;
 	private int proc; //processors
 	private HashMap<String, HashMap<String, ArrayList<long[]>>> cats;
 
@@ -33,8 +34,10 @@ public class Results {
 		cats = new HashMap<String, HashMap<String, ArrayList<long[]>>>(numCat);
 	}
 	
-	public void setImageType(String t){
+	public void setImageProperties(String t, int w, int h){
 		type = t;
+		width = w;
+		height = h;
 	}
 	
 	public void newCategory(String c){
@@ -97,14 +100,14 @@ public class Results {
 		
 		long sum = 0;
 		int size = 0;
-		String header="FName,IType,Proc,Filter,Series";
+		String header="FName,IType,Pixels,Proc,Filter,Series";
 		String akey = cats.keySet().toArray(new String[]{})[0];
 		for (String e : cats.get(akey).keySet()){
 			header += ","+e;
 		}
 		header+=",PType\n";
 		String results = "";
-		String rb = fname+","+type+","+proc+","+title+","+(indep?"INDEP":"DEP");
+		String rb = fname+","+type+","+width*height+","+proc+","+title+","+(indep?"INDEP":"DEP");
 		String rt;
 		
 		// print results from each category

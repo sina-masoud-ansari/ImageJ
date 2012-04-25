@@ -24,7 +24,7 @@ public abstract class PerformanceTest {
 	public void setup(){
 		img = new ImagePlus(path);
 		ip = img.getProcessor();
-		res.setImageType(img.getTypeString());
+		res.setImageProperties(img.getTypeString(), img.getWidth(), img.getHeight());
 
 	}
 	
