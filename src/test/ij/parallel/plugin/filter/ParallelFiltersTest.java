@@ -133,24 +133,6 @@ public class ParallelFiltersTest {
 		}
 	}
 	
-	@Test
-	public void testAddSaltAndPepper(){
-		//should only accept one channel 
-		//if channel is > 1, do not test it	
-		System.out.println("Image: "+imgA.getTitle()+", mode: "+mode);
-		
-		ArrayList<double[]> aChannels = getChannels(imgA);
-		ArrayList<double[]> bChannels = getChannels(imgB);
-		
-		//process images
-		//ONLY IF CHANNEL IS ONE
-		//imgA.addSaltAndPepperFilter() --> add(ip, 0.05, P_NONE);
-		//imgB.addSaltAndPepperFilter() --> add(ip, 0.05, P_SIMPLE); --> add(ip, 0.05, mode);
-		if (aChannels.size() == 1 && bChannels.size() == 1){
-			
-		}
-	}
-	
 	/**
 	 * Add your ij.plugin.filters class test here
 	 */
