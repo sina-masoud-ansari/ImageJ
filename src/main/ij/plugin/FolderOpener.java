@@ -6,7 +6,8 @@ import java.awt.image.ColorModel;
 import ij.*;
 import ij.io.*;
 import ij.gui.*;
-import ij.process.*;
+import ij.parallel.process.*;
+import ij.process.ImageProcessor;
 import ij.measure.Calibration;
 import ij.util.*;
 

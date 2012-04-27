@@ -1,6 +1,9 @@
 package ij.plugin;
 import ij.*;
-import ij.process.*;
+import ij.parallel.process.*;
+import ij.process.ImageConverter;
+import ij.process.ImageProcessor;
+import ij.process.StackConverter;
 import ij.gui.*;
 import java.awt.*;
 

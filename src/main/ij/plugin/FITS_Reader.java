@@ -4,7 +4,8 @@ import java.io.*;
 import java.util.zip.GZIPInputStream;
 import ij.*;
 import ij.io.*;
-import ij.process.*;
+import ij.parallel.process.*;
+import ij.process.ImageProcessor;
 import ij.measure.*;
 
 /** Opens and displays FITS images. The FITS format is 

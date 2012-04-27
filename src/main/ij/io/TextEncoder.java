@@ -1,7 +1,10 @@
 package ij.io;
 import java.io.*;
 import ij.*;
-import ij.process.*;
+import ij.parallel.process.*;
+import ij.process.ByteProcessor;
+import ij.process.ImageProcessor;
+import ij.process.ShortProcessor;
 import ij.measure.*;
 
 /** Saves an image described by an ImageProcessor object as a tab-delimited text file. */

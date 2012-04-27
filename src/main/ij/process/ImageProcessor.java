@@ -48,23 +48,28 @@ public abstract class ImageProcessor implements Cloneable {
 	/** Interpolation methods */
 	public static final int NEAREST_NEIGHBOR=0, NONE=0, BILINEAR=1, BICUBIC=2;
 
-	/** Filter functions **/
 	public static final int BLUR_MORE=0, FIND_EDGES=1, MEDIAN_FILTER=2, MIN=3, MAX=4, CONVOLVE=5;
-	
-	/** Parallelisation approach to be used for the filters 
+	static public final int RED_LUT=0, BLACK_AND_WHITE_LUT=1, NO_LUT_UPDATE=2, OVER_UNDER_LUT=3;
+	static final int INVERT=0, FILL=1, ADD=2, MULT=3, AND=4, OR=5,
+		XOR=6, GAMMA=7, LOG=8, MINIMUM=9, MAXIMUM=10, SQR=11, SQRT=12, EXP=13, ABS=14;
+	static final String WRONG_LENGTH = "width*height!=pixels.length";
+
+	/** 
+	 *  Parallelisation approach to be used for the filters 
 	 *  P_NONE is the original Image Processor method
 	 *  P_SERIAL is original method implemented in the parallel subclass of the Image Processor
 	 *  P_SIMPLE is using simple thread launching
 	 *  P_FORK_JOIN is using fork/join
 	 *  P_EXECUTOR is using the ExecutorService with thread pools
 	 *  P_PARALLEL_TASK is using the parallel task library
-	 *  **/
-	public static final int P_NONE=0, P_SERIAL=1, P_SIMPLE=2, P_FORK_JOIN=3, P_EXECUTOR=4, P_PARALLEL_TASK=5;
-	
-	static public final int RED_LUT=0, BLACK_AND_WHITE_LUT=1, NO_LUT_UPDATE=2, OVER_UNDER_LUT=3;
-	static final int INVERT=0, FILL=1, ADD=2, MULT=3, AND=4, OR=5,
-		XOR=6, GAMMA=7, LOG=8, MINIMUM=9, MAXIMUM=10, SQR=11, SQRT=12, EXP=13, ABS=14;
-	static final String WRONG_LENGTH = "width*height!=pixels.length";
+	 **/
+	public static final int 
+		P_NONE=0, 
+		P_SERIAL=1,
+		P_SIMPLE=2, 
+		P_FORK_JOIN=3, 
+		P_EXECUTOR=4, 
+		P_PARALLEL_TASK=5;		
 	
 	int fgColor = 0;
 	protected int lineWidth = 1;
@@ -1933,16 +1938,10 @@ public abstract class ImageProcessor implements Cloneable {
 	
     /** Adds random noise to the image or ROI.
     	@param range	the range of random numbers
-    	@param mode		the parallelisation approach to be used
     */
-    public abstract void noise(double range, int mode);
-    
-    /**
-     * Adds random salt and pepper noise to the image or ROI.
-     * @param percent 	the percent of black and white pixels to add
-     * @param mode		the parallelisation approach to be used
-     */
-    //public abstract void addSaltAndPepper(double percent, int mode);
+	public abstract void noise_P_NONE(double range);
+	public abstract void noise_P_SERIAL(double range);
+	public abstract void noise_P_SIMPLE(double range);    
     
 	/** Creates a new processor containing an image
 		that corresponds to the current ROI. */
@@ -2029,7 +2028,7 @@ public abstract class ImageProcessor implements Cloneable {
 			}
 		} else {
 			if (interpolationMethod==BICUBIC && (this instanceof ColorProcessor))
-				((ColorProcessor)this).filterRGB(ColorProcessor.RGB_TRANSLATE, P_NONE, xOffset, yOffset);
+				((ColorProcessor)this).filterRGB(ColorProcessor.RGB_TRANSLATE, xOffset, yOffset);
 			else {
 				for (int y=roiY; y<(roiY + roiHeight); y++) {
 					if (y%30==0) showProgress((double)(y-roiY)/roiHeight);

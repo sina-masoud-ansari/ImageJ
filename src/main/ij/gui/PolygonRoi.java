@@ -1,7 +1,10 @@
 package ij.gui;
 import ij.*;
-import ij.process.*;
+import ij.process.FloatPolygon;
+import ij.process.ImageProcessor;
+import ij.process.PolygonFiller;
 import ij.measure.*;
+import ij.parallel.process.*;
 import ij.plugin.frame.*;
 import java.awt.*;
 import java.awt.image.*;

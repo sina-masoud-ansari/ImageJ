@@ -1,14 +1,16 @@
 package ij.plugin;
 import ij.*;
 import ij.macro.Interpreter;
-import ij.process.*;
+import ij.process.ImageProcessor;
 import ij.gui.*;
 import java.awt.*;
 import ij.measure.*;
 import java.awt.event.*;
 import java.util.*;
 import java.lang.*;
-import ij.plugin.filter.*;
+
+import ij.parallel.plugin.filter.*;
+import ij.parallel.process.*;
 
 /** This plugin, which concatenates two or more images or stacks,
  *  implements the Image/Stacks/Tools/Concatenate command.

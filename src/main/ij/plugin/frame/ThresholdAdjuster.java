@@ -3,12 +3,20 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
 import ij.*;
+import ij.parallel.plugin.filter.*;
+import ij.parallel.process.*;
 import ij.plugin.*;
-import ij.process.*;
+import ij.process.AutoThresholder;
+import ij.process.ByteProcessor;
+import ij.process.FloatProcessor;
+import ij.process.ImageProcessor;
+import ij.process.ImageStatistics;
+import ij.process.ShortProcessor;
+import ij.process.StackStatistics;
 import ij.gui.*;
 import ij.measure.*;
 import ij.plugin.frame.Recorder;
-import ij.plugin.filter.*;
+import ij.plugin.filter.Analyzer;
 
 /** Adjusts the lower and upper threshold levels of the active image. This
 	class is multi-threaded to provide a more responsive user interface. */

@@ -1,8 +1,11 @@
 package ij.plugin;
 import ij.*;
 import ij.gui.*;
-import ij.process.*;
+import ij.process.ByteProcessor;
+import ij.process.ImageProcessor;
+import ij.process.StackProcessor;
 import ij.measure.*;
+import ij.parallel.process.*;
 import ij.plugin.frame.Recorder;
 import ij.plugin.filter.PlugInFilter;
 import java.awt.*;

@@ -1,8 +1,9 @@
 package ij.plugin;
 import ij.*;
-import ij.process.*;
+import ij.process.ColorProcessor;
 import ij.gui.*;
 import ij.measure.Calibration;
+import ij.parallel.process.*;
 import ij.plugin.HyperStackReducer;
 import java.awt.*;
 import java.util.Vector;

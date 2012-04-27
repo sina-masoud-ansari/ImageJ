@@ -1,7 +1,8 @@
 package ij.macro;
 import ij.*;
-import ij.process.*;
+import ij.process.ColorProcessor;
 import ij.gui.*;
+import ij.parallel.process.*;
 import ij.plugin.Macro_Runner;
 import ij.plugin.frame.*;
 import ij.util.Tools;

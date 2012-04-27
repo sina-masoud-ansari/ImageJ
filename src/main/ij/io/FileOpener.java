@@ -6,9 +6,14 @@ import java.net.*;
 import java.util.*;
 import java.util.zip.GZIPInputStream;
 import ij.gui.*;
-import ij.process.*;
+import ij.process.ByteProcessor;
+import ij.process.ColorProcessor;
+import ij.process.FloatProcessor;
+import ij.process.ImageProcessor;
+import ij.process.ShortProcessor;
 import ij.measure.*;
 import ij.*;
+import ij.parallel.process.*;
 import ij.plugin.frame.ThresholdAdjuster;
 
 /**

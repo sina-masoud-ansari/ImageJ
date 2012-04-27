@@ -1,8 +1,12 @@
 package ij.plugin; 
 import ij.*; 
 import ij.gui.GenericDialog; 
-import ij.process.*;
-import ij.plugin.filter.*; 
+import ij.process.ByteProcessor;
+import ij.process.FloatProcessor;
+import ij.process.ImageProcessor;
+import ij.process.ShortProcessor;
+import ij.parallel.plugin.filter.*;
+import ij.parallel.process.*;
 import ij.measure.Measurements;
 import java.lang.*; 
 import java.awt.*; 

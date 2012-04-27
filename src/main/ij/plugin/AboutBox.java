@@ -1,6 +1,8 @@
 package ij.plugin;
 import ij.*;
-import ij.process.*;
+import ij.parallel.process.*;
+import ij.process.ColorProcessor;
+import ij.process.ImageProcessor;
 import ij.gui.*;
 import java.awt.*;
 import ij.io.*;

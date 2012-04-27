@@ -1,12 +1,17 @@
 package ij.plugin.frame;
 import ij.*;
-import ij.process.*;
+import ij.process.AutoThresholder;
+import ij.process.ByteProcessor;
+import ij.process.ColorProcessor;
+import ij.process.ImageProcessor;
+import ij.process.ImageStatistics;
 import ij.gui.*;
 import java.awt.*;
 import java.awt.image.*;
 import java.util.*;
 import java.awt.event.*;
 import ij.measure.*;
+import ij.parallel.process.*;
 import ij.plugin.*;
 
 /*	This plugin isolates pixels in an RGB image or stack according to a range of Hue.

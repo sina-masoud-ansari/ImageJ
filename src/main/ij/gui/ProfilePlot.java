@@ -3,9 +3,11 @@ package ij.gui;
 import java.awt.*;
 import java.util.ArrayList;
 import ij.*;
-import ij.process.*;
+import ij.process.FloatPolygon;
+import ij.process.ImageProcessor;
 import ij.util.*;
 import ij.measure.*;
+import ij.parallel.process.*;
 import ij.plugin.Straightener;
 
 /** Creates a density profile plot of a rectangular selection or line selection. */

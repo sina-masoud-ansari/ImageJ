@@ -1,9 +1,9 @@
 package ij.plugin;
 import ij.*;
 import ij.gui.*;
-import ij.process.*;
 import ij.io.*;
-import ij.plugin.filter.*;
+import ij.parallel.plugin.filter.*;
+import ij.parallel.process.*;
 import ij.plugin.frame.LineWidthAdjuster;
 import java.awt.*;
 

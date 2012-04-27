@@ -993,6 +993,29 @@ public class ImagePlus implements ImageObserver, Measurements, Cloneable {
     public int getType() {
     	return imageType;
     }
+    
+    public String getTypeString() {
+    	String type ="UNKNOW";
+    	
+    	switch (imageType){
+	    	case COLOR_RGB:
+	    		type = "COLOR_RGB";
+	    		break;
+	    	case COLOR_256:
+	    		type = "COLOR_256";
+	    		break;
+	    	case GRAY8:
+	    		type = "GRAY8";
+	    		break;
+	    	case GRAY16:
+	    		type = "GRAY16";
+	    		break;
+	    	case GRAY32:
+	    		type = "GRAY32";
+	    		break;
+    	}
+    	return type;
+    }    
 
     /** Returns the bit depth, 8, 16, 24 (RGB) or 32. RGB images actually use 32 bits per pixel. */
     public int getBitDepth() {

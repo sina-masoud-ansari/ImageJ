@@ -6,7 +6,12 @@ import java.io.*;
 import java.awt.event.*;
 import java.util.*;
 import ij.*;
-import ij.process.*;
+import ij.parallel.process.*;
+import ij.process.ByteProcessor;
+import ij.process.ColorProcessor;
+import ij.process.FloatProcessor;
+import ij.process.ImageProcessor;
+import ij.process.ShortProcessor;
 
 /** New image dialog box plus several static utility methods for creating images.*/
 public class NewImage {

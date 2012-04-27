@@ -1,7 +1,14 @@
 package ij.plugin;
 import ij.*;
-import ij.plugin.filter.*;
-import ij.process.*;
+import ij.parallel.plugin.filter.*;
+import ij.parallel.process.*;
+import ij.plugin.filter.PlugInFilter;
+import ij.process.Blitter;
+import ij.process.ByteBlitter;
+import ij.process.ByteProcessor;
+import ij.process.ColorBlitter;
+import ij.process.ColorProcessor;
+import ij.process.ImageProcessor;
 import ij.gui.*;
 import java.awt.*;
 import java.awt.image.*;

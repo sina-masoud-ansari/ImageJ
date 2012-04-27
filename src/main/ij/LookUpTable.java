@@ -1,7 +1,11 @@
 package ij;
 import java.awt.*;
 import java.awt.image.*;
-import ij.process.*;
+
+import ij.parallel.process.*;
+import ij.process.ByteProcessor;
+import ij.process.ColorProcessor;
+import ij.process.ImageProcessor;
 
 /** This class represents a color look-up table. */
 public class LookUpTable extends Object {

@@ -1,9 +1,8 @@
 package ij.process;
 
-import java.util.*;
 import java.awt.*;
 import java.awt.image.*;
-import ij.gui.*;
+import ij.process.ByteProcessor;
 import ij.ImageStack;
 
 /**
@@ -14,10 +13,13 @@ public class ColorProcessor extends ImageProcessor {
 
 	protected int[] pixels;
 	protected int[] snapshotPixels = null;
-	private int bgColor = 0xffffffff; //white
+	protected int bgColor = 0xffffffff; //white
 	private int min=0, max=255;
 	private WritableRaster rgbRaster;
 	private SampleModel rgbSampleModel;
+	protected byte[] R, G, B;
+	protected ByteProcessor r, g, b;
+	protected Rectangle roi;
 	
 	// Weighting factors used by getPixelValue(), getHistogram() and convertToByte().
 	// Enable "Weighted RGB Conversion" in <i>Edit/Options/Conversions</i>
@@ -615,51 +617,27 @@ public class ColorProcessor extends ImageProcessor {
 		}
 	}
 	
-	public static final int
-		RGB_NOISE=0, RGB_NOISE_SERIAL=2, RGB_NOISE_SIMPLE=3,
-		RGB_MEDIAN=4,
-		RGB_FIND_EDGES=5,
-		RGB_ERODE=6,
-		RGB_DILATE=7,
-		RGB_THRESHOLD=8,
-		RGB_ROTATE=9,
-		RGB_SCALE=10,
-		RGB_RESIZE=11,
-		RGB_TRANSLATE=12;
+	public static final int RGB_NOISE=0, RGB_MEDIAN=1, RGB_FIND_EDGES=2,
+		RGB_ERODE=3, RGB_DILATE=4, RGB_THRESHOLD=5, RGB_ROTATE=6,
+		RGB_SCALE=7, RGB_RESIZE=8, RGB_TRANSLATE=9;
 
- 	/** Performs the specified filter on the red, green and blue planes of this image.
- 	 *  The mode is the parallelisation approach to be used. Default is P_NONE.
- 	 *  */
- 	public void filterRGB(int type, int mode, double arg) {
- 		filterRGB(type, mode, arg, 0.0);
+ 	/** Performs the specified filter on the red, green and blue planes of this image. */
+ 	public void filterRGB(int type, double arg) {
+ 		filterRGB(type, arg, 0.0);
  	}
-
- 	final ImageProcessor filterRGB(int type, int mode, double arg, double arg2) {
+ 	
+	private void setup(){
 		showProgress(0.01);
-		byte[] R = new byte[width*height];
-		byte[] G = new byte[width*height];
-		byte[] B = new byte[width*height];
+		R = new byte[width*height];
+		G = new byte[width*height];
+		B = new byte[width*height];		
 		getRGB(R, G, B);
-		Rectangle roi = new Rectangle(roiX, roiY, roiWidth, roiHeight);
+		roi = new Rectangle(roiX, roiY, roiWidth, roiHeight);
 		
-		// Initialise Image Processors
-		ByteProcessor r, g, b;
-		switch (mode) {
-			case P_NONE:
-				// ORIGINAL IMPLEMENTATION
-				r = new ByteProcessor(width, height, R, null);
-				g = new ByteProcessor(width, height, G, null);	
-				b = new ByteProcessor(width, height, B, null);				
-				break;	
-			default:
-				// PARALLEL IMPLEMENTATION
-				r = new ParallelByteProcessor(width, height, R, null);
-				g = new ParallelByteProcessor(width, height, G, null);	
-				b = new ParallelByteProcessor(width, height, B, null);				
-				break;
-		}	
+		r = new ByteProcessor(width, height, R, null);
+		g = new ByteProcessor(width, height, G, null);	
+		b = new ByteProcessor(width, height, B, null);	
 		
-		// Set region of interest for each Image Processor
 		r.setRoi(roi);
 		g.setRoi(roi);
 		b.setRoi(roi);
@@ -672,14 +650,21 @@ public class ColorProcessor extends ImageProcessor {
 		g.setInterpolationMethod(interpolationMethod);
 		b.setInterpolationMethod(interpolationMethod);
 		
-		showProgress(0.15);
+		showProgress(0.15);		
+	}
+	
+	private void finish() {
+		R = (byte[])r.getPixels();
+		G = (byte[])g.getPixels();
+		B = (byte[])b.getPixels();
+		
+		setRGB(R, G, B);
+		showProgress(1.0);		
+	} 	
+
+ 	final ImageProcessor filterRGB(int type, double arg, double arg2) {
+
 		switch (type) {
-			case RGB_NOISE:
-				// TODO: we may want to add primary and seconday parallelisation
-				r.noise(arg, mode); showProgress(0.40);
-				g.noise(arg, mode); showProgress(0.65);
-				b.noise(arg, mode); showProgress(0.90);				
-				break;
 			case RGB_MEDIAN:
 				r.medianFilter(); showProgress(0.40);
 				g.medianFilter(); showProgress(0.65);
@@ -746,38 +731,60 @@ public class ColorProcessor extends ImageProcessor {
 				break;
 		}
 		
-		R = (byte[])r.getPixels();
-		G = (byte[])g.getPixels();
-		B = (byte[])b.getPixels();
-		
-		setRGB(R, G, B);
-		showProgress(1.0);
 		return null;
 	}
 
-    public void noise(double range, int mode) {
-    	filterRGB(RGB_NOISE, mode, range);    
-    }
+	@Override
+	public void noise_P_NONE(double range) {
+		setup();
+		r.noise_P_NONE(range); showProgress(0.40);
+		g.noise_P_NONE(range); showProgress(0.65);
+		b.noise_P_NONE(range); showProgress(0.90);
+		finish();	
+
+	}
+
+	@Override
+	public void noise_P_SERIAL(double range) {
+		// TODO Auto-generated method stub
+		setup();
+		r.noise_P_SERIAL(range); showProgress(0.40);
+		g.noise_P_SERIAL(range); showProgress(0.65);
+		b.noise_P_SERIAL(range); showProgress(0.90);		
+		finish();
+		
+	}
+
+	@Override
+	public void noise_P_SIMPLE(double range) {
+		// TODO Auto-generated method stub
+		setup();
+		r.noise_P_SIMPLE(range); showProgress(0.40);
+		g.noise_P_SIMPLE(range); showProgress(0.65);
+		b.noise_P_SIMPLE(range); showProgress(0.90);		
+		finish();		
+		
+	}
     
 	public void medianFilter() {
-    	filterRGB(RGB_MEDIAN, P_NONE, 0.0);
+    	filterRGB(RGB_MEDIAN, 0.0);
 	}
 	
 	public void findEdges() {
-    	filterRGB(RGB_FIND_EDGES, P_NONE, 0.0);
+    	filterRGB(RGB_FIND_EDGES, 0.0);
 	}		
 		
 	public void erode() {
-    	filterRGB(RGB_ERODE, P_NONE, 0.0);
+    	filterRGB(RGB_ERODE, 0.0);
 	}
 			
 	public void dilate() {
-    	filterRGB(RGB_DILATE, P_NONE, 0.0);
+    	filterRGB(RGB_DILATE, 0.0);
 
 	}
 			
 	public void autoThreshold() {
-   		filterRGB(RGB_THRESHOLD, P_NONE, 0.0);
+   		filterRGB(RGB_THRESHOLD, 0.0);
 	}
 	
 	/** Scales the image or selection using the specified scale factors.
@@ -785,7 +792,7 @@ public class ColorProcessor extends ImageProcessor {
 	*/
 	public void scale(double xScale, double yScale) {
         if (interpolationMethod==BICUBIC) {
-        	filterRGB(RGB_SCALE, P_NONE, xScale, yScale);
+        	filterRGB(RGB_SCALE, xScale, yScale);
         	return;
         }
 		double xCenter = roiX + roiWidth/2.0;
@@ -919,7 +926,7 @@ public class ColorProcessor extends ImageProcessor {
 	*/
 	public ImageProcessor resize(int dstWidth, int dstHeight) {
         if (interpolationMethod==BICUBIC)
-        	return filterRGB(RGB_RESIZE, P_NONE, dstWidth, dstHeight);
+        	return filterRGB(RGB_RESIZE, dstWidth, dstHeight);
 		double srcCenterX = roiX + roiWidth/2.0;
 		double srcCenterY = roiY + roiHeight/2.0;
 		double dstCenterX = dstWidth/2.0;
@@ -975,7 +982,7 @@ public class ColorProcessor extends ImageProcessor {
         if (angle%360==0)
         	return;
         if (interpolationMethod==BICUBIC) {
-        	filterRGB(RGB_ROTATE, P_NONE, angle);
+        	filterRGB(RGB_ROTATE, angle);
         	return;
         }
 		int[] pixels2 = (int[])getPixelsCopy();
@@ -1335,6 +1342,7 @@ public class ColorProcessor extends ImageProcessor {
 			if (value>255f) value = 255f;
 			pixels[i] = (pixels[i]&resetMask) | ((int)value<<shift);
 		}
-	}	
+	}
+	
 }
 

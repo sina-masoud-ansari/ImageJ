@@ -1,7 +1,7 @@
 package ij.plugin.tool;
 import ij.*;
-import ij.process.*;
 import ij.gui.*;
+import ij.parallel.process.*;
 import ij.plugin.Colors;
 import java.awt.*;
 import java.awt.event.*;

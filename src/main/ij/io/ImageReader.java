@@ -1,6 +1,9 @@
 package ij.io;
 import ij.*;
-import ij.process.*;
+import ij.parallel.process.*;
+import ij.process.ColorProcessor;
+import ij.process.ImageProcessor;
+
 import java.io.*;
 import java.net.*;
 import java.awt.image.BufferedImage;

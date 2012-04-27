@@ -1,7 +1,12 @@
 package ij.plugin.filter;
 import ij.*;
+import ij.parallel.process.*;
 import ij.plugin.*;
-import ij.process.*;
+import ij.process.Blitter;
+import ij.process.ByteProcessor;
+import ij.process.FloatProcessor;
+import ij.process.ImageProcessor;
+import ij.process.ShortProcessor;
 import ij.gui.*;
 
 /**

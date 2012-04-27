@@ -1,7 +1,7 @@
 package ij.process;
 import java.awt.*;
 import ij.*;
-import ij.process.*;
+import ij.parallel.process.*;
 import ij.macro.Interpreter;
 
 /** This class processes stacks. */

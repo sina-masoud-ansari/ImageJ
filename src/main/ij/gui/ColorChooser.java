@@ -1,7 +1,7 @@
 package ij.gui;
 import ij.*;
-import ij.process.*;
 import ij.util.*;
+import ij.parallel.process.*;
 import ij.plugin.Colors;
 import java.awt.*;
 import java.util.Vector;

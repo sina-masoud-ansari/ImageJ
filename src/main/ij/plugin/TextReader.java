@@ -4,7 +4,9 @@ import java.awt.image.*;
 import java.io.*;
 import ij.*;
 import ij.io.*;
-import ij.process.*;
+import ij.parallel.process.*;
+import ij.process.FloatProcessor;
+import ij.process.ImageProcessor;
 import ij.util.Tools;
 
 

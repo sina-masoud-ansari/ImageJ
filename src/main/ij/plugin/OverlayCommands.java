@@ -1,7 +1,8 @@
 package ij.plugin;
 import ij.*;
-import ij.process.*;
+import ij.process.ImageProcessor;
 import ij.gui.*;
+import ij.parallel.process.*;
 import ij.plugin.frame.RoiManager;
 import ij.macro.Interpreter;
 import ij.io.RoiDecoder;

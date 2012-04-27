@@ -8,11 +8,11 @@ import java.awt.*;
 	and Add Noise commands. */
 public class Filters implements PlugInFilter {
 	
-	private static double sd = Prefs.getDouble(Prefs.NOISE_SD, 25.0);
-	private String arg;
-	private ImagePlus imp;
-	private int slice;
-	private boolean canceled;
+	protected static double sd = Prefs.getDouble(Prefs.NOISE_SD, 25.0);
+	protected String arg;
+	protected ImagePlus imp;
+	protected int slice;
+	protected boolean canceled;
 
 	public int setup(String arg, ImagePlus imp) {
 		this.arg = arg;
@@ -29,7 +29,7 @@ public class Filters implements PlugInFilter {
 		}
 		return flags;
 	}
-
+	
 	public void run(ImageProcessor ip) {
 	
 		if (arg.equals("invert")) {
@@ -59,26 +59,9 @@ public class Filters implements PlugInFilter {
 		}
 						
 	 	if (arg.equals("add")) {
-	 		ip.noise(25.0, ImageProcessor.P_NONE);
+	 		ip.noise_P_NONE(25.0);
 	 		return;
 	 	}
-	 	
-	 	// Adds noise in serial using the ParallelByteProcessor and a single thread
-	 		 	
-	 	// TODO: Need a way to test our implementations for correctness
-	 	
-	    // TODO: Exception when type is not correct?
-	 	
-	 	if (arg.equals("add serial")) {
-	 		ip.noise(25.0, ImageProcessor.P_SERIAL);
-	 		return;
-	 	}	
-	 	
-	    // Adds noise in parallel using the ParallelByteProcessor and simple thread launching
-	 	if (arg.equals("add simple")) {
-	 		ip.noise(25.0, ImageProcessor.P_SIMPLE);
-	 		return;
-	 	}	 	
 	 	
 	 	if (arg.equals("noise")) {
 	 		if (canceled)
@@ -94,15 +77,14 @@ public class Filters implements PlugInFilter {
 				}
 				sd = gd.getNextNumber();
 			}
-	 		// TODO: Extend for custom noise to use parallel approaches
-	 		ip.noise(sd, ImageProcessor.P_NONE);
+	 		ip.noise_P_NONE(sd);
 	 		IJ.register(Filters.class);
 	 		return;
 	 	}
         	 	
 	}
 	
-	void invert16BitStack(ImagePlus imp) {
+	protected void invert16BitStack(ImagePlus imp) {
 		imp.killRoi();
 		imp.getCalibration().disableDensityCalibration();
 		ImageStatistics stats = new StackStatistics(imp);

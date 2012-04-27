@@ -1,7 +1,8 @@
 package ij.plugin.filter;
 import ij.*;
 import ij.gui.*;
-import ij.process.*;
+import ij.parallel.process.*;
+import ij.process.ImageProcessor;
 import ij.measure.Calibration;
 import java.awt.*;
 import java.util.Properties;

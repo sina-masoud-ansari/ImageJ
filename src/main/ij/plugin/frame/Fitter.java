@@ -4,13 +4,15 @@ import java.awt.event.*;
 import java.util.*;
 import java.io.*;
 import ij.*;
+import ij.parallel.process.*;
 import ij.plugin.*;
 import ij.plugin.frame.*;
 import ij.text.*;
 import ij.gui.*;
 import ij.util.*;
 import ij.io.*;
-import ij.process.*;
+import ij.process.FloatProcessor;
+import ij.process.ImageProcessor;
 import ij.measure.*;
 
 /** ImageJ plugin that does curve fitting using the modified CurveFitter class.

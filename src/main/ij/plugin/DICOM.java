@@ -4,7 +4,8 @@ import java.util.*;
 import java.net.URL;
 import ij.*;
 import ij.io.*;
-import ij.process.*;
+import ij.parallel.process.*;
+import ij.process.ImageProcessor;
 import ij.util.Tools;
 import ij.measure.Calibration;
 

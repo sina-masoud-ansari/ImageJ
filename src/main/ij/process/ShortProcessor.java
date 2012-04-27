@@ -3,7 +3,11 @@
 import java.util.*;
 import java.awt.*;
 import java.awt.image.*;
+
+import ij.Prefs;
 import ij.gui.*;
+import ij.parallel.Division;
+import ij.parallel.ImageDivision;
 
 /** ShortProcessors contain a 16-bit unsigned image
 	and methods that operate on that image. */
@@ -1030,10 +1034,8 @@ public class ShortProcessor extends ImageProcessor {
 		System.arraycopy(pixels2, 0, pixels, 0, pixels.length);
 	}
 
-	/**
-	 *  Only one mode is implemented, no need to switch
-	 */
-    public void noise(double range, int mode) {
+
+    public void noise_P_NONE(double range) {
 		Random rnd=new Random();
 		int v, ran;
 		boolean inRange;
@@ -1052,6 +1054,72 @@ public class ShortProcessor extends ImageProcessor {
 		}
 		resetMinAndMax();
     }
+    
+    private Runnable getNoiseRunnable(final double range, final Division div){
+    	 	
+    	return new Runnable(){
+			@Override
+			public void run() {
+				int p, v, ran;
+				boolean inRange;
+				Random rnd = new Random();
+				// for each row
+				for (int y = div.yStart; y < div.yLimit; y++){
+					// process pixels in ROI
+					for (int x = roiX; x < div.xEnd; x++){
+						// pixels is a 1D array so need to map to it
+						p = y * roiWidth + roiX + x;
+						inRange = false;
+						while (!inRange){
+							ran = (int)Math.round(rnd.nextGaussian()*range);
+							v = (pixels[p] & 0xffff) + ran;
+							inRange = v>=0 && v<=255;
+							if (inRange){
+								pixels[p] = (short)v;								
+							}
+						}			
+					} // end x loop
+					if (y%20==0) {
+						showProgress((double)(y-roiY)/roiHeight);
+					}
+				} // end y loop
+			} 				
+		}; 		
+    	
+    }
+
+   
+	@Override
+	public void noise_P_SERIAL(double range) {
+		
+		//Divide the number of rows by the number of threads, max threads is 1 in this case
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, 1);
+	
+		Thread[] threads = new Thread[div.numThreads];
+		for (int i = 0; i < div.numThreads; i++){
+			threads[i] = new Thread(getNoiseRunnable(range, div.getDivision(i))); 
+		}
+		
+		div.processThreads(threads);
+		// indicate processing is finished	
+		showProgress(1.0);
+		
+	}    
+    
+	@Override
+    public void noise_P_SIMPLE(double range) {	
+		//Divide the number of rows by the number of threads, max threads is roiHeight
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, roiHeight);
+	
+		Thread[] threads = new Thread[div.numThreads];
+		for (int i = 0; i < div.numThreads; i++){
+			threads[i] = new Thread(getNoiseRunnable(range, div.getDivision(i))); 
+		}
+		
+		div.processThreads(threads);
+		// indicate processing is finished	
+		showProgress(1.0);
+    } 
     
 	public void threshold(int level) {
 		for (int i=0; i<width*height; i++) {
@@ -1116,6 +1184,7 @@ public class ShortProcessor extends ImageProcessor {
 	public void erode() {}
 	/** Not implemented. */
 	public void dilate() {}
+
 
 }
 

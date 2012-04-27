@@ -1,7 +1,7 @@
 package ij.plugin;
 import ij.*;
 import ij.gui.*;
-import ij.process.*;
+import ij.parallel.process.*;
 import ij.measure.Calibration;
 
 /** This plugin animates stacks. */

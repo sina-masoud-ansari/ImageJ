@@ -1,7 +1,10 @@
 package ij.plugin.filter;
 import ij.*;
 import ij.gui.*;
-import ij.process.*;
+import ij.process.ByteProcessor;
+import ij.process.FloodFiller;
+import ij.process.ImageProcessor;
+import ij.parallel.process.*;
 import ij.plugin.frame.ThresholdAdjuster;
 import java.awt.*;
 

@@ -1,8 +1,10 @@
 package ij.plugin.filter;
 import ij.*;
-import ij.process.*;
+import ij.process.ColorProcessor;
+import ij.process.ImageProcessor;
 import ij.gui.*;
 import ij.io.*;
+import ij.parallel.process.*;
 import ij.plugin.Animator;
 import java.awt.*;
 import java.awt.image.*;

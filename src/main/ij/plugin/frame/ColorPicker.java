@@ -1,10 +1,12 @@
 package ij.plugin.frame;
 import ij.*;
+import ij.parallel.process.*;
 import ij.plugin.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Vector;
-import ij.process.*;
+
+import ij.process.ColorProcessor;
 import ij.gui.*;
 
 /** Implements the Image/Color/Color Picker command. */

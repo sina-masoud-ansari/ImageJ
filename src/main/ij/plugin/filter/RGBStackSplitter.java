@@ -1,6 +1,7 @@
 package ij.plugin.filter;
 import ij.*;
-import ij.process.*;
+import ij.process.ImageProcessor;
+import ij.parallel.process.*;
 import ij.plugin.ChannelSplitter;
 
 /** Deprecated; replaced by ij.plugin.ChannelSplitter. */

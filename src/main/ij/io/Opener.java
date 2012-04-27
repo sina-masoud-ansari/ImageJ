@@ -1,7 +1,9 @@
 package ij.io;
 import ij.*;
 import ij.gui.*;
-import ij.process.*;
+import ij.process.ImageConverter;
+import ij.process.ImageProcessor;
+import ij.parallel.process.*;
 import ij.plugin.frame.*;
 import ij.plugin.DICOM;
 import ij.plugin.AVI_Reader;
@@ -13,7 +15,6 @@ import ij.macro.Interpreter;
 import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
-import java.net.URL;
 import java.net.*;
 import java.util.Hashtable;
 import java.util.zip.*;

@@ -1,6 +1,8 @@
 package ij.plugin.filter;
 import ij.*;
-import ij.process.*;
+import ij.parallel.process.*;
+import ij.process.ImageProcessor;
+import ij.process.ImageStatistics;
 import ij.gui.*;
 import ij.util.Tools;
 import ij.measure.Measurements;

@@ -1,7 +1,10 @@
 package ij.plugin;
 import java.awt.*;
 import ij.*;
-import ij.process.*;
+import ij.parallel.process.*;
+import ij.process.ColorProcessor;
+import ij.process.ImageConverter;
+import ij.process.ImageProcessor;
 import ij.gui.*;
 
 /** Converts a 2 or 3 slice stack, or a hyperstack, to RGB. */

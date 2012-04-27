@@ -1,8 +1,12 @@
 package ij.plugin;
 import ij.*;
 import ij.gui.*;
-import ij.process.*;
+import ij.process.ByteProcessor;
+import ij.process.ImageConverter;
+import ij.process.ImageProcessor;
+import ij.process.ImageStatistics;
 import ij.measure.*;
+import ij.parallel.process.*;
 import ij.plugin.filter.Analyzer;
 
 import java.awt.*;

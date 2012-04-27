@@ -3,7 +3,8 @@ import java.awt.*;
 import java.util.*;
 
 import ij.*;
-import ij.process.*;
+import ij.parallel.process.*;
+import ij.process.ImageProcessor;
 
 /** Implements ImageJ's Process/Noise/Salt and Pepper command. */
 public class SaltAndPepper implements PlugInFilter {

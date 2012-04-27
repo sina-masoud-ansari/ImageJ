@@ -7,7 +7,9 @@ import ij.*;
 import ij.io.*;
 import ij.gui.*;
 import ij.measure.Calibration;
-import ij.process.*;
+import ij.process.ImageProcessor;
+import ij.process.LUT;
+import ij.parallel.process.*;
 import ij.plugin.frame.Recorder;
 import ij.macro.Interpreter;
 

@@ -3,7 +3,11 @@ package ij.process;
 import java.util.*;
 import java.awt.*;
 import java.awt.image.*;
+
+import ij.Prefs;
 import ij.gui.*;
+import ij.parallel.Division;
+import ij.parallel.ImageDivision;
 
 /** This is an 32-bit floating-point image and methods that operate on that image. */
 public class FloatProcessor extends ImageProcessor {
@@ -709,10 +713,34 @@ public class FloatProcessor extends ImageProcessor {
 		}
 	}
 	
-	/**
-	 *  Only one mode is implemented, no need to switch
-	 */
-	public void noise(double range, int mode) {
+    private Runnable getNoiseRunnable(final double range, final Division div){
+	 	
+    	return new Runnable(){
+			@Override
+			public void run() {
+				int p;
+				float RandomBrightness;
+				Random rnd = new Random();
+				// for each row
+				for (int y = div.yStart; y < div.yLimit; y++){
+					// process pixels in ROI
+					for (int x = roiX; x < div.xEnd; x++){
+						// pixels is a 1D array so need to map to it
+						p = y * roiWidth + roiX + x;
+						RandomBrightness = (float)(rnd.nextGaussian()*range);
+						pixels[p] = pixels[p] + RandomBrightness;			
+					} // end x loop
+					if (y%20==0) {
+						showProgress((double)(y-roiY)/roiHeight);
+					}
+				} // end y loop
+			} 				
+		}; 		
+    	
+    }
+	
+	
+	public void noise_P_NONE(double range) {
 		Random rnd=new Random();
 		for (int y=roiY; y<(roiY+roiHeight); y++) {
 			int i = y * width + roiX;
@@ -724,6 +752,38 @@ public class FloatProcessor extends ImageProcessor {
 		}
 		resetMinAndMax();
 	}
+	
+	@Override
+	public void noise_P_SERIAL(double range) {
+		
+		//Divide the number of rows by the number of threads, max threads is 1 in this case
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, 1);
+	
+		Thread[] threads = new Thread[div.numThreads];
+		for (int i = 0; i < div.numThreads; i++){
+			threads[i] = new Thread(getNoiseRunnable(range, div.getDivision(i))); 
+		}
+		
+		div.processThreads(threads);
+		// indicate processing is finished	
+		showProgress(1.0);
+		
+	}    
+    
+	@Override
+    public void noise_P_SIMPLE(double range) {	
+		//Divide the number of rows by the number of threads, max threads is roiHeight
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, roiHeight);
+	
+		Thread[] threads = new Thread[div.numThreads];
+		for (int i = 0; i < div.numThreads; i++){
+			threads[i] = new Thread(getNoiseRunnable(range, div.getDivision(i))); 
+		}
+		
+		div.processThreads(threads);
+		// indicate processing is finished	
+		showProgress(1.0);
+    } 
 
 	public ImageProcessor crop() {
 		ImageProcessor ip2 = createProcessor(roiWidth, roiHeight);

@@ -1,8 +1,14 @@
 package ij.plugin;
 import ij.*;
-import ij.process.*;
+import ij.process.ColorProcessor;
+import ij.process.FHT;
+import ij.process.FloatProcessor;
+import ij.process.ImageProcessor;
+import ij.process.ImageStatistics;
+import ij.process.StackProcessor;
 import ij.gui.*;
 import ij.measure.*;
+import ij.parallel.process.*;
 import ij.plugin.ContrastEnhancer;
 import ij.measure.Calibration;
 import ij.util.Tools;

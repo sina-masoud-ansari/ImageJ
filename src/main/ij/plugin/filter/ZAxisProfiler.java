@@ -1,8 +1,10 @@
 package ij.plugin.filter;
 import ij.*;
-import ij.process.*;
+import ij.process.ImageProcessor;
+import ij.process.ImageStatistics;
 import ij.gui.*;
 import ij.measure.*;
+import ij.parallel.process.*;
 import ij.plugin.filter.Analyzer;
 import ij.util.Tools;
 import java.awt.Rectangle;

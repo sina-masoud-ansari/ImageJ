@@ -1,8 +1,13 @@
 package ij.measure;
 import ij.*;
+import ij.parallel.process.*;
 import ij.plugin.filter.Analyzer;
 import ij.text.*;
-import ij.process.*;
+import ij.process.ByteProcessor;
+import ij.process.ByteStatistics;
+import ij.process.FloatProcessor;
+import ij.process.ImageProcessor;
+import ij.process.ImageStatistics;
 import ij.gui.Roi;
 import ij.util.Tools;
 import ij.io.SaveDialog;

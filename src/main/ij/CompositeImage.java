@@ -1,6 +1,9 @@
 package ij;
-import ij.process.*;
+import ij.process.ColorProcessor;
+import ij.process.ImageProcessor;
+import ij.process.LUT;
 import ij.gui.*;
+import ij.parallel.process.*;
 import ij.plugin.*;
 import ij.plugin.frame.*;
 import ij.io.FileInfo;

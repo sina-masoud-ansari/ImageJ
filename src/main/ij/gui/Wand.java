@@ -1,6 +1,8 @@
 package ij.gui;
 import ij.*;
-import ij.process.*;
+import ij.parallel.process.*;
+import ij.process.ImageProcessor;
+
 import java.awt.*;
 
 /** This class implements ImageJ's wand (tracing) tool.
