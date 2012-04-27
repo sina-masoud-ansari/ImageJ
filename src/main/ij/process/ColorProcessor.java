@@ -1335,13 +1335,6 @@ public class ColorProcessor extends ImageProcessor {
 			if (value>255f) value = 255f;
 			pixels[i] = (pixels[i]&resetMask) | ((int)value<<shift);
 		}
-	}
-	
-	/**
-	 * Adds salt and pepper filter. This filter does not apply to RGB images.
-	 */
-	public void addSaltAndPepper(double percent, int mode)
-	{return;}
-	
+	}	
 }
 

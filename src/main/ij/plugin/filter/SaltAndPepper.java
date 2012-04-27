@@ -16,7 +16,12 @@ public class SaltAndPepper implements PlugInFilter {
 	 *  P_EXECUTOR is using the ExecutorService with thread pools
 	 *  P_PARALLEL_TASK is using the parallel task library
 	 *  **/
-	public static final int P_NONE=0, P_SERIAL=1, P_SIMPLE=2, P_FORK_JOIN=3, P_EXECUTOR=4, P_PARALLEL_TASK=5;
+	public static final int P_NONE=ImageProcessor.P_NONE, 
+			P_SERIAL=ImageProcessor.P_SERIAL, 
+			P_SIMPLE=ImageProcessor.P_SIMPLE, 
+			P_FORK_JOIN=ImageProcessor.P_FORK_JOIN, 
+			P_EXECUTOR=ImageProcessor.P_EXECUTOR, 
+			P_PARALLEL_TASK=ImageProcessor.P_PARALLEL_TASK;
 	
 	Random r = new Random();
 	private String arg;
@@ -32,19 +37,19 @@ public class SaltAndPepper implements PlugInFilter {
 		
 		//basic implementation
 		if (arg.equals("salt_and_pepper")) {
-			add(ip, 0.05, ImageProcessor.P_NONE);
+			add(ip, 0.05, P_NONE);
 	 		return;
 	 	}
 		
 		//should add salt and pepper in serial
 		if (arg.equals("salt_and_pepper serial")) {
-			add(ip, 0.05, ImageProcessor.P_SERIAL);
+			add(ip, 0.05, P_SERIAL);
 	 		return;
 	 	}
 		
 		//should add salt and pepper in simple
 		if (arg.equals("salt_and_pepper simple")) {
-			add(ip, 0.05, ImageProcessor.P_SIMPLE);
+			add(ip, 0.05, P_SIMPLE);
 	 		return;
 	 	}
 	}
