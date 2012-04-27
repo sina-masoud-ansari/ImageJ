@@ -1,9 +1,9 @@
 #ImageJ 1.46j Preferences
-#Thu Apr 19 18:10:32 NZST 2012
+#Fri Apr 27 17:11:43 NZST 2012
 menu.size=14
 fps=7.0
 new.type=3
-dir.image=C\:\\Users\\ArvieCarpio\\Pictures\\School\\se751\\
+dir.image=C\:\\Users\\ArvieCarpio\\Documents\\sem1-2012\\se751\\se751_images\\
 new.width=400
 fcolor=\#000000
 div-by-zero=Infinity
@@ -19,8 +19,9 @@ new.slices=1
 raw.width=512
 new.height=400
 new.fill=0
+recent01=C\:\\Users\\ArvieCarpio\\Pictures\\School\\se751\\greyscale1.gif
 bcolor=\#FFFFFF
-recent00=C\:\\Users\\ArvieCarpio\\Pictures\\School\\se751\\greyscale1.gif
+recent00=C\:\\Users\\ArvieCarpio\\Documents\\sem1-2012\\se751\\se751_images\\greyscale1.gif
 ap.options=64
 measurements=19
 precision=3

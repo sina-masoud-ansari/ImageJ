@@ -28,7 +28,7 @@ public class ImageDivision {
 	}	
 	
 	private void setDivsions(int roiX, int roiY, int roiWidth){
-		int numRows, yStart, yLimit, xEnd;
+		int numRows, yStart, yLimit, xStart, xEnd;
 		
 		for (int i = 0; i < numThreads; i++){
 			if ( i == (numThreads - 1)){
@@ -39,8 +39,9 @@ public class ImageDivision {
 			}
 			yStart = roiY+i*numRows;
 			yLimit = yStart + numRows;
+			xStart = roiX;
 			xEnd = roiX + roiWidth;
-			divs[i] = new Division(i, numRows, yStart, yLimit, xEnd);
+			divs[i] = new Division(i, numRows, yStart, yLimit, xStart, xEnd);
 		}		
 	}
 	
