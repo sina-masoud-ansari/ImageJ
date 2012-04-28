@@ -4,7 +4,7 @@ DROP TABLE IF EXISTS performance;
 
 CREATE TABLE performance (
   fname VARCHAR(50),
-  type VARCHAR(20),
+  itype VARCHAR(20),
   npixels INT,
   proc INT, 
   filter VARCHAR(100),
