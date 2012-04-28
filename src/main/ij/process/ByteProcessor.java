@@ -930,7 +930,7 @@ public class ByteProcessor extends ImageProcessor {
 	public void noise_P_SIMPLE(double range) {
 		
 		//Divide the number of rows by the number of threads, max threads is 1 in this case
-		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, 1);
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, roiHeight);
 	
 		Thread[] threads = new Thread[div.numThreads];
 		for (int i = 0; i < div.numThreads; i++){

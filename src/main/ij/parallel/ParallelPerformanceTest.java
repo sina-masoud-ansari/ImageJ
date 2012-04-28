@@ -8,15 +8,28 @@ public class ParallelPerformanceTest {
 	private int maxt; //max threads to use;
 	
 	ArrayList<PerformanceTest> tests;
+	ArrayList<Results> results;
 	
 	public ParallelPerformanceTest(int i, int t){
 		iter = i;
 		maxt = t;
 		tests = new ArrayList<PerformanceTest>();
+		results = new ArrayList<Results>();
 	}
 	
 	public void add(PerformanceTest t){
 		tests.add(t);
+	}
+	
+	public void collate(){
+		String res = "";
+		for (Results r : results){
+			if (res.isEmpty()){
+				res += r.getHeaderCSV();
+			}
+			res += r.collateCSV();
+		}
+		System.out.println(res.trim());
 	}
 	
 	public void start(){
@@ -31,9 +44,8 @@ public class ParallelPerformanceTest {
 		for (int n = 1; n <= maxt; n++){ // for each thread arrangement
 			t.setProcessors(n);
 			t.schedule(iter, true);
-			Results r = t.getResults();
-			System.out.println(r.collateCSV());
-		}		
+			results.add(t.getResults());
+		}
 	}
 	
 	private void runDependent(PerformanceTest t){
@@ -41,9 +53,8 @@ public class ParallelPerformanceTest {
 		for (int n = 1; n <= maxt; n++){ // for each thread arrangement
 			t.setProcessors(n);
 			t.schedule(iter, false);
-			Results r = t.getResults();
-			System.out.println(r.collateCSV());
-		}		
+			results.add(t.getResults());
+		}
 	}
 	
 	/**
@@ -52,12 +63,13 @@ public class ParallelPerformanceTest {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		int maxt = Runtime.getRuntime().availableProcessors(); // max number of threads to use.
+		String url = args[0]; //"/Users/smas036/Dev/ImageJ/resources/test/images/tif/GRAY8.tif";		
 		int iter = Integer.parseInt(args[1]);
-		String url = args[0];
 		
 		ParallelPerformanceTest test = new ParallelPerformanceTest(iter, maxt);
 		test.add(new NoiseFilterPerformanceTest(url));
 		test.start();
+		test.collate();
 	}
 
 }
