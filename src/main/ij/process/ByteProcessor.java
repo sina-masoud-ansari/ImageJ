@@ -1339,41 +1339,6 @@ public class ByteProcessor extends ImageProcessor {
 	byte[] create8BitImage() {
 		return pixels;
 	}
-//
-//	/**
-//	 * Called by addSaltAndPepperFilter
-//	 */
-//	public int rand(int min, int max, Random r) {
-//		return min + (int)(r.nextDouble()*(max-min));
-//	}
-//	
-//	@Override
-//	/**
-//	 * Adds salt and pepper filter to grey scale image
-//	 */
-//	public void addSaltAndPepper(double percent, int mode) {
-//		// TODO Auto-generated method stub
-//		Random r = new Random();
-//		Rectangle roi = getRoi();
-//		int n = (int)(percent*roi.width*roi.height);
-//		byte[] pixels = (byte[])getPixels();
-//		int rx, ry;
-//		int width = getWidth();
-//		int xmin = roi.x;
-//		int xmax = roi.x+roi.width-1;
-//		int ymin = roi.y;
-//		int ymax = roi.y+roi.height-1;		
-//
-//		for (int i=0; i<n/2; i++) {
-//			rx = rand(xmin, xmax,r);
-//			ry = rand(ymin, ymax,r);
-//			pixels[ry*width+rx] = (byte)255;
-//			rx = rand(xmin, xmax,r);
-//			ry = rand(ymin, ymax,r);
-//			pixels[ry*width+rx] = (byte)0;
-//		}		
-//		
-//	}
 
 }
 
