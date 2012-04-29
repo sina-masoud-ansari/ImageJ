@@ -85,7 +85,7 @@ public class Results {
 	
 	public String collateCSV(){
 		
-		long sum = 0;
+		long sum;
 		int size = 0;
 		String results = "";
 		String rb = fname+","+type+","+width*height+","+proc+","+title+","+(indep?"INDEP":"DEP");
@@ -97,6 +97,7 @@ public class Results {
 			rt = "";
 			for (String e : cats.get(c).keySet()){
 				// print results from each trial
+				sum = 0;
 				for (long[] t : cats.get(c).get(e)){
 					sum += t[2];
 				}

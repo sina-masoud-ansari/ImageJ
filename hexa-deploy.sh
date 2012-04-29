@@ -4,7 +4,7 @@ ant clean
 
 echo "Zipping up ..."
 cd ..
-if [-e ImageJ.zip ]; then
+if [ -e ImageJ.zip ]; then
   rm ImageJ.zip
 fi
 zip -r ImageJ.zip ImageJ -x 'ImageJ/.git/*'

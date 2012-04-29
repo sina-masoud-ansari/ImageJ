@@ -8,6 +8,8 @@
 	<property name="bin.dir" location="bin"/>
 	<property name="plugins.dir" location="plugins"/>
 	<property name="macros.dir" location="macros"/>
+	<property name="sample.dir" location="${build.dir}/resources/images/sample"/>
+	<property name="num.samples" value="10" />
 	<property name="reports.dir" location="reports"/>
 	<property name="results.dir" location="results"/>	
 	<property name="resources.build" location="resources/build"/>
@@ -30,7 +32,7 @@
 	<path id="run.classpath">
 		<fileset dir="${bin.dir}">
 			<include name="**/*.jar" />
-		</fileset>
+		</fileset>	
 	</path>
 	<!--
 	<target name="compile_test" description="Compile everything">
@@ -82,7 +84,12 @@
 			<fileset dir="${lib.dir}">
 				<include name="**/*.jar" />
 			</fileset>
-		</copy>		
+		</copy>	
+        <copy todir="${bin.dir}">
+                <fileset dir="${lib.dir}">
+                        <include name="**/*.jar" />
+                </fileset>
+        </copy>		
 		<jar jarfile="${bin.dir}/ij.jar" basedir="${build.dir}" manifest="MANIFEST.MF" />
 	</target>
 
@@ -173,7 +180,7 @@
 		<os family="windows"/>
 	</condition>
 
-	<target name="performance" depends="test" description="Initiate performance testing">
+	<target name="performance" depends="clean, test" description="Initiate performance testing">
 		<delete dir="${results.dir}" />
 		<mkdir dir="${results.dir}" />
 		<echo message="${os.name} ${os.arch}" />
@@ -194,6 +201,33 @@
 						<arg value="${bin.dir}"/>
 						<arg value="${results.dir}"/>
 						<arg value="${memory.max}"/>
+						<arg value="${sample.dir}"/>
+						<arg value="${num.samples}"/>
+					</exec>
+				</then>
+			</elseif>
+		</if>
+	</target>	
+	
+	<target name="cluster-performance" depends="clean, test" description="Initiate performance testing on NeSI cluster">
+		<delete dir="${results.dir}" />
+		<mkdir dir="${results.dir}" />
+		<echo message="${os.name} ${os.arch}" />
+		<if>
+			<equals arg1="${os}" arg2="windows" />
+			<then>
+				<echo message="Not implemented on ${os.name}" />
+			</then>
+			<elseif>
+				<equals arg1="${os}" arg2="unix" />
+				<then>
+					<exec executable="bash">
+						<arg value="cluster-performance.sh"/>
+						<arg value="${bin.dir}"/>
+						<arg value="${results.dir}"/>
+						<arg value="${memory.max}"/>
+						<arg value="${sample.dir}"/>
+						<arg value="${num.samples}"/>
 					</exec>
 				</then>
 			</elseif>

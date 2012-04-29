@@ -7,6 +7,8 @@ import java.util.Collection;
 import java.awt.Rectangle;
 import java.net.URL;
 
+import junit.framework.TestCase;
+
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,7 +18,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 
 @RunWith(value = Parameterized.class)
-public class ImageDivisionTest {
+public class ImageDivisionTest extends TestCase{
 
 	private final static String 
 	
