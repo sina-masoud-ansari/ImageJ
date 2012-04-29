@@ -3,6 +3,7 @@ package ij.parallel;
 import java.io.File;
 
 import ij.ImagePlus;
+import ij.Prefs;
 import ij.process.ImageProcessor;
 
 
@@ -30,6 +31,7 @@ public abstract class PerformanceTest {
 	
 	public void setProcessors(int p){
 		proc = p;
+		Prefs.setThreads(p);
 	}
 
 	public void schedule(int repeat, boolean indep){

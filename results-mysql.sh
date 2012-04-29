@@ -38,6 +38,9 @@ mysql -u root -e "SELECT * INTO OUTFILE \"$Q_FILE\" FIELDS TERMINATED BY ',' LIN
 Q_FILE=$QUERIES_DIR/q_rgb_indep_psimple.csv
 mysql -u root -e "SELECT * INTO OUTFILE \"$Q_FILE\" FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n' FROM performance WHERE itype='COLOR_RGB' AND ptype='P_SIMPLE' AND series='INDEP'" imagej
 
+# For a large problem, how does the Add Noise filter perform with different approaches and with different different number of cores available?
+
+
 
 
 cat $Q_FILE

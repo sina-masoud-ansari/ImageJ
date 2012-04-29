@@ -63,8 +63,10 @@ public class ParallelPerformanceTest {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		int maxt = Runtime.getRuntime().availableProcessors(); // max number of threads to use.
-		String url = args[0]; //"/Users/smas036/Dev/ImageJ/resources/test/images/tif/GRAY8.tif";		
+		String url = args[0];
 		int iter = Integer.parseInt(args[1]);
+		//String url = "/Users/smas036/Dev/LARGE_COLOR_RGB.tif";	
+		//int iter = 1;
 		
 		ParallelPerformanceTest test = new ParallelPerformanceTest(iter, maxt);
 		test.add(new NoiseFilterPerformanceTest(url));

@@ -2,8 +2,8 @@
 
 BIN_DIR=$1
 RESULTS_DIR=$2
+MAX_MEM=$3
 MACRO_DIR=$BIN_DIR/macros
-MAX_MEM=1024M
 
 for image in resources/test/images/tif/*.tif; do
 	csv=$(basename $image)

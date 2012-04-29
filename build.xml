@@ -13,6 +13,7 @@
 	<property name="resources.build" location="resources/build"/>
 	<property name="resources.test" location="resources/test" />
 	<property name="hexa.rt" location="/usr/lib/jvm/java-1.6.0-openjdk/jre/lib/rt.jar" />
+	<property name="memory.max" value="2048m" />
 
 	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
 		<classpath>
@@ -77,17 +78,21 @@
 		</copy>
 		<!-- Build ij.jar. -->
 		<mkdir dir="${bin.dir}" />
+		<copy todir="${build.dir}/macros">
+			<fileset dir="${lib.dir}">
+				<include name="**/*.jar" />
+			</fileset>
+		</copy>		
 		<jar jarfile="${bin.dir}/ij.jar" basedir="${build.dir}" manifest="MANIFEST.MF" />
 	</target>
 
 	<target name="clean" description="Delete the build files.">
 		<delete dir="${build.dir}" />
+		<delete dir="${bin.dir}" />
 	</target>
 
 	<target name="headless" depends="build" description="Build and run ImageJ in headless mode">
-		<!-- WHY IS THIS NEEDED ? -->
-		<!-- <copy file="ij.jar" toDir=".." /> -->
-		<java maxmemory="1024m" classpathref="run.classpath" classname="ij.ImageJ" fork="yes">
+		<java maxmemory="${memory.max}" classpathref="run.classpath" classname="ij.ImageJ" fork="yes">
 			<arg value="-batch" />
 		</java>
 	</target>
@@ -99,7 +104,7 @@
 		<copy todir="${build.dir}/resources">
 			<fileset dir="${resources.test}" />
 		</copy>
-		<junit printsummary="withOutAndErr" haltonfailure="yes">
+		<junit maxmemory="${memory.max}" printsummary="withOutAndErr" haltonfailure="yes">
 			<classpath path="${build.dir}" />
 			<classpath refid="build.classpath" />
 			<classpath refid="run.classpath" />
@@ -127,7 +132,7 @@
 		<copy todir="${build.dir}/resources">
 			<fileset dir="${resources.test}" />
 		</copy>
-		<junit printsummary="withOutAndErr" haltonfailure="yes">
+		<junit maxmemory="${memory.max}" printsummary="withOutAndErr" haltonfailure="yes">
 			<jvmarg value="-Xdebug" />
 			<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000" />
 			<classpath path="${build.dir}" />
@@ -151,11 +156,11 @@
 
 
 	<target name="run" depends="build" description="Build and run ImageJ.">
-		<java maxmemory="1024m" jar="${bin.dir}/ij.jar" fork="yes"/>
+		<java maxmemory="${memory.max}" classpathref="run.classpath" jar="${bin.dir}/ij.jar" fork="yes"/>
 	</target>
 
 	<target name="debug" depends="build" description="Build and debug ImageJ.">
-		<java maxmemory="1024m" jar="${bin.dir}/ij.jar" fork="yes">
+		<java maxmemory="${memory.max}" jar="${bin.dir}/ij.jar" fork="yes">
 			<jvmarg value="-Xdebug" />
 			<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000" />
 		</java>
@@ -188,16 +193,12 @@
 						<arg value="performance.sh"/>
 						<arg value="${bin.dir}"/>
 						<arg value="${results.dir}"/>
+						<arg value="${memory.max}"/>
 					</exec>
 				</then>
 			</elseif>
 		</if>
 	</target>	
-
-	<!-- NOT USED -->
-	<target name="zip" depends="clean" description="Build zrc.zip.">
-		<zip zipfile="../src.zip" basedir=".." includes="source/**" />
-	</target>
 
 	<!-- NOT USED -->
 	<target name="javadocs" description="Build the JavaDocs.">
