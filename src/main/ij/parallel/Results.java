@@ -73,39 +73,20 @@ public class Results {
 		}
 	}	
 	
-	public String collate(){
-		
-		long sum = 0;
-		int size = 0;
-		String summary = title+" "+proc+" cores\n";
-		// print results from each category
-		for (String c : cats.keySet()){
-			summary += c+":\n";
-			// print results from each event
-			for (String e : cats.get(c).keySet()){
-				summary += "\t"+e+": ";
-				// print results from each trial
-				for (long[] t : cats.get(c).get(e)){
-					sum += t[2];
-				}
-				size = cats.get(c).get(e).size();
-				summary += (float)sum/(1000*size)+"\n";
-			}
-			summary += "\n";
-		}
-		return summary;
-	}
-	
-	public String collateCSV(){
-		
-		long sum = 0;
-		int size = 0;
+	public String getHeaderCSV(){
 		String header="FName,IType,Pixels,Proc,Filter,Series";
 		String akey = cats.keySet().toArray(new String[]{})[0];
 		for (String e : cats.get(akey).keySet()){
 			header += ","+e;
 		}
 		header+=",PType\n";
+		return header;
+	}
+	
+	public String collateCSV(){
+		
+		long sum = 0;
+		int size = 0;
 		String results = "";
 		String rb = fname+","+type+","+width*height+","+proc+","+title+","+(indep?"INDEP":"DEP");
 		String rt;
@@ -124,7 +105,8 @@ public class Results {
 			}
 			results += rb +rt +","+c+"\n";
 		}
-		return header+results;
+
+		return results;
 		
 	}	
 	

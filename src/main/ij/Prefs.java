@@ -581,7 +581,7 @@ public class Prefs {
 	
 	/** Sets the number of threads (1-32) used by PlugInFilters to process stacks. */
 	public static void setThreads(int n) {
-		if (n<1) n = 1;
+		if (n<1) n = 0;
 		if (n>32) n = 32;
 		threads = n;
 	}

@@ -2,3 +2,5 @@ build/*
 bin/ij.jar
 reports/*
 tohexa.sh
+results/*
+resources/test/images/sample/*

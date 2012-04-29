@@ -7,9 +7,10 @@ public class ImageDivision {
 	public final int numThreads, mod, ratio;
 	public final Division[] divs;
 
-	public ImageDivision(int roiX, int roiY, int roiWidth, int roiHeight, int limit) {
+	// Decide best number of threads automatically
+	public ImageDivision(int roiX, int roiY, int roiWidth, int roiHeight) {
 		// TODO Auto-generated constructor stub
-		numThreads = Math.min(Prefs.getThreads(), limit);
+		numThreads = Math.min(Prefs.getThreads(), roiHeight);
 		ratio = roiHeight / numThreads;
 		mod = roiHeight % numThreads;
 		divs = new Division[numThreads];
@@ -17,9 +18,10 @@ public class ImageDivision {
 		setDivsions(roiX, roiY, roiWidth);
 	}
 	
-	public ImageDivision(int roiX, int roiY, int roiWidth, int roiHeight, int threads, int limit) {
+	// Set specific number of threads
+	public ImageDivision(int roiX, int roiY, int roiWidth, int roiHeight, int threads) {
 		// TODO Auto-generated constructor stub
-		numThreads = Math.min(threads, limit);
+		numThreads = Math.min(Math.max(threads, 1), roiHeight);
 		ratio = roiHeight / numThreads;
 		mod = roiHeight % numThreads;
 		divs = new Division[numThreads];
@@ -37,7 +39,7 @@ public class ImageDivision {
 			} else {
 				numRows = ratio;
 			}
-			yStart = roiY+i*numRows;
+			yStart = roiY+i*ratio;
 			yLimit = yStart + numRows;
 			xStart = roiX;
 			xEnd = roiX + roiWidth;
