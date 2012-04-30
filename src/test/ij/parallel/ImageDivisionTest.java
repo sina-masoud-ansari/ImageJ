@@ -18,7 +18,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 
 @RunWith(value = Parameterized.class)
-public class ImageDivisionTest extends TestCase{
+public class ImageDivisionTest {
 
 	private final static String 
 	
