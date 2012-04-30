@@ -70,7 +70,7 @@ public class ParallelPerformanceTest {
 		
 		ParallelPerformanceTest test = new ParallelPerformanceTest(iter, maxt);
 		test.add(new NoiseFilterPerformanceTest(url));
-		//test.add(new SaltAndPepperFilterPerformanceTest(url));
+		test.add(new SaltAndPepperFilterPerformanceTest(url));
 		test.start();
 		test.collate();
 	}

@@ -190,7 +190,10 @@
 				<!-- see http://ant.apache.org/manual/Tasks/exec.html -->
 				<exec executable="cmd">
 					<arg value="/c"/>
-					<arg value="performance.bat"/> <!-- SOMEONE NEEDS TO WRITE THIS -->
+					<arg value="performance.bat"/>
+					<arg value="${bin.dir}"/>
+					<arg value="${results.dir}"/>
+					<arg value="${memory.max}"/>
 				</exec>
 			</then>
 			<elseif>
