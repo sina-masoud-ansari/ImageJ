@@ -1160,7 +1160,7 @@ public class ColorProcessor extends ImageProcessor {
 		rsum_p = 0; gsum_p = 0; bsum_p = 0;
         rowOffset_p = width;
         
-		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight,roiHeight,1);
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, 1, width, height);
     	
 		Thread[] threads = new Thread[div.numThreads];
 		for (int i = 0; i < div.numThreads; i++)
@@ -1172,6 +1172,7 @@ public class ColorProcessor extends ImageProcessor {
 		// indicate processing is finished	
 		showProgress(1.0);
 	}
+	
 	
 	public void convolve3x3_simple(int[] kernel)
 	{
@@ -1191,7 +1192,7 @@ public class ColorProcessor extends ImageProcessor {
 		rsum_p = 0; gsum_p = 0; bsum_p = 0;
         rowOffset_p = width;
         
-		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight,roiHeight);
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, width, height);
     	
 		Thread[] threads = new Thread[div.numThreads];
 		for (int i = 0; i < div.numThreads; i++)

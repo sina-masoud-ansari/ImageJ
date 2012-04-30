@@ -123,8 +123,8 @@ public class ParallelFiltersTest {
 		TTest test = new TTest();
 		boolean reject;
 		for (int i = 0; i < nChannels; i++){
-			//double pValue = test.homoscedasticTTest(aChannles.get(i), bChannles.get(i));
-			//System.out.println("Channel: "+i+", p-value: "+Double.valueOf(DP3.format(pValue))+", alpha: "+ALPHA);
+			double pValue = test.homoscedasticTTest(aChannles.get(i), bChannles.get(i));
+			System.out.println("Channel: "+i+", p-value: "+Double.valueOf(DP3.format(pValue))+", alpha: "+ALPHA);
 			reject = test.homoscedasticTTest(aChannles.get(i), bChannles.get(i), ALPHA);
 			if (reject){			
 				//System.out.println("\tRejected with confidence: " + (1 - ALPHA));			

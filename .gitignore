@@ -1,4 +1,6 @@
 build/*
-bin/ij.jar
+bin/*
 reports/*
 tohexa.sh
+results/*
+resources/test/images/sample/*
