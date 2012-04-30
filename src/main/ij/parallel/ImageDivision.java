@@ -1,11 +1,14 @@
 package ij.parallel;
 
+import ij.ImagePlus;
 import ij.Prefs;
+import ij.process.*;
 
 public class ImageDivision {
 	
 	public final int numThreads, mod, ratio;
 	public final Division[] divs;
+	
 
 	public ImageDivision(int roiX, int roiY, int roiWidth, int roiHeight, int limit) {
 		// TODO Auto-generated constructor stub
@@ -15,6 +18,15 @@ public class ImageDivision {
 		divs = new Division[numThreads];
 		
 		setDivsions(roiX, roiY, roiWidth);
+	}
+	
+	public ImageDivision(int roiX, int roiY, int roiWidth, int roiHeight, int limit, int width, int height) {
+		// TODO Auto-generated constructor stub
+		numThreads = Math.min(Prefs.getThreads(), limit);
+		ratio = roiHeight / numThreads;
+		mod = roiHeight % numThreads;
+		divs = new Division[numThreads];
+		setDivsionsWithKernel(roiX, roiY, roiWidth,roiHeight, width, height);
 	}
 	
 	public ImageDivision(int roiX, int roiY, int roiWidth, int roiHeight, int threads, int limit) {
@@ -28,7 +40,7 @@ public class ImageDivision {
 	}	
 	
 	private void setDivsions(int roiX, int roiY, int roiWidth){
-		int numRows, yStart, yLimit, xEnd;
+		int numRows, yStart, yLimit, xEnd,xStart;
 		
 		for (int i = 0; i < numThreads; i++){
 			if ( i == (numThreads - 1)){
@@ -43,6 +55,26 @@ public class ImageDivision {
 			divs[i] = new Division(i, numRows, yStart, yLimit, xEnd);
 		}		
 	}
+
+	private void setDivsionsWithKernel(int roiX, int roiY, int roiWidth, int roiHeight,int width, int height){
+		int numRows, yStart, yLimit, xEnd,xStart;
+		
+		for (int i = 0; i < numThreads; i++){
+			if ( i == (numThreads - 1)){
+				// add remainder rows for the last thread if the roiHeight is not a multiple of numThreads
+				numRows = mod == 0 ? ratio : ratio + mod;
+			} else {
+				numRows = ratio;
+			}
+			yStart = Math.min(1,roiY+i*numRows);
+			yLimit = Math.min(yStart+numRows,height-2);
+			xEnd = Math.min(width - 2,roiX + roiWidth-1);
+			xStart=Math.min(roiX,1);
+			//int xMax =  Math.min(roiX + roiWidth - 1, width - 2);
+			//int yMax = Math.min(yStart + roiHeight - 1, height - 2);
+			divs[i] = new Division(i, numRows, yStart, yLimit, xEnd, xStart);
+		}		
+	}	
 	
 	public Division getDivision(int index){
 		return divs[index];

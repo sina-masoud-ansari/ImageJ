@@ -2,6 +2,9 @@ package ij.process;
 
 import java.awt.*;
 import java.awt.image.*;
+
+import ij.parallel.Division;
+import ij.parallel.ImageDivision;
 import ij.process.ByteProcessor;
 import ij.ImageStack;
 
@@ -20,6 +23,11 @@ public class ColorProcessor extends ImageProcessor {
 	protected byte[] R, G, B;
 	protected ByteProcessor r, g, b;
 	protected Rectangle roi;
+	int p1_p,p2_p,p3_p,p4_p,p5_p,p6_p,p7_p,p8_p,p9_p;
+	int k1_p,k2_p,k3_p,k4_p,k5_p,k6_p,k7_p,k8_p,k9_p;
+	int offset_p,rowOffset_p,scale_p;
+	int[] pixelsTemp;
+	int rsum_p, gsum_p,bsum_p,inc_p;
 	
 	// Weighting factors used by getPixelValue(), getHistogram() and convertToByte().
 	// Enable "Weighted RGB Conversion" in <i>Edit/Options/Conversions</i>
@@ -1063,7 +1071,8 @@ public class ColorProcessor extends ImageProcessor {
 		int offset;
 		int rsum = 0, gsum = 0, bsum = 0;
         int rowOffset = width;
-		for (int y=yMin; y<=yMax; y++) {
+		
+        for (int y=yMin; y<=yMax; y++) {
 			offset = xMin + y * width;
 			p1 = 0;
 			p2 = pixels2[offset-rowOffset-1];
@@ -1132,7 +1141,146 @@ public class ColorProcessor extends ImageProcessor {
 		}
 		showProgress(1.0);
 	}
+	
+	public void convolve3x3_serial(int[] kernel)
+	{
+		k1_p=kernel[0]; k2_p=kernel[1]; k3_p=kernel[2];
+	    k4_p=kernel[3]; k5_p=kernel[4]; k6_p=kernel[5];
+		k7_p=kernel[6]; k8_p=kernel[7]; k9_p=kernel[8];
 
+		scale_p = 0;
+		for (int i=0; i<kernel.length; i++)
+			scale_p += kernel[i];
+		if (scale_p==0) scale_p = 1;
+	    inc_p = roiHeight/25;
+		if (inc_p<1) inc_p = 1;
+		
+		 pixelsTemp = (int[])getPixelsCopy();
+		
+		rsum_p = 0; gsum_p = 0; bsum_p = 0;
+        rowOffset_p = width;
+        
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight,roiHeight,1);
+    	
+		Thread[] threads = new Thread[div.numThreads];
+		for (int i = 0; i < div.numThreads; i++)
+		{
+			threads[i] = new Thread(getRunnableConvolve(div.getDivision(i))); 
+		}
+		
+		div.processThreads(threads);
+		// indicate processing is finished	
+		showProgress(1.0);
+	}
+	
+	public void convolve3x3_simple(int[] kernel)
+	{
+		k1_p=kernel[0]; k2_p=kernel[1]; k3_p=kernel[2];
+	    k4_p=kernel[3]; k5_p=kernel[4]; k6_p=kernel[5];
+		k7_p=kernel[6]; k8_p=kernel[7]; k9_p=kernel[8];
+
+		scale_p = 0;
+		for (int i=0; i<kernel.length; i++)
+			scale_p += kernel[i];
+		if (scale_p==0) scale_p = 1;
+	    inc_p = roiHeight/25;
+		if (inc_p<1) inc_p = 1;
+		
+		 pixelsTemp = (int[])getPixelsCopy();
+		
+		rsum_p = 0; gsum_p = 0; bsum_p = 0;
+        rowOffset_p = width;
+        
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight,roiHeight);
+    	
+		Thread[] threads = new Thread[div.numThreads];
+		for (int i = 0; i < div.numThreads; i++)
+		{
+			threads[i] = new Thread(getRunnableConvolve(div.getDivision(i))); 
+		}
+		
+		div.processThreads(threads);
+		// indicate processing is finished	
+		showProgress(1.0);
+	}
+
+	private Runnable getRunnableConvolve(final Division div)
+	{
+		return new Runnable(){
+			@Override
+			public void run() 
+			{	
+				for (int y=div.yStart; y<=div.yLimit; y++) {
+					offset_p = div.xStart + y * width;
+					p1_p = 0;
+					p2_p = pixelsTemp[offset_p-rowOffset_p-1];
+					p3_p = pixelsTemp[offset_p-rowOffset_p];
+					p4_p = 0;
+					p5_p = pixelsTemp[offset_p-1];
+					p6_p = pixelsTemp[offset_p];
+					p7_p = 0;
+					p8_p = pixelsTemp[offset_p+rowOffset_p-1];
+					p9_p = pixelsTemp[offset_p+rowOffset_p];
+
+					for (int x=div.xStart; x<=div.xEnd; x++) {
+						p1_p = p2_p; p2_p = p3_p;
+						p3_p = pixelsTemp[offset_p-rowOffset_p+1];
+						p4_p = p5_p; p5_p = p6_p;
+						p6_p = pixelsTemp[offset_p+1];
+						p7_p = p8_p; p8_p = p9_p;
+						p9_p = pixelsTemp[offset_p+rowOffset_p+1];
+
+						rsum_p = k1_p*((p1_p & 0xff0000) >> 16)
+						     + k2_p*((p2_p & 0xff0000) >> 16)
+						     + k3_p*((p3_p & 0xff0000) >> 16)
+						     + k4_p*((p4_p & 0xff0000) >> 16)
+						     + k5_p*((p5_p & 0xff0000) >> 16)
+						     + k6_p*((p6_p & 0xff0000) >> 16)
+						     + k7_p*((p7_p & 0xff0000) >> 16)
+						     + k8_p*((p8_p & 0xff0000) >> 16)
+						     + k9_p*((p9_p & 0xff0000) >> 16);
+						rsum_p /= scale_p;
+						if(rsum_p>255) rsum_p = 255;
+						if(rsum_p<0) rsum_p = 0;
+
+						gsum_p = k1_p*((p1_p & 0xff00) >> 8)
+						     + k2_p*((p2_p & 0xff00) >> 8)
+						     + k3_p*((p3_p & 0xff00) >> 8)
+						     + k4_p*((p4_p & 0xff00) >> 8)
+						     + k5_p*((p5_p & 0xff00) >> 8)
+						     + k6_p*((p6_p & 0xff00) >> 8)
+						     + k7_p*((p7_p & 0xff00) >> 8)
+						     + k8_p*((p8_p & 0xff00) >> 8)
+						     + k9_p*((p9_p & 0xff00) >> 8);
+						gsum_p /= scale_p;
+						if(gsum_p>255) gsum_p = 255;
+						else if(gsum_p<0) gsum_p = 0;
+
+						bsum_p = k1_p*(p1_p & 0xff)
+						     + k2_p*(p2_p & 0xff)
+						     + k3_p*(p3_p & 0xff)
+						     + k4_p*(p4_p & 0xff)
+						     + k5_p*(p5_p & 0xff)
+						     + k6_p*(p6_p & 0xff)
+						     + k7_p*(p7_p & 0xff)
+						     + k8_p*(p8_p& 0xff)
+						     + k9_p*(p9_p & 0xff);
+						bsum_p /= scale_p;
+						if (bsum_p>255) bsum_p = 255;
+						if (bsum_p<0) bsum_p = 0; 
+
+						pixels[offset_p++] = 0xff000000
+						                 | ((rsum_p << 16) & 0xff0000)
+						                 | ((gsum_p << 8 ) & 0xff00)
+						                 |  (bsum_p       & 0xff);
+					}
+					if (y%inc_p==0)
+						showProgress((double)(y-roiY)/roiHeight);
+				}
+			}
+		};
+	}
+	
 	/** 3x3 unweighted smoothing. */
 	public void filter(int type) {
 		int p1, p2, p3, p4, p5, p6, p7, p8, p9;

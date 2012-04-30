@@ -21,6 +21,10 @@ public class ByteProcessor extends ImageProcessor {
 	private boolean bgColorSet;
 	private int min=0, max=255;
     private int binaryCount, binaryBackground;
+    byte[] pixelsTemp;
+    int v1_p,v2_p,v3_p,v4_p,v5_p,v6_p,v7_p,v8_p,v9_p;
+    int k1_p,k2_p,k3_p,k4_p,k5_p,k6_p,k7_p,k8_p,k9_p;
+    int scale_p;
 
 	/**Creates a ByteProcessor from an AWT Image. */
 	public ByteProcessor(Image img) {
@@ -544,6 +548,112 @@ public class ByteProcessor extends ImageProcessor {
         }
         showProgress(1.0);
     }
+    
+    public void convolve3x3_simple(int[] kernel)
+    {
+        scale_p = 0;
+ 		k1_p=kernel[0]; k2_p=kernel[1]; k3_p=kernel[2];
+ 		k4_p=kernel[3]; k5_p=kernel[4]; k6_p=kernel[5];
+ 		k7_p=kernel[6]; k8_p=kernel[7]; k9_p=kernel[8];
+ 		
+ 		for (int i=0; i<kernel.length; i++)
+ 		scale_p += kernel[i];
+ 		
+ 		if (scale_p==0) scale_p = 1;
+        int inc = roiHeight/25;
+        if (inc<1) inc = 1;
+        
+        pixelsTemp = (byte[])getPixelsCopy();
+        
+        // for multiple threads
+    	ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, roiHeight);
+    	
+		Thread[] threads = new Thread[div.numThreads];
+		for (int i = 0; i < div.numThreads; i++)
+		{
+			threads[i] = new Thread(getRunnableConvolve(div.getDivision(i))); 
+		}
+		
+		div.processThreads(threads);
+		// indicate processing is finished	
+		showProgress(1.0);
+    }
+    
+    public void convolve3x3_serial(int[] kernel)
+    {
+    	scale_p = 0;
+ 		k1_p=kernel[0]; k2_p=kernel[1]; k3_p=kernel[2];
+ 		k4_p=kernel[3]; k5_p=kernel[4]; k6_p=kernel[5];
+ 		k7_p=kernel[6]; k8_p=kernel[7]; k9_p=kernel[8];
+ 		
+ 		for (int i=0; i<kernel.length; i++)
+ 		scale_p += kernel[i];
+ 		
+ 		if (scale_p==0) scale_p = 1;
+        int inc = roiHeight/25;
+        if (inc<1) inc = 1;
+        
+        //for single thread
+    	ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, 1);
+    	
+		Thread[] threads = new Thread[div.numThreads];
+		for (int i = 0; i < div.numThreads; i++)
+		{
+			threads[i] = new Thread(getRunnableConvolve(div.getDivision(i))); 
+		}
+		
+		div.processThreads(threads);
+		// indicate processing is finished	
+		showProgress(1.0);
+    }
+    
+    private Runnable getRunnableConvolve(final Division div)
+    {
+    	return new Runnable(){
+			@Override
+			public void run() 
+			{		
+				// for each row
+				for (int y = div.yStart; y < div.yLimit; y++)
+				{
+					int p  = roiX + y*width;            
+					int p6 = p - (roiX>0 ? 1 : 0);      
+					int p3 = p6 - (y>0 ? width : 0);    
+					int p9 = p6 + (y<height-1 ? width : 0);
+
+					v2_p = pixelsTemp[p3]&0xff;
+					v5_p = pixelsTemp[p6]&0xff;  
+					v8_p = pixelsTemp[p9]&0xff;
+					if (roiX>0) { p3++; p6++; p9++; }
+					v3_p = pixelsTemp[p3]&0xff;
+					v6_p = pixelsTemp[p6]&0xff;
+					v9_p = pixelsTemp[p9]&0xff;
+					for (int x = roiX; x < div.xEnd; x++,p++)
+					{						
+						if (x<width-1) { p3++; p6++; p9++; }
+						v1_p = v2_p; v2_p = v3_p;
+						v3_p = pixelsTemp[p3]&0xff;
+						v4_p = v5_p; v5_p = v6_p;
+						v6_p = pixelsTemp[p6]&0xff;
+						v7_p = v8_p; v8_p = v9_p;
+						v9_p = pixelsTemp[p9]&0xff;
+						int sum = k1_p*v1_p + k2_p*v2_p + k3_p*v3_p
+								+ k4_p*v4_p + k5_p*v5_p + k6_p*v6_p
+								+ k7_p*v7_p + k8_p*v8_p + k9_p*v9_p;
+						sum = (sum+scale_p/2)/scale_p;   //add scale/2 to round
+						if (sum>255) sum = 255;
+						if (sum<0) sum = 0;
+						pixels[p] = (byte)sum;
+					} // end x loop
+					if (y%20==0) {
+						showProgress((double)(y-roiY)/roiHeight);
+					}
+				} // end y loop
+			} 				
+		}; 		
+    	
+    }
+    
 
 	/** Filters using a 3x3 neighborhood. The p1, p2, etc variables, which
 		contain the values of the pixels in the neighborhood, are arranged
@@ -929,8 +1039,8 @@ public class ByteProcessor extends ImageProcessor {
 	@Override
 	public void noise_P_SIMPLE(double range) {
 		
-		//Divide the number of rows by the number of threads, max threads is 1 in this case
-		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, 1);
+		//Divide the number of rows by the number of threads, max threads is roiHeight in this case
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, roiHeight);
 	
 		Thread[] threads = new Thread[div.numThreads];
 		for (int i = 0; i < div.numThreads; i++){
