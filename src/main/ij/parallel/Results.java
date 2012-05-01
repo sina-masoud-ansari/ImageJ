@@ -108,7 +108,6 @@ public class Results {
 		}
 
 		return results;
-		
 	}	
 	
 }
