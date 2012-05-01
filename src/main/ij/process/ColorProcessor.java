@@ -765,6 +765,16 @@ public class ColorProcessor extends ImageProcessor {
 		finish();		
 		
 	}
+
+	@Override
+	public void noise_P_FORK_JOIN(double range) {
+		// TODO Auto-generated method stub
+		setup();
+		r.noise_P_FORK_JOIN(range); showProgress(0.40);
+		g.noise_P_FORK_JOIN(range); showProgress(0.65);
+		b.noise_P_FORK_JOIN(range); showProgress(0.90);		
+		finish();			
+	}		
     
 	public void medianFilter() {
     	filterRGB(RGB_MEDIAN, 0.0);

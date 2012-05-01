@@ -5,6 +5,7 @@ RESULTS_DIR=$2
 MAX_MEM=$3
 SAMPLE_DIR=$4
 NUM_SAMPLES=$5
+XBOOT=$6
 
 ### Make samples
 
@@ -13,7 +14,7 @@ NUM_SAMPLES=$5
 #fi
 
 #for (( i=1; i<=$NUM_SAMPLES; i++ )); do
-#	java -Xmx$MAX_MEM -classpath $BIN_DIR/ij.jar:$BIN_DIR/jai_codec.jar:$BIN_DIR/jai_core.jar ij.parallel.SampleImageCreator $((1000*$i)) $SAMPLE_DIR
+#	java -Xmx$MAX_MEM -Xbootclasspath/p:$XBOOT -classpath $BIN_DIR/ij.jar:$BIN_DIR/jai_codec.jar:$BIN_DIR/jai_core.jar ij.parallel.SampleImageCreator $((1000*$i)) $SAMPLE_DIR
 #done
 
 ## Create and run jobs
@@ -45,7 +46,7 @@ for image in $SAMPLE_DIR/*.tif; do
         echo "#@ queue" >> $JOBFILE
         
         echo "cd $HOME/ImageJ" >> $JOBFILE
-        echo "java -Xmx$MAX_MEM -classpath $BIN_DIR/ij.jar ij.parallel.ParallelPerformanceTest $image 10 > $RESULTS_DIR/$csv" >> $JOBFILE
+        echo "java -Xmx$MAX_MEM -Xbootclasspath/p:$XBOOT -classpath $BIN_DIR/ij.jar ij.parallel.ParallelPerformanceTest $image 10 > $RESULTS_DIR/$csv" >> $JOBFILE
         
         llsubmit $JOBFILE
         
