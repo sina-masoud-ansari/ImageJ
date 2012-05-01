@@ -1062,6 +1062,7 @@ public class ShortProcessor extends ImageProcessor {
     
     private Runnable getNoiseRunnable(final double range, final Division div){
     	 	
+    	//TODO : Upadte with div.xStart
     	return new Runnable(){
 			@Override
 			public void run() {
@@ -1125,6 +1126,12 @@ public class ShortProcessor extends ImageProcessor {
 		// indicate processing is finished	
 		showProgress(1.0);
     } 
+	
+	@Override
+	public void noise_P_FORK_JOIN(double range) {
+		// TODO Auto-generated method stub
+		
+	}		
     
 	public void threshold(int level) {
 		for (int i=0; i<width*height; i++) {

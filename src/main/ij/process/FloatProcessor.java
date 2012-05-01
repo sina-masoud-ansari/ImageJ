@@ -793,6 +793,12 @@ public class FloatProcessor extends ImageProcessor {
 		// indicate processing is finished	
 		showProgress(1.0);
     } 
+	
+	@Override
+	public void noise_P_FORK_JOIN(double range) {
+		// TODO Auto-generated method stub
+		
+	}		
 
 	public ImageProcessor crop() {
 		ImageProcessor ip2 = createProcessor(roiWidth, roiHeight);

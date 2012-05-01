@@ -80,22 +80,7 @@ public class ParallelFiltersTest {
 		imgA = new ImagePlus(url.getPath());
 		imgB = new ImagePlus(url.getPath());	
 	}
-	
-	//@Test
-	public void testImageDivision() {
-		
-		switch (mode){
-		case ImageProcessor.P_NONE:
-			
-			break;
-		case ImageProcessor.P_SERIAL:
-			
-			break;
-		case ImageProcessor.P_SIMPLE:
-			
-			break;	
-		}
-	}
+
 	
 	@Test
 	public void testAddNoise() {
@@ -123,12 +108,7 @@ public class ParallelFiltersTest {
 		TTest test = new TTest();
 		boolean reject;
 		for (int i = 0; i < nChannels; i++){
-			double pValue = test.homoscedasticTTest(aChannles.get(i), bChannles.get(i));
-			System.out.println("Channel: "+i+", p-value: "+Double.valueOf(DP3.format(pValue))+", alpha: "+ALPHA);
 			reject = test.homoscedasticTTest(aChannles.get(i), bChannles.get(i), ALPHA);
-			if (reject){			
-				//System.out.println("\tRejected with confidence: " + (1 - ALPHA));			
-			}
 			assertEquals(false, reject);
 		}
 	}

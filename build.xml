@@ -55,12 +55,14 @@
 				<javac destdir="${build.dir}" classpathref="build.classpath" optimize="on" source="1.6" target="1.6" debug="on" encoding="UTF-8" bootclasspath="/usr/lib/jvm/java-1.6.0-openjdk/jre/lib/rt.jar">
 					<src path="${src.main}"/>
 					<src path="${src.test}"/>
+					<compilerarg arg="-Xbootclasspath/p:${lib.dir}/jsr166.jar"/>
 				</javac>
 			</then>
 			<else>
 				<javac destdir="${build.dir}" classpathref="build.classpath" optimize="on" source="1.6" target="1.6" debug="on" encoding="UTF-8">
 					<src path="${src.main}"/>
 					<src path="${src.test}"/>
+					<compilerarg value="-Xbootclasspath/p:${lib.dir}/jsr166.jar"/>
 				</javac>
 			</else>
 		</if>
@@ -112,6 +114,7 @@
 			<fileset dir="${resources.test}" />
 		</copy>
 		<junit maxmemory="${memory.max}" printsummary="withOutAndErr" haltonfailure="yes">
+			<jvmarg value="-Xbootclasspath/p:${lib.dir}/jsr166.jar" />
 			<classpath path="${build.dir}" />
 			<classpath refid="build.classpath" />
 			<classpath refid="run.classpath" />
@@ -140,6 +143,7 @@
 			<fileset dir="${resources.test}" />
 		</copy>
 		<junit maxmemory="${memory.max}" printsummary="withOutAndErr" haltonfailure="yes">
+			<jvmarg value="-Xbootclasspath/p:${lib.dir}/jsr166.jar" />
 			<jvmarg value="-Xdebug" />
 			<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000" />
 			<classpath path="${build.dir}" />
@@ -163,11 +167,14 @@
 
 
 	<target name="run" depends="build" description="Build and run ImageJ.">
-		<java maxmemory="${memory.max}" classpathref="run.classpath" jar="${bin.dir}/ij.jar" fork="yes"/>
+		<java maxmemory="${memory.max}" classpathref="run.classpath" jar="${bin.dir}/ij.jar" fork="yes">
+			<jvmarg value="-Xbootclasspath/p:${lib.dir}/jsr166.jar" />
+		</java>
 	</target>
 
 	<target name="debug" depends="build" description="Build and debug ImageJ.">
 		<java maxmemory="${memory.max}" jar="${bin.dir}/ij.jar" fork="yes">
+			<jvmarg value="-Xbootclasspath/p:${lib.dir}/jsr166.jar" />
 			<jvmarg value="-Xdebug" />
 			<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000" />
 		</java>
@@ -206,6 +213,7 @@
 						<arg value="${memory.max}"/>
 						<arg value="${sample.dir}"/>
 						<arg value="${num.samples}"/>
+						<arg value="${lib.dir}/jsr166.jar"/>
 					</exec>
 				</then>
 			</elseif>
@@ -232,6 +240,7 @@
 						<!--<arg value="${sample.dir}"/> -->
 						<arg value="../sample_images"/>
 						<arg value="${num.samples}"/>
+						<arg value="${lib.dir}/jsr166.jar"/>
 					</exec>
 				</then>
 			</elseif>

@@ -1,8 +1,6 @@
 package ij.parallel;
 
-import ij.ImagePlus;
 import ij.Prefs;
-import ij.process.*;
 
 public class ImageDivision {
 	

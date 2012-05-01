@@ -1,10 +1,12 @@
 package ij.process;
 
 import java.util.*;
+import java.util.concurrent.ForkJoinPool;
 import java.awt.*;
 import java.awt.image.*;
 import ij.gui.*;
 import ij.parallel.Division;
+import ij.parallel.ForkAction;
 import ij.parallel.ImageDivision;
 import ij.Prefs;
 
@@ -1054,6 +1056,13 @@ public class ByteProcessor extends ImageProcessor {
 		showProgress(1.0);
 		
 	}   
+	
+	@Override
+	public void noise_P_FORK_JOIN(double range) {
+		// TODO Auto-generated method stub
+		ForkJoinPool fjp = new ForkJoinPool();
+		ForkAction fa = new ForkAction();
+	}	
 
 	/** Scales the image or selection using the specified scale factors.
 		@see ImageProcessor#setInterpolate
@@ -1451,6 +1460,8 @@ public class ByteProcessor extends ImageProcessor {
 	byte[] create8BitImage() {
 		return pixels;
 	}
+
+
 
 }
 

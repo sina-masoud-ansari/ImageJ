@@ -1944,6 +1944,7 @@ public abstract class ImageProcessor implements Cloneable {
 	public abstract void noise_P_NONE(double range);
 	public abstract void noise_P_SERIAL(double range);
 	public abstract void noise_P_SIMPLE(double range);    
+	public abstract void noise_P_FORK_JOIN(double range);
     
 	/** Creates a new processor containing an image
 		that corresponds to the current ROI. */
