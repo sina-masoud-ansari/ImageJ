@@ -9,8 +9,8 @@ import java.awt.*;
 /** Implements the commands in the Process/Shadows submenu. */
 public class Shadows implements PlugInFilter {
 	
-	String arg;
-	ImagePlus imp;
+	protected String arg;
+	protected ImagePlus imp;
 
 	public int setup(String arg, ImagePlus imp) {
 		this.arg = arg;

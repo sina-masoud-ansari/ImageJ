@@ -19,7 +19,11 @@ public class ShortProcessor extends ImageProcessor {
 	private short[] snapshotPixels;
 	private byte[] LUT;
 	private boolean fixedScale;
-
+	int v1_p, v2_p, v3_p;           //input pixel values around the current pixel
+    int v4_p, v5_p, v6_p;
+    int v7_p, v8_p, v9_p;
+    int k1_p,k2_p,k3_p,k4_p,k5_p,k6_p,k7_p,k8_p,k9_p,scale_p;
+    short[] pixelsTemp;
 
 	/** Creates a new ShortProcessor using the specified pixel array and ColorModel.
 		Set 'cm' to null to use the default grayscale LUT. */
@@ -615,6 +619,7 @@ public class ShortProcessor extends ImageProcessor {
         }
         int inc = roiHeight/25;
         if (inc<1) inc = 1;
+         
 
         short[] pixels2 = (short[])getPixelsCopy();
         int xEnd = roiX + roiWidth;
@@ -1191,6 +1196,117 @@ public class ShortProcessor extends ImageProcessor {
 	/** Not implemented. */
 	public void dilate() {}
 
+	@Override
+	public void convolve3x3_serial(int[] kernel) 
+	{
+         k1_p=0; k2_p=0; k3_p=0;  //kernel values (used for CONVOLVE only)
+         k4_p=0; k5_p=0; k6_p=0;
+         k7_p=0; k8_p=0; k9_p=0;
+         scale_p = 0;
+        
+            k1_p=kernel[0]; k2_p=kernel[1]; k3_p=kernel[2];
+            k4_p=kernel[3]; k5_p=kernel[4]; k6_p=kernel[5];
+            k7_p=kernel[6]; k8_p=kernel[7]; k9_p=kernel[8];
+            for (int i=0; i<kernel.length; i++)
+                scale_p += kernel[i];
+            if (scale_p==0) scale_p = 1;
+        
+        int inc = roiHeight/25;
+        if (inc<1) inc = 1;
+        pixelsTemp = (short[])getPixelsCopy();
+        
+        ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight,1);
+    	
+		Thread[] threads = new Thread[div.numThreads];
+		for (int i = 0; i < div.numThreads; i++)
+		{
+			threads[i] = new Thread(getRunnableConvolve(div.getDivision(i))); 
+		}
+		
+		div.processThreads(threads);
+		// indicate processing is finished	
+		showProgress(1.0);
+	}
+
+	@Override
+	public void convolve3x3_simple(int[] kernel) {
+		// TODO Auto-generated method stub
+		 k1_p=0; k2_p=0; k3_p=0;  //kernel values (used for CONVOLVE only)
+         k4_p=0; k5_p=0; k6_p=0;
+         k7_p=0; k8_p=0; k9_p=0;
+         scale_p = 0;
+        
+            k1_p=kernel[0]; k2_p=kernel[1]; k3_p=kernel[2];
+            k4_p=kernel[3]; k5_p=kernel[4]; k6_p=kernel[5];
+            k7_p=kernel[6]; k8_p=kernel[7]; k9_p=kernel[8];
+            for (int i=0; i<kernel.length; i++)
+                scale_p += kernel[i];
+            if (scale_p==0) scale_p = 1;
+        
+        int inc = roiHeight/25;
+        if (inc<1) inc = 1;
+        pixelsTemp = (short[])getPixelsCopy();
+        
+        ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight,roiHeight);
+    	
+		Thread[] threads = new Thread[div.numThreads];
+		for (int i = 0; i < div.numThreads; i++)
+		{
+			threads[i] = new Thread(getRunnableConvolve(div.getDivision(i))); 
+		}
+		
+		div.processThreads(threads);
+		// indicate processing is finished	
+		showProgress(1.0);
+	}
+
+	private Runnable getRunnableConvolve(final Division div)
+    {
+    	return new Runnable(){
+			@Override
+			public void run() 
+			{		
+				// for each row
+				for (int y = div.yStart; y < div.yLimit; y++)
+				{
+					int p  = roiX + y*width;            //points to current pixel
+		            int p6 = p - (roiX>0 ? 1 : 0);      //will point to v6, currently lower
+		            int p3 = p6 - (y>0 ? width : 0);    //will point to v3, currently lower
+		            int p9 = p6 + (y<height-1 ? width : 0); // ...  to v9, currently lower
+		            v2_p = pixelsTemp[p3]&0xffff;
+		            v5_p = pixelsTemp[p6]&0xffff;
+		            v8_p = pixelsTemp[p9]&0xffff;
+		            if (roiX>0) { p3++; p6++; p9++; }
+		            v3_p = pixelsTemp[p3]&0xffff;
+		            v6_p = pixelsTemp[p6]&0xffff;
+		            v9_p = pixelsTemp[p9]&0xffff;
+		            
+		            for (int x=roiX; x<div.xEnd; x++,p++) {
+	                    if (x<width-1) { p3++; p6++; p9++; }
+	                    v1_p = v2_p; v2_p = v3_p;
+	                    v3_p = pixelsTemp[p3]&0xffff;
+	                    v4_p = v5_p; v5_p = v6_p;
+	                    v6_p = pixelsTemp[p6]&0xffff;
+	                    v7_p = v8_p; v8_p = v9_p;
+	                    v9_p = pixelsTemp[p9]&0xffff;
+	                    int sum = k1_p*v1_p + k2_p*v2_p + k3_p*v3_p
+	                            + k4_p*v4_p + k5_p*v5_p + k6_p*v6_p
+	                            + k7_p*v7_p + k8_p*v8_p + k9_p*v9_p;
+	                    sum = (sum+scale_p/2)/scale_p;   //scale/2 for rounding
+	                    if(sum>65535) sum = 65535;
+	                    if(sum<0) sum = 0;
+	                    pixels[p] = (short)sum;
+	                }
+					
+					
+					if (y%20==0) {
+						showProgress((double)(y-roiY)/roiHeight);
+					}
+				} // end y loop
+			} 				
+		}; 		
+    	
+    }
 
 }
 

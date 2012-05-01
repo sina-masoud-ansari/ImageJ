@@ -18,6 +18,15 @@ public class FloatProcessor extends ImageProcessor {
 	private float[] snapshotPixels = null;
 	private float fillColor =  Float.MAX_VALUE;
 	private boolean fixedScale = false;
+	float v1_p, v2_p, v3_p;			//input pixel values around the current pixel
+	float v4_p, v5_p, v6_p;
+	float v7_p, v8_p, v9_p;
+	float k1_p, k2_p, k3_p;	//kernel values (used for CONVOLVE only)
+	float k4_p, k5_p, k6_p;
+	float k7_p, k8_p, k9_p;
+	float scale_p;
+	int inc_p;
+	float[] pixelsTemp;
 
 	/** Creates a new FloatProcessor using the specified pixel array. */
 	public FloatProcessor(int width, int height, float[] pixels) {
@@ -1100,7 +1109,124 @@ public class FloatProcessor extends ImageProcessor {
 	public double maxValue() {
 		return Float.MAX_VALUE;
 	}
+
+	@Override
+	public void convolve3x3_serial(int[] kernel)
+	{
+		k1_p=0f; k2_p=0f; k3_p=0f;	//kernel values (used for CONVOLVE only)
+		k4_p=0f; k5_p=0f; k6_p=0f;
+		k7_p=0f; k8_p=0f; k9_p=0f;
+		scale_p = 0f;
+		
+		
+		k1_p=kernel[0]; k2_p=kernel[1]; k3_p=kernel[2];
+		k4_p=kernel[3]; k5_p=kernel[4]; k6_p=kernel[5];
+		k7_p=kernel[6]; k8_p=kernel[7]; k9_p=kernel[8];
+		
+		for (int i=0; i<kernel.length; i++)
+				scale_p += kernel[i];
+			if (scale_p==0) scale_p = 1f;
+			scale_p = 1f/scale_p; //multiplication factor (multiply is faster than divide)
+		
+		inc_p = roiHeight/25;
+		if (inc_p<1) inc_p = 1;
+		
+		pixelsTemp = (float[])getPixelsCopy();
+
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight,1);
+    	
+		Thread[] threads = new Thread[div.numThreads];
+		for (int i = 0; i < div.numThreads; i++)
+		{
+			threads[i] = new Thread(getRunnableConvolve(div.getDivision(i))); 
+		}
+		
+		div.processThreads(threads);
+		// indicate processing is finished	
+		showProgress(1.0);
+
+	}
+
+	@Override
+	public void convolve3x3_simple(int[] kernel) 
+	{
+		k1_p=0f; k2_p=0f; k3_p=0f;	//kernel values (used for CONVOLVE only)
+		k4_p=0f; k5_p=0f; k6_p=0f;
+		k7_p=0f; k8_p=0f; k9_p=0f;
+		scale_p = 0f;
+		
+		
+		k1_p=kernel[0]; k2_p=kernel[1]; k3_p=kernel[2];
+		k4_p=kernel[3]; k5_p=kernel[4]; k6_p=kernel[5];
+		k7_p=kernel[6]; k8_p=kernel[7]; k9_p=kernel[8];
+		
+		for (int i=0; i<kernel.length; i++)
+				scale_p += kernel[i];
+			if (scale_p==0) scale_p = 1f;
+			scale_p = 1f/scale_p; //multiplication factor (multiply is faster than divide)
+		
+		inc_p = roiHeight/25;
+		if (inc_p<1) inc_p = 1;
+		
+		pixelsTemp = (float[])getPixelsCopy();
+
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
+    	
+		Thread[] threads = new Thread[div.numThreads];
+		for (int i = 0; i < div.numThreads; i++)
+		{
+			threads[i] = new Thread(getRunnableConvolve(div.getDivision(i))); 
+		}
+		
+		div.processThreads(threads);
+		// indicate processing is finished	
+		showProgress(1.0);
+	}
 	
+	private Runnable getRunnableConvolve(final Division div)
+    {
+    	return new Runnable(){
+			@Override
+			public void run() 
+			{		
+				// for each row
+				for (int y = div.yStart; y < div.yLimit; y++)
+				{
+					int p  = roiX + y*width;			//points to current pixel
+					int p6 = p - (roiX>0 ? 1 : 0);		//will point to v6, currently lower
+					int p3 = p6 - (y>0 ? width : 0);	//will point to v3, currently lower
+					int p9 = p6 + (y<height-1 ? width : 0); // ...	to v9, currently lower
+					v2_p = pixelsTemp[p3];
+					v5_p = pixelsTemp[p6];
+					v8_p = pixelsTemp[p9];
+					if (roiX>0) { p3++; p6++; p9++; }
+					v3_p = pixelsTemp[p3];
+					v6_p = pixelsTemp[p6];
+					v9_p = pixelsTemp[p9];
+					
+					for (int x=roiX; x<div.xEnd; x++,p++) {
+						if (x<width-1) { p3++; p6++; p9++; }
+						v1_p = v2_p; v2_p = v3_p;
+						v3_p = pixelsTemp[p3];
+						v4_p = v5_p; v5_p = v6_p;
+						v6_p = pixelsTemp[p6];
+						v7_p = v8_p; v8_p = v9_p;
+						v9_p = pixelsTemp[p9];
+						float sum = k1_p*v1_p + k2_p*v2_p + k3_p*v3_p
+								  + k4_p*v4_p + k5_p*v5_p + k6_p*v6_p
+								  + k7_p*v7_p + k8_p*v8_p + k9_p*v9_p;
+						sum *= scale_p;
+						pixels[p] = sum;
+					}
+					
+					if (y%20==0) {
+						showProgress((double)(y-roiY)/roiHeight);
+					}
+				} // end y loop
+			} 				
+		}; 		
+    	
+    }
 
 }
 

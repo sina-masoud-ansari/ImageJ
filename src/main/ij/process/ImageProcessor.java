@@ -1928,6 +1928,8 @@ public abstract class ImageProcessor implements Cloneable {
 	/** Convolves the image or ROI with the specified
 		3x3 integer convolution kernel. */
 	public abstract void convolve3x3(int[] kernel);
+	public abstract void convolve3x3_serial(int[] kernel);
+	public abstract void convolve3x3_simple(int[] kernel);
 	
 	/** A 3x3 filter operation, where the argument (BLUR_MORE,  FIND_EDGES, 
 	     MEDIAN_FILTER, MIN or MAX) determines the filter type. */
