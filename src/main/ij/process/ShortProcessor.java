@@ -1241,7 +1241,7 @@ public class ShortProcessor extends ImageProcessor {
         if (inc<1) inc = 1;
         pixelsTemp = (short[])getPixelsCopy();
         
-        ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight,roiHeight);
+        ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
     	
 		Thread[] threads = new Thread[div.numThreads];
 		for (int i = 0; i < div.numThreads; i++)

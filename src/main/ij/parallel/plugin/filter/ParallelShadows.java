@@ -39,7 +39,7 @@ public class ParallelShadows extends Shadows
 		
 	}
 	
-	private void northSerial(ImageProcessor ip) 
+	public void northSerial(ImageProcessor ip) 
 	{
 		int[] kernel = {1,2,1, 0,1,0,  -1,-2,-1};
 		ip.convolve3x3_serial(kernel);
