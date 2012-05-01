@@ -7,8 +7,6 @@ import java.util.Collection;
 import java.awt.Rectangle;
 import java.net.URL;
 
-import junit.framework.TestCase;
-
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
