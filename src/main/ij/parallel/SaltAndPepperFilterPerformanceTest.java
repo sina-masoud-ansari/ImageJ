@@ -10,7 +10,7 @@ public class SaltAndPepperFilterPerformanceTest extends PerformanceTest {
 	private static final double PERCENT = 0.05;
 	
 	public SaltAndPepperFilterPerformanceTest(String path) {
-		super("Salt and Pepper ORIGINAL", path);
+		super("Salt and Pepper", path);
 		// TODO Auto-generated constructor stub
 	}
 

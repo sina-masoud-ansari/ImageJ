@@ -65,13 +65,17 @@ public class ParallelPerformanceTest {
 		int maxt = Runtime.getRuntime().availableProcessors(); // max number of threads to use.
 		String url = args[0];
 		int iter = Integer.parseInt(args[1]);
+		
+		// Manual testing
 		//String url = "/Users/smas036/Dev/LARGE_COLOR_RGB.tif";	
+		//String url = "/Users/smas036/Dev/ImageJ/build/resources/images/sample/image1000x1000.tif";
+		//String url = "/Users/smas036/Dev/ImageJ/resources/test/images/tif/GRAY8.tif";
 		//int iter = 1;
 		
 		ParallelPerformanceTest test = new ParallelPerformanceTest(iter, maxt);
 		test.add(new NoiseFilterPerformanceTest(url));
 		test.add(new SaltAndPepperFilterPerformanceTest(url));
-		test.add(new ShadowsFilterPerformanceTest(url));
+		//test.add(new ShadowsFilterPerformanceTest(url));
 		test.start();
 		test.collate();
 	}
