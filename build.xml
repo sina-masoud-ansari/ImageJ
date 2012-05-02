@@ -55,7 +55,7 @@
 				<javac destdir="${build.dir}" classpathref="build.classpath" optimize="on" source="1.6" target="1.6" debug="on" encoding="UTF-8" bootclasspath="/usr/lib/jvm/java-1.6.0-openjdk/jre/lib/rt.jar">
 					<src path="${src.main}"/>
 					<src path="${src.test}"/>
-					<compilerarg arg="-Xbootclasspath/p:${lib.dir}/jsr166.jar"/>
+					<compilerarg value="-Xbootclasspath/p:${lib.dir}/jsr166.jar"/>
 				</javac>
 			</then>
 			<else>
