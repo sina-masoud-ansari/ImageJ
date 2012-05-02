@@ -88,7 +88,7 @@ public class ImageDivision {
 			xStart=Math.max(roiX,1); //max
 			//int xMax =  Math.min(roiX + roiWidth - 1, width - 2);
 			//int yMax = Math.min(yStart + roiHeight - 1, height - 2);
-			divs[i] = new Division(i, numRows, yStart, yLimit, xEnd, xStart);
+			divs[i] = new Division(i, numRows, yStart, yLimit, xStart, xEnd);
 		}		
 	}	
 	
