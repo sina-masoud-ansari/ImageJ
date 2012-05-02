@@ -218,6 +218,39 @@
 				</then>
 			</elseif>
 		</if>
+	</target>
+	
+	<target name="performance-small" depends="clean, test" description="Initiate performance testing">
+		<delete dir="${results.dir}" />
+		<mkdir dir="${results.dir}" />
+		<echo message="${os.name} ${os.arch}" />
+		<if>
+			<equals arg1="${os}" arg2="windows" />
+			<then>
+				<!-- see http://ant.apache.org/manual/Tasks/exec.html -->
+				<exec executable="cmd">
+					<arg value="/c"/>
+					<arg value="performance.bat"/>
+					<arg value="${bin.dir}"/>
+					<arg value="${results.dir}"/>
+					<arg value="${memory.max}"/>
+				</exec>
+			</then>
+			<elseif>
+				<equals arg1="${os}" arg2="unix" />
+				<then>
+					<exec executable="bash">
+						<arg value="performance.sh"/>
+						<arg value="${bin.dir}"/>
+						<arg value="${results.dir}"/>
+						<arg value="${memory.max}"/>
+						<arg value="${sample.dir}"/>
+						<arg value="$1"/>
+						<arg value="${lib.dir}/jsr166.jar"/>
+					</exec>
+				</then>
+			</elseif>
+		</if>
 	</target>	
 	
 	<target name="cluster-performance" depends="clean, build" description="Initiate performance testing on NeSI cluster">
