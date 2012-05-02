@@ -977,9 +977,9 @@ public class ByteProcessor extends ImageProcessor {
 				// for each row
 				for (int y = div.yStart; y < div.yLimit; y++){
 					// process pixels in ROI
-					for (int x = roiX; x < div.xEnd; x++){
+					for (int x = div.xStart; x < div.xEnd; x++){
 						// pixels is a 1D array so need to map to it
-						p = y * roiWidth + roiX + x;
+						p = y * roiWidth + div.xStart + x;
 						inRange = false;
 						while (!inRange){
 							ran = (int)Math.round(rnd.nextGaussian()*range);
