@@ -19,7 +19,6 @@ public abstract class PerformanceTest {
 	public PerformanceTest(String n, String p){
 		name = n;
 		path = p;
-
 	}
 
 	public void setup(){

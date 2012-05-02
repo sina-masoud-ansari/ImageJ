@@ -1240,6 +1240,7 @@ public class ColorProcessor extends ImageProcessor {
 						p6_p = pixelsTemp[offset_p+1];
 						p7_p = p8_p; p8_p = p9_p;
 						p9_p = pixelsTemp[offset_p+rowOffset_p+1];
+						
 
 						rsum_p = k1_p*((p1_p & 0xff0000) >> 16)
 						     + k2_p*((p2_p & 0xff0000) >> 16)

@@ -595,6 +595,8 @@ public class ByteProcessor extends ImageProcessor {
         int inc = roiHeight/25;
         if (inc<1) inc = 1;
         
+        pixelsTemp = (byte[])getPixelsCopy();
+        
         //for single thread
     	ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, 1);
     	
@@ -605,6 +607,7 @@ public class ByteProcessor extends ImageProcessor {
 		}
 		
 		div.processThreads(threads);
+
 		// indicate processing is finished	
 		showProgress(1.0);
     }
