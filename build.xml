@@ -245,7 +245,7 @@
 						<arg value="${results.dir}"/>
 						<arg value="${memory.max}"/>
 						<arg value="${sample.dir}"/>
-						<arg value="$1"/>
+						<arg value="2"/>
 						<arg value="${lib.dir}/jsr166.jar"/>
 					</exec>
 				</then>
