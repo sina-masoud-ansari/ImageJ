@@ -568,7 +568,7 @@ public class ByteProcessor extends ImageProcessor {
         pixelsTemp = (byte[])getPixelsCopy();
         
         // for multiple threads
-    	ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
+    	ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight,roiHeight);
     	
 		Thread[] threads = new Thread[div.numThreads];
 		for (int i = 0; i < div.numThreads; i++)
@@ -1044,7 +1044,7 @@ public class ByteProcessor extends ImageProcessor {
 	@Override
 	public void noise_P_SIMPLE(double range) 
 	{
-		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, roiHeight);
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight,roiHeight);
 		Thread[] threads = new Thread[div.numThreads];
 		for (int i = 0; i < div.numThreads; i++)
 		{
