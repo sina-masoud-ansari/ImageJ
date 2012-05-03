@@ -782,7 +782,40 @@ public class ColorProcessor extends ImageProcessor {
 		g.noise_P_FORK_JOIN(range); showProgress(0.65);
 		b.noise_P_FORK_JOIN(range); showProgress(0.90);		
 		finish();			
-	}		
+	}	
+	
+	@Override
+	public void salt_and_pepper_NONE(double percent) {
+		// TODO Auto-generated method stub
+		setup();
+		r.salt_and_pepper_NONE(percent); showProgress(0.40);
+		g.salt_and_pepper_NONE(percent); showProgress(0.65);
+		b.salt_and_pepper_NONE(percent); showProgress(0.90);
+		finish();	
+		
+	}
+
+	@Override
+	public void salt_and_pepper_SERIAL(double percent) {
+		// TODO Auto-generated method stub
+		setup();
+		r.salt_and_pepper_SERIAL(percent); showProgress(0.40);
+		g.salt_and_pepper_SERIAL(percent); showProgress(0.65);
+		b.salt_and_pepper_SERIAL(percent); showProgress(0.90);
+		finish();	
+		
+	}
+
+	@Override
+	public void salt_and_pepper_SIMPLE(double percent) {
+		// TODO Auto-generated method stub
+		setup();
+		r.salt_and_pepper_SERIAL(percent); showProgress(0.40);
+		g.salt_and_pepper_SERIAL(percent); showProgress(0.65);
+		b.salt_and_pepper_SERIAL(percent); showProgress(0.90);
+		finish();	
+		
+	}
     
 	public void medianFilter() {
     	filterRGB(RGB_MEDIAN, 0.0);
@@ -1170,6 +1203,7 @@ public class ColorProcessor extends ImageProcessor {
 		rsum_p = 0; gsum_p = 0; bsum_p = 0;
         rowOffset_p = width;
         
+        //ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, 1);
 		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, 1, width, height);
     	
 		Thread[] threads = new Thread[div.numThreads];
@@ -1202,7 +1236,8 @@ public class ColorProcessor extends ImageProcessor {
 		rsum_p = 0; gsum_p = 0; bsum_p = 0;
         rowOffset_p = width;
         
-		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, width, height);
+        //ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight,roiHeight);
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight-2, width, height);
     	
 		Thread[] threads = new Thread[div.numThreads];
 		for (int i = 0; i < div.numThreads; i++)
@@ -1503,6 +1538,8 @@ public class ColorProcessor extends ImageProcessor {
 			pixels[i] = (pixels[i]&resetMask) | ((int)value<<shift);
 		}
 	}
+
+
 	
 }
 
