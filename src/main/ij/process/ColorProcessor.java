@@ -1203,6 +1203,7 @@ public class ColorProcessor extends ImageProcessor {
 		rsum_p = 0; gsum_p = 0; bsum_p = 0;
         rowOffset_p = width;
         
+        //ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, 1);
 		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, 1, width, height);
     	
 		Thread[] threads = new Thread[div.numThreads];
@@ -1235,7 +1236,8 @@ public class ColorProcessor extends ImageProcessor {
 		rsum_p = 0; gsum_p = 0; bsum_p = 0;
         rowOffset_p = width;
         
-		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, width, height);
+        //ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight,roiHeight);
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight-2, width, height);
     	
 		Thread[] threads = new Thread[div.numThreads];
 		for (int i = 0; i < div.numThreads; i++)
