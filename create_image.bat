@@ -4,4 +4,4 @@ set MAX_MEM = %3
 set SAMPLE_DIR = %4
 
 set /a size = 500*%1
-java -Xmx%MAX_MEM% -classpath %SAMPLE_DIR%;%BIN_DIR%/ij.jar -jar ./build/macros/jai_codec.jar ij.parallel.SampleImageCreator %size% %SAMPLE_DIR%
+java -Xmx%MAX_MEM% -classpath %BIN_DIR%/ij.jar;%BIN_DIR%/jai_codec.jar;%BIN_DIR%/jai_core.jar ij.parallel.SampleImageCreator %size% %SAMPLE_DIR%
