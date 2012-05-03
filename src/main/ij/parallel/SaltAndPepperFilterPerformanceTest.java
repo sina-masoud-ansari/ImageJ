@@ -17,26 +17,38 @@ public class SaltAndPepperFilterPerformanceTest extends PerformanceTest {
 	@Override
 	public void run_P_NONE(ImageProcessor ip) {
 		// TODO Auto-generated method stub
-		SaltAndPepper sp = new SaltAndPepper();
-		sp.setup("salt_and_pepper", null);
-		sp.run(ip);
+		try {
+			SaltAndPepper sp = new SaltAndPepper();
+			sp.setup("salt_and_pepper", null);
+			sp.run(ip);
+		} catch (Exception e){
+			
+		}
 	}
 
 	@Override
 	public void run_P_SERIAL(ImageProcessor ip) {
 		// TODO Auto-generated method stub
-		ParallelSaltAndPepper parallel_sp = new ParallelSaltAndPepper();
-		parallel_sp.setup("salt_and_pepper serial", null);
-		parallel_sp.run(ip);
+		try {	
+			ParallelSaltAndPepper parallel_sp = new ParallelSaltAndPepper();
+			parallel_sp.setup("salt_and_pepper serial", null);
+			parallel_sp.run(ip);
+		} catch (Exception e){
+			
+		}		
 
 	}
 
 	@Override
 	public void run_P_SIMPLE(ImageProcessor ip) {
 		// TODO Auto-generated method stub
-		ParallelSaltAndPepper parallel_sp = new ParallelSaltAndPepper();
-		parallel_sp.setup("salt_and_pepper simple", null);
-		parallel_sp.run(ip);
+		try {
+			ParallelSaltAndPepper parallel_sp = new ParallelSaltAndPepper();
+			parallel_sp.setup("salt_and_pepper simple", null);
+			parallel_sp.run(ip);
+		} catch (Exception e){
+			
+		}				
 	}
 
 }

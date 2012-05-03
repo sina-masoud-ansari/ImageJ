@@ -34,12 +34,14 @@ public class SaltAndPepper implements PlugInFilter {
 	}
 
 	public void setROIandPercent(ImageProcessor ip, double percent) {
-		roi = ip.getRoi();
-		n = (int)(percent*roi.width*roi.height);
-		pixels = (byte[])ip.getPixels();
+
+			roi = ip.getRoi();
+			n = (int)(percent*roi.width*roi.height);
+			pixels = (byte[])ip.getPixels();
+
 	}
 	
-	public void salt_and_pepper_NONE(ImageProcessor ip, double percent) {
+	public void salt_and_pepper_NONE(ImageProcessor ip, double percent) {	
 		setROIandPercent(ip, percent);
 		int width = ip.getWidth();
 		int xmin = roi.x;
@@ -54,7 +56,7 @@ public class SaltAndPepper implements PlugInFilter {
 			rx = rand(xmin, xmax);
 			ry = rand(ymin, ymax);
 			pixels[ry*width+rx] = (byte)0;
-		}	
+		}		
 	}
 
 }
