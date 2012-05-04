@@ -1204,7 +1204,8 @@ public class ColorProcessor extends ImageProcessor {
         rowOffset_p = width;
         
         //ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight,roiHeight);
-		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight-2, width, height);
+        //roiX, roiY, roiWidth, roiHeight, width, height
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight,width, height);
     	
 		Thread[] threads = new Thread[div.numThreads];
 		for (int i = 0; i < div.numThreads; i++)

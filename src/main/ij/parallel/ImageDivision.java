@@ -81,6 +81,7 @@ public class ImageDivision {
 			} else {
 				numRows = ratio;
 			}
+			int r = roiY+i*numRows;
 			yStart = Math.max(1, roiY+i*numRows); //max
 			yLimit = Math.min(yStart+numRows - 1 ,height-2);
 			xEnd = Math.min(width - 2,roiX + roiWidth-1);
