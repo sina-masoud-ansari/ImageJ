@@ -1,7 +1,7 @@
 package ij.process;
 
 import java.util.*;
-import java.util.concurrent.ForkJoinPool;
+//import java.util.concurrent.ForkJoinPool;
 import java.awt.*;
 import java.awt.image.*;
 import ij.gui.*;
@@ -1060,9 +1060,87 @@ public class ByteProcessor extends ImageProcessor {
 	@Override
 	public void noise_P_FORK_JOIN(double range) {
 		// TODO Auto-generated method stub
-		ForkJoinPool fjp = new ForkJoinPool();
-		ForkAction fa = new ForkAction();
+//		ForkJoinPool fjp = new ForkJoinPool();
+//		ForkAction fa = new ForkAction();
 	}	
+	
+	@Override
+	public void salt_and_pepper_NONE(double percent) {
+		Random r = new Random();
+		int n = (int)(percent*roiWidth*roiHeight);
+			int xmin = roiX;
+			int xmax = roiX+roiWidth-1;
+			int ymin = roiY;
+			int ymax = roiY+roiHeight-1;	
+			int rx, ry;
+			for (int i=0; i<n/2; i++) {
+				rx = rand(xmin, xmax, r);
+				ry = rand(ymin, ymax, r);
+				pixels[ry*width+rx] = (byte)255;
+				rx = rand(xmin, xmax, r);
+				ry = rand(ymin, ymax, r);
+				pixels[ry*width+rx] = (byte)0;
+			}
+		
+	}
+	
+	@Override
+	public void salt_and_pepper_SERIAL(double percent) {
+		// TODO Auto-generated method stub
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, 1);
+		Thread[] threads = new Thread[div.numThreads];
+		
+		Random r = new Random();
+		int n = (int)(percent*roiWidth*roiHeight);
+		
+		for (int i = 0; i < div.numThreads; i++) {
+			threads[i] = new Thread(getSaltAndPepperRunnable(n,div.getDivision(i),div.numThreads,r));
+		}
+		
+		div.processThreads(threads);
+		
+	}
+
+	@Override
+	public void salt_and_pepper_SIMPLE(double percent) {
+		// TODO Auto-generated method stub
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight,roiHeight);
+		Thread[] threads = new Thread[div.numThreads];
+		
+		Random r = new Random();
+		int n = (int)(percent*roiWidth*roiHeight);
+		
+		for (int i = 0; i < div.numThreads; i++) {
+			threads[i] = new Thread(getSaltAndPepperRunnable(n,div.getDivision(i),div.numThreads,r));
+		}
+		
+		div.processThreads(threads);
+		
+	}
+	
+	public int rand(int min, int max, Random r) {
+		return min + (int)(r.nextDouble()*(max-min));
+	}
+	
+	private Runnable getSaltAndPepperRunnable(final int n, final Division div, final int numThreads, final Random r) {
+		return new Runnable () {
+			@Override
+			public void run() {
+				int rx,ry;
+				//filter is not done per pixel but per block of rows
+				//random pixel is picked to be either 255 or 0
+				//we need to decrease the percentage as it is per block
+				for (int i=0; i<n/(2*numThreads); i++) {
+					rx = rand(div.xStart, div.xEnd,r);
+					ry = rand(div.yStart, div.yLimit,r);
+					pixels[ry*roiWidth+rx] = (byte)255;
+					rx = rand(div.xStart, div.xEnd,r);
+					ry = rand(div.yStart, div.yLimit,r);
+					pixels[ry*roiWidth+rx] = (byte)0;
+				}
+			}
+		};
+	}
 
 	/** Scales the image or selection using the specified scale factors.
 		@see ImageProcessor#setInterpolate
@@ -1460,6 +1538,7 @@ public class ByteProcessor extends ImageProcessor {
 	byte[] create8BitImage() {
 		return pixels;
 	}
+
 
 
 

@@ -782,7 +782,40 @@ public class ColorProcessor extends ImageProcessor {
 		g.noise_P_FORK_JOIN(range); showProgress(0.65);
 		b.noise_P_FORK_JOIN(range); showProgress(0.90);		
 		finish();			
-	}		
+	}	
+	
+	@Override
+	public void salt_and_pepper_NONE(double percent) {
+		// TODO Auto-generated method stub
+		setup();
+		r.salt_and_pepper_NONE(percent); showProgress(0.40);
+		g.salt_and_pepper_NONE(percent); showProgress(0.65);
+		b.salt_and_pepper_NONE(percent); showProgress(0.90);
+		finish();	
+		
+	}
+
+	@Override
+	public void salt_and_pepper_SERIAL(double percent) {
+		// TODO Auto-generated method stub
+		setup();
+		r.salt_and_pepper_SERIAL(percent); showProgress(0.40);
+		g.salt_and_pepper_SERIAL(percent); showProgress(0.65);
+		b.salt_and_pepper_SERIAL(percent); showProgress(0.90);
+		finish();	
+		
+	}
+
+	@Override
+	public void salt_and_pepper_SIMPLE(double percent) {
+		// TODO Auto-generated method stub
+		setup();
+		r.salt_and_pepper_SERIAL(percent); showProgress(0.40);
+		g.salt_and_pepper_SERIAL(percent); showProgress(0.65);
+		b.salt_and_pepper_SERIAL(percent); showProgress(0.90);
+		finish();	
+		
+	}
     
 	public void medianFilter() {
     	filterRGB(RGB_MEDIAN, 0.0);
@@ -1506,6 +1539,8 @@ public class ColorProcessor extends ImageProcessor {
 			pixels[i] = (pixels[i]&resetMask) | ((int)value<<shift);
 		}
 	}
+
+
 	
 }
 

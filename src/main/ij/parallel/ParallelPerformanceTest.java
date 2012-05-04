@@ -65,6 +65,7 @@ public class ParallelPerformanceTest {
 		int maxt = Runtime.getRuntime().availableProcessors(); // max number of threads to use.
 		String url = args[0];
 		int iter = Integer.parseInt(args[1]);
+		System.out.println(url + "," + iter);
 		//String url = "/Users/smas036/Dev/LARGE_COLOR_RGB.tif";	
 		//int iter = 1;
 		
