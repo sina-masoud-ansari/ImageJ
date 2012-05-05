@@ -805,20 +805,19 @@ public class FloatProcessor extends ImageProcessor {
 		// TODO Auto-generated method stub
 		Random r = new Random();
 		int n = (int)(percent*roiWidth*roiHeight);
-			//int width = ip.getWidth();
-			int xmin = roiX;
-			int xmax = roiX+roiWidth-1;
-			int ymin = roiY;
-			int ymax = roiY+roiHeight-1;	
-			int rx, ry;
-			for (int i=0; i<n/2; i++) {
-				rx = rand(xmin, xmax, r);
-				ry = rand(ymin, ymax, r);
-				pixels[ry*width+rx] = (float)255;
-				rx = rand(xmin, xmax, r);
-				ry = rand(ymin, ymax, r);
-				pixels[ry*width+rx] = (float)0;
-			}
+		int xmin = roiX;
+		int xmax = roiX+roiWidth-1;
+		int ymin = roiY;
+		int ymax = roiY+roiHeight-1;	
+		int rx, ry;
+		for (int i=0; i<n/2; i++) {
+			rx = rand(xmin, xmax, r);
+			ry = rand(ymin, ymax, r);
+			pixels[ry*width+rx] = (float)255;
+			rx = rand(xmin, xmax, r);
+			ry = rand(ymin, ymax, r);
+			pixels[ry*width+rx] = (float)0;
+		}
 		
 		
 	}

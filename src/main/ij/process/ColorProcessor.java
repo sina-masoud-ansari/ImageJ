@@ -788,9 +788,9 @@ public class ColorProcessor extends ImageProcessor {
 	public void salt_and_pepper_NONE(double percent) {
 		// TODO Auto-generated method stub
 		setup();
-		r.salt_and_pepper_NONE(percent); showProgress(0.40);
-		g.salt_and_pepper_NONE(percent); showProgress(0.65);
-		b.salt_and_pepper_NONE(percent); showProgress(0.90);
+		r.salt_and_pepper_NONE(percent); 
+		g.salt_and_pepper_NONE(percent); 
+		b.salt_and_pepper_NONE(percent); 
 		finish();	
 		
 	}
@@ -799,9 +799,9 @@ public class ColorProcessor extends ImageProcessor {
 	public void salt_and_pepper_SERIAL(double percent) {
 		// TODO Auto-generated method stub
 		setup();
-		r.salt_and_pepper_SERIAL(percent); showProgress(0.40);
-		g.salt_and_pepper_SERIAL(percent); showProgress(0.65);
-		b.salt_and_pepper_SERIAL(percent); showProgress(0.90);
+		r.salt_and_pepper_SERIAL(percent); 
+		g.salt_and_pepper_SERIAL(percent);
+		b.salt_and_pepper_SERIAL(percent); 
 		finish();	
 		
 	}
@@ -810,9 +810,9 @@ public class ColorProcessor extends ImageProcessor {
 	public void salt_and_pepper_SIMPLE(double percent) {
 		// TODO Auto-generated method stub
 		setup();
-		r.salt_and_pepper_SERIAL(percent); showProgress(0.40);
-		g.salt_and_pepper_SERIAL(percent); showProgress(0.65);
-		b.salt_and_pepper_SERIAL(percent); showProgress(0.90);
+		r.salt_and_pepper_SIMPLE(percent); 
+		g.salt_and_pepper_SIMPLE(percent); 
+		b.salt_and_pepper_SIMPLE(percent); 
 		finish();	
 		
 	}
@@ -1220,6 +1220,8 @@ public class ColorProcessor extends ImageProcessor {
 	
 	public void convolve3x3_simple(int[] kernel)
 	{
+		
+		showProgress(0.01);
 		k1_p=kernel[0]; k2_p=kernel[1]; k3_p=kernel[2];
 	    k4_p=kernel[3]; k5_p=kernel[4]; k6_p=kernel[5];
 		k7_p=kernel[6]; k8_p=kernel[7]; k9_p=kernel[8];
@@ -1237,14 +1239,14 @@ public class ColorProcessor extends ImageProcessor {
         rowOffset_p = width;
         
         //ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight,roiHeight);
-		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight-2, width, height);
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, width, height);
     	
 		Thread[] threads = new Thread[div.numThreads];
 		for (int i = 0; i < div.numThreads; i++)
 		{
 			threads[i] = new Thread(getRunnableConvolve(div.getDivision(i))); 
 		}
-		
+		showProgress(0.10);
 		div.processThreads(threads);
 		// indicate processing is finished	
 		showProgress(1.0);
@@ -1321,9 +1323,11 @@ public class ColorProcessor extends ImageProcessor {
 						                 | ((gsum_p << 8 ) & 0xff00)
 						                 |  (bsum_p       & 0xff);
 					}
-					if (y%inc_p==0)
-						showProgress((double)(y-roiY)/roiHeight);
+					if (y%inc_p==0){
+						//showProgress((double)(y-div.yStart)/roiHeight);
+					}
 				}
+				showProgress((double)(div.numRows)/roiHeight);
 			}
 		};
 	}
