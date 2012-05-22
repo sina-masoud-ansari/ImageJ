@@ -25,7 +25,6 @@ public abstract class PerformanceTest {
 		img = new ImagePlus(path);
 		ip = img.getProcessor();
 		res.setImageProperties(img.getTypeString(), img.getWidth(), img.getHeight());
-
 	}
 	
 	public void setProcessors(int p){
