@@ -1068,19 +1068,19 @@ public class ByteProcessor extends ImageProcessor {
 	public void salt_and_pepper_NONE(double percent) {
 		Random r = new Random();
 		int n = (int)(percent*roiWidth*roiHeight);
-			int xmin = roiX;
-			int xmax = roiX+roiWidth-1;
-			int ymin = roiY;
-			int ymax = roiY+roiHeight-1;	
-			int rx, ry;
-			for (int i=0; i<n/2; i++) {
-				rx = rand(xmin, xmax, r);
-				ry = rand(ymin, ymax, r);
-				pixels[ry*width+rx] = (byte)255;
-				rx = rand(xmin, xmax, r);
-				ry = rand(ymin, ymax, r);
-				pixels[ry*width+rx] = (byte)0;
-			}
+		int xmin = roiX;
+		int xmax = roiX+roiWidth-1;
+		int ymin = roiY;
+		int ymax = roiY+roiHeight-1;	
+		int rx, ry;
+		for (int i=0; i<n/2; i++) {
+			rx = rand(xmin, xmax, r);
+			ry = rand(ymin, ymax, r);
+			pixels[ry*width+rx] = (byte)255;
+			rx = rand(xmin, xmax, r);
+			ry = rand(ymin, ymax, r);
+			pixels[ry*width+rx] = (byte)0;
+		}
 		
 	}
 	

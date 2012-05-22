@@ -1,0 +1,76 @@
+#ImageJ 1.46j Preferences
+<<<<<<< HEAD
+#Fri May 04 08:44:39 NZST 2012
+new.fill=0
+pp.options=1
+recent09=C\:\\Users\\Rucha\\Desktop\\101MSDCF\\image_8bitcolor.tif
+recent08=C\:\\Users\\Rucha\\Desktop\\101MSDCF\\image_16bitgray.tif
+recent07=C\:\\Users\\Rucha\\Desktop\\101MSDCF\\image_RGBcolor.tif
+recent06=C\:\\Users\\Rucha\\Desktop\\101MSDCF\\image_8bitgray.tif
+bcolor=\#FFFFFF
+recent05=E\:\\image4000x4000.tif
+recent04=E\:\\image7000x7000.tif
+recent03=C\:\\Users\\ArvieCarpio\\Documents\\sem1-2012\\se751\\se751_images\\E.jpg
+recent02=C\:\\Users\\ArvieCarpio\\Documents\\sem1-2012\\se751\\se751_images\\2N126467960EDN0000P1500L0M1.JPG
+noise.sd=25.0
+recent01=C\:\\Users\\ArvieCarpio\\Documents\\sem1-2012\\se751\\se751_images\\D.jpg
+recent00=C\:\\Users\\ArvieCarpio\\Documents\\sem1-2012\\se751\\se751_images\\A.jpg
+=======
+#Thu May 03 22:04:22 NZST 2012
+new.fill=2
+pp.options=1
+recent09=C\:\\Users\\Rucha\\Desktop\\101MSDCF\\DSC00566.JPG
+recent08=C\:\\Users\\Rucha\\Desktop\\image.jpg
+recent07=C\:\\Users\\Rucha\\Desktop\\101MSDCF\\DSC00555.JPG
+recent06=C\:\\Users\\Rucha\\Desktop\\101MSDCF\\DSC00551.JPG
+bcolor=\#FFFFFF
+recent05=C\:\\Users\\Rucha\\Desktop\\101MSDCF\\image_32bitgray.tif
+recent04=C\:\\Users\\Rucha\\Desktop\\101MSDCF\\image_8bitcolor.tif
+recent03=C\:\\Users\\Rucha\\Desktop\\101MSDCF\\image_16bitgray.tif
+threads=2
+recent02=C\:\\Users\\Rucha\\Desktop\\101MSDCF\\image_8bitgray.tif
+noise.sd=25.0
+recent01=C\:\\Users\\Rucha\\Desktop\\101MSDCF\\image_RGBcolor.tif
+recent00=G\:\\image4000x4000.tif
+>>>>>>> f4d70fb4e20d2e5289d5563c55eaec89cdc3ba16
+raw.offset=0
+fcolor=\#000000
+raw.width=512
+prefs.options=541085696
+new.height=400
+measurements=19
+showcolor=\#00FFFF
+fps=7.0
+raw.height=512
+jpeg=85
+ij.y=91
+ij.x=643
+new.slices=1
+menu.size=14
+raw.n=1
+new.type=3
+div-by-zero=Infinity
+raw.options=0
+recent14=C\:\\Users\\Rucha\\Desktop\\101MSDCF\\DSC00566.JPG
+new.width=400
+<<<<<<< HEAD
+recent13=C\:\\Users\\Rucha\\Desktop\\image.jpg
+recent12=C\:\\Users\\Rucha\\Desktop\\101MSDCF\\DSC00555.JPG
+recent11=C\:\\Users\\Rucha\\Desktop\\101MSDCF\\DSC00551.JPG
+recent10=C\:\\Users\\Rucha\\Desktop\\101MSDCF\\image_32bitgray.tif
+=======
+recent11=C\:\\Users\\ArvieCarpio\\Pictures\\School\\se751\\greyscale1.gif
+recent10=C\:\\Users\\ArvieCarpio\\Documents\\sem1-2012\\se751\\se751_images\\greyscale1.gif
+>>>>>>> f4d70fb4e20d2e5289d5563c55eaec89cdc3ba16
+mark.width=0
+raw.gap=0
+prefs.options2=2
+precision=3
+roicolor=\#FFFF00
+ap.options=64
+<<<<<<< HEAD
+dir.image=C\:\\Users\\ArvieCarpio\\Documents\\sem1-2012\\se751\\se751_images\\
+=======
+dir.image=G\:\\
+>>>>>>> f4d70fb4e20d2e5289d5563c55eaec89cdc3ba16
+raw.type=0

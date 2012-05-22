@@ -1148,20 +1148,19 @@ public class ShortProcessor extends ImageProcessor {
 		// TODO Auto-generated method stub
 		Random r = new Random();
 		int n = (int)(percent*roiWidth*roiHeight);
-			//int width = ip.getWidth();
-			int xmin = roiX;
-			int xmax = roiX+roiWidth-1;
-			int ymin = roiY;
-			int ymax = roiY+roiHeight-1;	
-			int rx, ry;
-			for (int i=0; i<n/2; i++) {
-				rx = rand(xmin, xmax, r);
-				ry = rand(ymin, ymax, r);
-				pixels[ry*width+rx] = (short)255;
-				rx = rand(xmin, xmax, r);
-				ry = rand(ymin, ymax, r);
-				pixels[ry*width+rx] = (short)0;
-			}
+		int xmin = roiX;
+		int xmax = roiX+roiWidth-1;
+		int ymin = roiY;
+		int ymax = roiY+roiHeight-1;	
+		int rx, ry;
+		for (int i=0; i<n/2; i++) {
+			rx = rand(xmin, xmax, r);
+			ry = rand(ymin, ymax, r);
+			pixels[ry*width+rx] = (short)255;
+			rx = rand(xmin, xmax, r);
+			ry = rand(ymin, ymax, r);
+			pixels[ry*width+rx] = (short)0;
+		}
 	}
 
 	@Override
@@ -1172,9 +1171,10 @@ public class ShortProcessor extends ImageProcessor {
 		
 		Random r = new Random();
 		int n = (int)(percent*roiWidth*roiHeight);
+		int nForEachTask = (n/2)/div.numThreads;
 		
 		for (int i = 0; i < div.numThreads; i++) {
-			threads[i] = new Thread(getSaltAndPepperRunnable(n,div.getDivision(i),div.numThreads,r));
+			threads[i] = new Thread(getSaltAndPepperRunnable(nForEachTask,div.getDivision(i),div.numThreads,r));
 		}
 		
 		div.processThreads(threads);
@@ -1189,9 +1189,10 @@ public class ShortProcessor extends ImageProcessor {
 		
 		Random r = new Random();
 		int n = (int)(percent*roiWidth*roiHeight);
+		int nForEachTask = (n/2)/div.numThreads;
 		
 		for (int i = 0; i < div.numThreads; i++) {
-			threads[i] = new Thread(getSaltAndPepperRunnable(n,div.getDivision(i),div.numThreads,r));
+			threads[i] = new Thread(getSaltAndPepperRunnable(nForEachTask,div.getDivision(i),div.numThreads,r));
 		}
 		
 		div.processThreads(threads);
@@ -1202,7 +1203,7 @@ public class ShortProcessor extends ImageProcessor {
 		return min + (int)(r.nextDouble()*(max-min));
 	}
 	
-	private Runnable getSaltAndPepperRunnable(final int n, final Division div, final int numThreads, final Random r) {
+	private Runnable getSaltAndPepperRunnable(final int nForEachTask, final Division div, final int numThreads, final Random r) {
 		return new Runnable () {
 			@Override
 			public void run() {
@@ -1210,7 +1211,7 @@ public class ShortProcessor extends ImageProcessor {
 				//filter is not done per pixel but per block of rows
 				//random pixel is picked to be either 255 or 0
 				//we need to decrease the percentage as it is per block
-				for (int i=0; i<n/(2*numThreads); i++) {
+				for (int i=0; i<nForEachTask; i++) {
 					rx = rand(div.xStart, div.xEnd,r);
 					ry = rand(div.yStart, div.yLimit,r);
 					pixels[ry*roiWidth+rx] = (short)255;

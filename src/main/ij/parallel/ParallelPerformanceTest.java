@@ -72,7 +72,7 @@ public class ParallelPerformanceTest {
 		//int iter = 1;
 		
 		ParallelPerformanceTest test = new ParallelPerformanceTest(iter, maxt);
-		test.add(new NoiseFilterPerformanceTest(url));
+	    test.add(new NoiseFilterPerformanceTest(url));
 		test.add(new SaltAndPepperFilterPerformanceTest(url));
 		test.add(new ShadowsFilterPerformanceTest(url));
 		test.start();
