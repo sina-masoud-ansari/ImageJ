@@ -1,6 +1,8 @@
 package ij.process;
 
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 //import java.util.concurrent.ForkJoinPool;
 import java.awt.*;
 import java.awt.image.*;
@@ -545,9 +547,20 @@ public class ByteProcessor extends ImageProcessor {
 				if (sum<0) sum = 0;
 				pixels[p] = (byte)sum;
 			}
+			
+			/*for(int cnt=0;cnt<pixels.length;cnt++)
+			{
+			System.out.println(cnt+"  "+pixels[cnt]);
+			}
+			
+
+			System.out.println(pixels.length);
+			*/
+			
             if (y%inc==0)
                 showProgress((double)(y-roiY)/roiHeight);
         }
+       
         showProgress(1.0);
     }
     
@@ -567,8 +580,13 @@ public class ByteProcessor extends ImageProcessor {
         
         pixelsTemp = (byte[])getPixelsCopy();
         
+        for(int i=0;i<pixelsTemp.length;i++)
+        {
+        	System.out.println("i:"+i+" "+pixelsTemp[i]);
+        }
+        
         // for multiple threads
-    	ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight,roiHeight);
+    	ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight,2);
     	
 		Thread[] threads = new Thread[div.numThreads];
 		for (int i = 0; i < div.numThreads; i++)
@@ -576,13 +594,16 @@ public class ByteProcessor extends ImageProcessor {
 			threads[i] = new Thread(getRunnableConvolve(div.getDivision(i))); 
 		}
 		
+	
 		div.processThreads(threads);
 		// indicate processing is finished	
 		showProgress(1.0);
     }
     
+    @Override
     public void convolve3x3_serial(int[] kernel)
     {
+    	System.out.println("hi");
     	scale_p = 0;
  		k1_p=kernel[0]; k2_p=kernel[1]; k3_p=kernel[2];
  		k4_p=kernel[3]; k5_p=kernel[4]; k6_p=kernel[5];
@@ -597,23 +618,65 @@ public class ByteProcessor extends ImageProcessor {
         
         pixelsTemp = (byte[])getPixelsCopy();
         
+        for(int i=0;i<pixelsTemp.length;i++)
+        {
+        	System.out.println(pixelsTemp[i]);
+        }
+        
         //for single thread
     	ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, 1);
     	
 		Thread[] threads = new Thread[div.numThreads];
 		for (int i = 0; i < div.numThreads; i++)
 		{
+			
 			threads[i] = new Thread(getRunnableConvolve(div.getDivision(i))); 
 		}
+	
 		
-		div.processThreads(threads);
-
+		div.processThreads(threads);	
+		// indicate processing is finished	
+		//showProgress(1.0);
+    }
+    
+    @Override
+    public void convolve3x3_executor(int[] kernel)
+    {
+        scale_p = 0;
+ 		k1_p=kernel[0]; k2_p=kernel[1]; k3_p=kernel[2];
+ 		k4_p=kernel[3]; k5_p=kernel[4]; k6_p=kernel[5];
+ 		k7_p=kernel[6]; k8_p=kernel[7]; k9_p=kernel[8];
+ 		
+ 		for (int i=0; i<kernel.length; i++)
+ 		scale_p += kernel[i];
+ 		
+ 		if (scale_p==0) scale_p = 1;
+        int inc = roiHeight/25;
+        if (inc<1) inc = 1;
+        
+        pixelsTemp = (byte[])getPixelsCopy();
+        
+        // for multiple threads
+    	ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight,roiHeight);
+    	
+    	ExecutorService executor = Executors.newFixedThreadPool(div.numThreads);
+		for (int i = 0; i < div.numThreads; i++)
+		{
+			Runnable worker = getRunnableConvolve(div.getDivision(i));
+			executor.execute(worker);
+		}
+		
+		executor.shutdown();
+		while (!executor.isTerminated()) {}
+		System.out.println("Finished all threads");
+		//div.processThreads(executor);
 		// indicate processing is finished	
 		showProgress(1.0);
     }
     
     private Runnable getRunnableConvolve(final Division div)
     {
+    	
     	return new Runnable(){
 			@Override
 			public void run() 
@@ -621,12 +684,22 @@ public class ByteProcessor extends ImageProcessor {
 				// for each row
 				for (int y = div.yStart; y < div.yLimit; y++)
 				{
-					int p  = roiX + y*width;            
-					int p6 = p - (roiX>0 ? 1 : 0);      
-					int p3 = p6 - (y>0 ? width : 0);    
+					@SuppressWarnings("unused")
+					int y1=div.yStart;		
+					int p  = roiX + y*width;
+					//System.out.println("Thread: "+Thread.currentThread().getId()
+	
+					int p6 = p - (roiX>0 ? 1 : 0);
+					int p3 = p6 - (y>0 ? width : 0); 
 					int p9 = p6 + (y<height-1 ? width : 0);
+					
 
 					v2_p = pixelsTemp[p3]&0xff;
+					
+					System.out.println("y:"+y+"  "+"pixelsTemp[p3]:"+pixelsTemp[p3]+"  "+Integer.toBinaryString(pixelsTemp[p3])+"  "+"0xff:"+Integer.toBinaryString(0xff)+"   v2_p:"+v2_p+ " "+Integer.toBinaryString(v2_p));
+					//System.out.printf("y:%d  pixelsTemp[p3]:%d  %x  v2_p:%d  %x \n",y,pixelsTemp[p3],pixelsTemp[p3],v2_p,v2_p);
+					//System.out.println("y:"+y+"  "+"p3:"+p3+"  "+"pixelsTemp:"+pixelsTemp[p3]+"  "+"v2_p:"+v2_p);
+					//System.out.printf("hex v2_p:%x   pixelstemp[p3]:%x\n\n", v2_p,pixelsTemp[p3]);
 					v5_p = pixelsTemp[p6]&0xff;  
 					v8_p = pixelsTemp[p9]&0xff;
 					if (roiX>0) { p3++; p6++; p9++; }
@@ -634,7 +707,8 @@ public class ByteProcessor extends ImageProcessor {
 					v6_p = pixelsTemp[p6]&0xff;
 					v9_p = pixelsTemp[p9]&0xff;
 					for (int x = roiX; x < div.xEnd; x++,p++)
-					{						
+					{	
+						//System.out.println("Thread: "+Thread.currentThread().getId()+" looking at pixel: "+p);
 						if (x<width-1) { p3++; p6++; p9++; }
 						v1_p = v2_p; v2_p = v3_p;
 						v3_p = pixelsTemp[p3]&0xff;
@@ -648,15 +722,20 @@ public class ByteProcessor extends ImageProcessor {
 						sum = (sum+scale_p/2)/scale_p;   //add scale/2 to round
 						if (sum>255) sum = 255;
 						if (sum<0) sum = 0;
+						//System.out.println("Thread: "+Thread.currentThread().getId()+" writing to pixel: "+p);
 						pixels[p] = (byte)sum;
 					} // end x loop
+								
+					
 					if (y%20==0) {
 						showProgress((double)(y-roiY)/roiHeight);
 					}
 				} // end y loop
+				
 			} 				
 		}; 		
     	
+		 
     }
     
 
@@ -979,6 +1058,7 @@ public class ByteProcessor extends ImageProcessor {
 				Random rnd = new Random();
 				// for each row
 				for (int y = div.yStart; y < div.yLimit; y++){
+					System.out.println("ystart:"+div.yStart+"  "+ "ylimit:"+div.yLimit+ "  "+"y:"+y);
 					// process pixels in ROI
 					for (int x = div.xStart; x < div.xEnd; x++){
 						// pixels is a 1D array so need to map to it
@@ -997,6 +1077,8 @@ public class ByteProcessor extends ImageProcessor {
 						showProgress((double)(y-roiY)/roiHeight);
 					}
 				} // end y loop
+				
+				
 			} 				
 		}; 		
     	
@@ -1044,7 +1126,7 @@ public class ByteProcessor extends ImageProcessor {
 	@Override
 	public void noise_P_SIMPLE(double range) 
 	{
-		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight,roiHeight);
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight,2);
 		Thread[] threads = new Thread[div.numThreads];
 		for (int i = 0; i < div.numThreads; i++)
 		{
