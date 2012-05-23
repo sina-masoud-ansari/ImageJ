@@ -33,7 +33,8 @@ public class ParallelFiltersTest {
 	
 		// Statistical parameters
 		RANGE = 25,
-		ALPHA = 0.05;
+		ALPHA = 0.05,
+		PERCENT = 0.05;
 
 	private final static String 
 	
@@ -109,6 +110,35 @@ public class ParallelFiltersTest {
 		boolean reject;
 		for (int i = 0; i < nChannels; i++){
 			reject = test.homoscedasticTTest(aChannles.get(i), bChannles.get(i), ALPHA);
+			assertEquals(false, reject);
+		}
+	}
+	
+	@Test
+	public void testSaltAndPepper() {
+	
+		imgA.getProcessor().salt_and_pepper_NONE(PERCENT);
+		ImageProcessor ipB = imgB.getProcessor();
+		
+		switch (mode){
+			case ImageProcessor.P_NONE:
+				ipB.salt_and_pepper_NONE(PERCENT);
+				break;
+			case ImageProcessor.P_SERIAL:
+				ipB.salt_and_pepper_SERIAL(PERCENT);
+				break;
+			case ImageProcessor.P_SIMPLE:
+				ipB.salt_and_pepper_SIMPLE(PERCENT);
+				break;
+		}
+		
+		ArrayList<double[]> aChannles = getChannels(imgA);
+		ArrayList<double[]> bChannles = getChannels(imgB);
+		
+		TTest test = new TTest();
+		boolean reject;
+		for (int i = 0; i < nChannels; i++){
+			reject = test.tTest(aChannles.get(i), bChannles.get(i), ALPHA);
 			assertEquals(false, reject);
 		}
 	}
