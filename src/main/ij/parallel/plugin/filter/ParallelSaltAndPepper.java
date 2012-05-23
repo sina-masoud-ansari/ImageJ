@@ -30,6 +30,11 @@ public class ParallelSaltAndPepper extends SaltAndPepper {
 			ip.salt_and_pepper_SIMPLE(0.05);
 	 		return;
 	 	}
+		
+//		if (arg.equals("salt_and_pepper paratask")) {
+//			ip.salt_and_pepper_PARATASK(0.05);
+//	 		return;
+//		}
 	}	
 	
 }
