@@ -15,6 +15,9 @@ debug=True
 ### Determine number of avilable processors
 cpus=multiprocessing.cpu_count()
 
+### List available Filters
+filters = ['Add Noise', 'Shadows', 'Salt and Pepper']
+
 ### List the parallel processing options
 ptype = ['NONE', 'SERIAL', 'SIMPLE' ]
 
@@ -58,14 +61,15 @@ if debug :
 	print "Using file '%s' with %s iterations" % (file, iter)
 	print "Number of CPU cores: %d" % cpus
 
-for s in setups :
-	for p in ptype 	:
-		for c in range(1, cpus+1) :
-			for t in stages :
-				if s == "DEPENDENT" :
-					print '{0} {1} {2} {3} {4} {5} {6}'.format(java_cmd, file, s, p, c, t, iter)					
-   				else :
-	                                for i in range(1, int(iter)+1) :
-        	                                print '{0} {1} {2} {3} {4} {5}'.format(java_cmd, file, s, p, c, t)
-                	                        #call([java_cmd, file, s, p, c, t])
+for f in filters :
+	for s in setups :
+		for p in ptype 	:
+			for c in range(1, cpus+1) :
+				for t in stages :
+					if s == "DEPENDENT" :
+						print '{0} {1} "{2}" {3} {4} {5} {6} {7}'.format(java_cmd, file, f, s, p, c, t, iter)					
+   					else :
+		                                for i in range(1, int(iter)+1) :
+        		                                print '{0} {1} "{2}" {3} {4} {5} {6}'.format(java_cmd, file, f, s, p, c, t)
+                		                        #call([java_cmd, file, s, p, c, t])
 
