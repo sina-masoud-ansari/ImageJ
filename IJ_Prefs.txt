@@ -1,30 +1,17 @@
 #ImageJ 1.46j Preferences
-#Wed May 02 17:59:04 NZST 2012
-new.fill=0
-#Fri May 04 08:44:39 NZST 2012
+#Tue May 22 12:02:19 NZST 2012
 new.fill=0
 pp.options=1
-recent09=C\:\\Users\\ArvieCarpio\\Documents\\sem1-2012\\se751\\se751_images\\greyscale1.gif
-recent08=C\:\\Users\\Rucha\\Desktop\\101MSDCF\\DSC00566.JPG
-recent07=C\:\\Users\\Rucha\\Desktop\\image.jpg
-recent06=C\:\\Users\\Rucha\\Desktop\\101MSDCF\\DSC00555.JPG
 recent09=C\:\\Users\\Rucha\\Desktop\\101MSDCF\\image_8bitcolor.tif
 recent08=C\:\\Users\\Rucha\\Desktop\\101MSDCF\\image_16bitgray.tif
 recent07=C\:\\Users\\Rucha\\Desktop\\101MSDCF\\image_RGBcolor.tif
 recent06=C\:\\Users\\Rucha\\Desktop\\101MSDCF\\image_8bitgray.tif
 bcolor=\#FFFFFF
-recent05=C\:\\Users\\Rucha\\Desktop\\101MSDCF\\DSC00551.JPG
-recent04=C\:\\Users\\Rucha\\Desktop\\101MSDCF\\image_32bitgray.tif
-recent03=C\:\\Users\\Rucha\\Desktop\\101MSDCF\\image_8bitcolor.tif
-threads=2
-recent02=C\:\\Users\\Rucha\\Desktop\\101MSDCF\\image_16bitgray.tif
 recent05=E\:\\image4000x4000.tif
 recent04=E\:\\image7000x7000.tif
 recent03=C\:\\Users\\ArvieCarpio\\Documents\\sem1-2012\\se751\\se751_images\\E.jpg
 recent02=C\:\\Users\\ArvieCarpio\\Documents\\sem1-2012\\se751\\se751_images\\2N126467960EDN0000P1500L0M1.JPG
 noise.sd=25.0
-recent01=C\:\\Users\\Rucha\\Desktop\\101MSDCF\\image_RGBcolor.tif
-recent00=C\:\\Users\\Rucha\\Desktop\\101MSDCF\\image_8bitgray.tif
 recent01=C\:\\Users\\ArvieCarpio\\Documents\\sem1-2012\\se751\\se751_images\\D.jpg
 recent00=C\:\\Users\\ArvieCarpio\\Documents\\sem1-2012\\se751\\se751_images\\A.jpg
 raw.offset=0
@@ -37,8 +24,6 @@ showcolor=\#00FFFF
 fps=7.0
 raw.height=512
 jpeg=85
-ij.y=94
-ij.x=569
 ij.y=91
 ij.x=643
 new.slices=1
@@ -49,8 +34,6 @@ div-by-zero=Infinity
 raw.options=0
 recent14=C\:\\Users\\Rucha\\Desktop\\101MSDCF\\DSC00566.JPG
 new.width=400
-recent10=C\:\\Users\\ArvieCarpio\\Pictures\\School\\se751\\greyscale1.gif
-
 recent13=C\:\\Users\\Rucha\\Desktop\\image.jpg
 recent12=C\:\\Users\\Rucha\\Desktop\\101MSDCF\\DSC00555.JPG
 recent11=C\:\\Users\\Rucha\\Desktop\\101MSDCF\\DSC00551.JPG
@@ -61,6 +44,5 @@ prefs.options2=2
 precision=3
 roicolor=\#FFFF00
 ap.options=64
-dir.image=C\:\\Users\\Rucha\\Desktop\\101MSDCF\\
 dir.image=C\:\\Users\\ArvieCarpio\\Documents\\sem1-2012\\se751\\se751_images\\
 raw.type=0

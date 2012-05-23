@@ -14,7 +14,7 @@ import ij.Prefs;
 This is an 8-bit image and methods that operate on that image. Based on the ImageProcessor class
 from "KickAss Java Programming" by Tonny Espeset.
 */
-public class ByteProcessor extends ImageProcessor {
+public class ByteProcessor extends ImageProcessor{
 
 	static final int ERODE=10, DILATE=11;
 	protected byte[] pixels;
@@ -1021,6 +1021,8 @@ public class ByteProcessor extends ImageProcessor {
 			if (y%20==0)
 				showProgress((double)(y-roiY)/roiHeight);
 		}
+		long name = Thread.currentThread().getId();
+	    System.out.println("Thread id: " + name);
 		showProgress(1.0);
     }
     
@@ -1081,7 +1083,9 @@ public class ByteProcessor extends ImageProcessor {
 			ry = rand(ymin, ymax, r);
 			pixels[ry*width+rx] = (byte)0;
 		}
-		
+//		SimulateWork();
+		long name = Thread.currentThread().getId();
+	    System.out.println("Thread id: " + name);
 	}
 	
 	@Override

@@ -799,9 +799,6 @@ public class ColorProcessor extends ImageProcessor {
 	public void salt_and_pepper_SERIAL(double percent) {
 		// TODO Auto-generated method stub
 		setup();
-		r.salt_and_pepper_SERIAL(percent); showProgress(0.40);
-		g.salt_and_pepper_SERIAL(percent); showProgress(0.65);
-		b.salt_and_pepper_SERIAL(percent); showProgress(0.90);
 		r.salt_and_pepper_SERIAL(percent); 
 		g.salt_and_pepper_SERIAL(percent);
 		b.salt_and_pepper_SERIAL(percent); 
