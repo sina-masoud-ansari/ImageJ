@@ -1,81 +1,187 @@
 package ij.parallel;
 
-import java.util.ArrayList;
+import ij.process.ImageProcessor;
+
+import java.io.File;
 
 public class ParallelPerformanceTest {
+
+	static final int ARGC = 6;
+	static File file;
+	static String filter;
+	static String setup;
+	static String stage;
+	static int method;
+	static int threads;
+	static int iter;
 	
-	private int iter; //number of iterations
-	private int maxt; //max threads to use;
+	static final String 
+		ADD_NOISE = "Add Noise",
+		SHADOWS = "Shadows",
+		SALT_AND_PEPPER = "Salt and Pepper";
 	
-	ArrayList<PerformanceTest> tests;
-	ArrayList<Results> results;
+	static final String
+		DEPENDENT = "DEPENDENT",
+		INDEPENDENT = "INDEPENDENT";
 	
-	public ParallelPerformanceTest(int i, int t){
-		iter = i;
-		maxt = t;
-		tests = new ArrayList<PerformanceTest>();
-		results = new ArrayList<Results>();
+	static final String
+		P_NONE_STR = "P_NONE",
+		P_SERIAL_STR = "P_SERIAL",
+		P_SIMPLE_STR = "P_SIMPLE";
+		// TODO: add executor etc
+	
+	static final String 
+		SETUP = "SETUP",
+		RUN = "RUN";
+		
+	
+	protected static void printError(String msg){
+		System.out.println("ERROR: "+msg);
+		System.exit(1);
+	}	
+	
+	private static void printUsage(){
+		System.out.println("Usage: filepath filter setup method threads stage [iter]");
+		System.exit(0);
 	}
 	
-	public void add(PerformanceTest t){
-		tests.add(t);
+	private static boolean validFilter(String f){
+		if (f.equals(ADD_NOISE)){
+			return true;
+		} else if (f.equals(SHADOWS)){
+			return true;
+		} else if (f.equals(SALT_AND_PEPPER)) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
-	public void collate(){
-		String res = "";
-		for (Results r : results){
-			if (res.isEmpty()){
-				res += r.getHeaderCSV();
+	private static boolean validSetup(String s){
+		if (s.equals(DEPENDENT)){
+			return true;
+		} else if (s.equals(INDEPENDENT)){
+			return true;	
+		} else {
+			return false;
+		}
+	}
+	
+	private static boolean validMethod(String m){
+		if (m.equals(P_NONE_STR)){
+			method = ImageProcessor.P_NONE;
+			return true;
+		} else if (m.equals(P_SERIAL_STR)){
+			method = ImageProcessor.P_SERIAL;
+			return true;
+		} else if (m.equals(P_SIMPLE_STR)) {
+			method = ImageProcessor.P_SIMPLE;
+			return true;
+		} else {
+			return false;
+		}
+	}	
+	
+	private static void processArgs(String[] args){
+		
+		// Check for valid file
+		file = new File(args[0]);
+		if (!file.isFile()){
+			printError("First argument must be a file");
+		}
+		
+		// Check for valid filter
+		filter = args[1];
+		if (filter.isEmpty()){
+			printError("Second argument must be a non-empty string");
+		} else if (!validFilter(filter)){
+			printError("Second argument must be one of {'"+ADD_NOISE+"','"+SHADOWS+"','"+SALT_AND_PEPPER+"'}");
+		}
+		
+		// Check for valid setup option
+		setup = args[2];
+		if (setup.isEmpty()){
+			printError("Third argument must be a non-empty string");
+		} else if (!validSetup(setup)){
+			printError("Third argument must be one of {'"+DEPENDENT+"','"+INDEPENDENT+"'}");
+		}		
+		
+		// Check for valid method
+		String methodString = args[3];
+		if (methodString.isEmpty()){
+			printError("Fourth argument must be a non-empty string");
+		} else if (!validMethod(methodString)){
+			printError("Fourth argument must be one of {'"+P_NONE_STR+"','"+P_SERIAL_STR+"', '"+P_SIMPLE_STR+"'}");
+		}
+		
+		// Check for valid threads
+		try {
+			threads = Integer.parseInt(args[4]);
+			if (threads < 1) {
+				printError("Fifth argument must be an integer > 0");
 			}
-			res += r.collateCSV();
+		} catch (NumberFormatException e){
+			printError("Fifth argument must be an integer");
 		}
-		System.out.println(res.trim());
+		
+		// Check for valid stage
+		stage = args[5];
+		if (stage.isEmpty()){
+			printError("Sixth argument must be a non-empty string");
+		} else if (!validMethod(methodString)){
+			printError("Sixth argument must be one of {'"+SETUP+"','"+RUN+"'}");
+		}		
+		
+		// Check for valid iter (reuqired for dependent tests)
+		try {
+			if (setup.equals(DEPENDENT)){
+				if (args.length != 7){
+					printError("Argument 'iterations' required for "+DEPENDENT+" configurations");
+				} else {
+					iter = Integer.parseInt(args[6]);
+				}
+				if (iter < 0) {
+					printError("Argument 'iterations' should be a positive integer");
+				}
+			}
+		} catch (NumberFormatException e){
+			printError("Sixth argument must be an integer");
+		}	
 	}
 	
-	public void start(){
-		for (PerformanceTest t : tests){ // for each test
-			runIndependent(t);
-			runDependent(t);
-		}
-	}
-	
-	private void runIndependent(PerformanceTest t){
-		//System.out.println("Single setup, single run:\n");
-		for (int n = 1; n <= maxt; n++){ // for each thread arrangement
-			t.setProcessors(n);
-			t.schedule(iter, true);
-			results.add(t.getResults());
-		}
-	}
-	
-	private void runDependent(PerformanceTest t){
-		//System.out.println("Single setup, multiple run:\n");
-		for (int n = 1; n <= maxt; n++){ // for each thread arrangement
-			t.setProcessors(n);
-			t.schedule(iter, false);
-			results.add(t.getResults());
-		}
-	}
-	
+
 	/**
 	 * @param args
+	 * 
+	 * Argument vector is as follows:
+	 * 
+	 * filepath	: path to the image file
+	 * filter	: the filter to perform on the image
+	 * setup	: independent or dependent runs. Dependent runs use iter 		
+	 * method	: the parallelisation method
+	 * threads 	: number o threads to use
+	 * stage	: what part of the filtering process to measure 
+	 * [iter]	: Optional. The number of iterations to perform on dependent setups.
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		int maxt = Runtime.getRuntime().availableProcessors(); // max number of threads to use.
-		String url = args[0];
-		int iter = Integer.parseInt(args[1]);
-		System.out.println(url + "," + iter);
-		//String url = "/Users/smas036/Dev/LARGE_COLOR_RGB.tif";	
-		//int iter = 1;
+	
+		if (args.length < 6){
+			printUsage();
+		} else {
+			processArgs(args);
+		}
 		
-		ParallelPerformanceTest test = new ParallelPerformanceTest(iter, maxt);
-	    test.add(new NoiseFilterPerformanceTest(url));
-		test.add(new SaltAndPepperFilterPerformanceTest(url));
-		test.add(new ShadowsFilterPerformanceTest(url));
-		test.start();
-		test.collate();
+		TestRunner runner = null;
+		if (setup.equals(DEPENDENT)){
+			runner = TestRunnerFactory.createTestRunner(file, filter, stage, method, threads, iter);
+		} else if (setup.equals(INDEPENDENT)){
+			runner = TestRunnerFactory.createTestRunner(file, filter, stage, method, threads, iter);
+		}
+		if (runner == null){
+			printError("Unable to initialise test runner");
+		} else {
+			System.out.println(runner.run());
+		}
 	}
 
 }
-

@@ -1950,6 +1950,7 @@ public abstract class ImageProcessor implements Cloneable {
 	public abstract void salt_and_pepper_NONE(double percent);
 	public abstract void salt_and_pepper_SERIAL(double percent);
 	public abstract void salt_and_pepper_SIMPLE(double percent);
+//	public abstract void salt_and_pepper_PARATASK(double d);
     
 	/** Creates a new processor containing an image
 		that corresponds to the current ROI. */
@@ -2395,12 +2396,9 @@ public abstract class ImageProcessor implements Cloneable {
 	/** Returns a shallow copy of this ImageProcessor. */
 	public synchronized Object clone() {
 		try {
-			return super.clone();
+		return super.clone();
 		} catch (CloneNotSupportedException e) {
-			return null;
+		return null;
 		}
 	}
-
-	
-
 }

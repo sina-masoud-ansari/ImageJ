@@ -94,7 +94,7 @@ public class ImageDivisionTest {
 		assertEquals(roi.height + roi.y, limit);
 	}
 	
-	@Test
+	
 	public void prefsTest(){
 		Prefs.setThreads(threads);
 		ImageDivision idiv2 = new ImageDivision(roi.x, roi.y, roi.width, roi.height);
