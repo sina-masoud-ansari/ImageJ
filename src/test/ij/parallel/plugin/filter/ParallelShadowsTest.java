@@ -39,29 +39,33 @@ public class ParallelShadowsTest {
 		ALPHA = 0.05;*
 */
 	private final static String 
-	P_GRAY8 = "file://C:/Users/Rucha/git/ImageJ/resources/test/images/tif/GRAY8.tif";
-		// Example image paths for each image type
-		//P_COLOR_RGB = "/resources/images/tif/COLOR_RGB.tif",
-		//P_COLOR_256 = "/resources/images/tif/COLOR_256.tif",
-		//P_GRAY8 = "/resources/images/tif/GRAY8.tif";
-		//P_GRAY16 = "/resources/images/tif/GRAY16.tif",
-		//P_GRAY32 = "/resources/images/tif/GRAY32.tif";
+	/*P_GRAY8 = "file://C:/Users/Rucha/git/ImageJ/resources/test/images/tif/GRAY8.tif",
+	P_GRAY16 = "file://C:/Users/Rucha/git/ImageJ/resources/test/images/tif/GRAY16.tif",
+	P_GRAY32 = "file://C:/Users/Rucha/git/ImageJ/resources/test/images/tif/GRAY32.tif",
+	P_COLOR_256 = "file://C:/Users/Rucha/git/ImageJ/resources/test/images/tif/COLOR_256.tif",
+	P_COLOR_RGB = "file://C:/Users/Rucha/git/ImageJ/resources/test/images/tif/COLOR_RGB.tif";*/
+		 //Example image paths for each image type
+		P_COLOR_RGB = "/resources/images/tif/COLOR_RGB.tif",
+		P_COLOR_256 = "/resources/images/tif/COLOR_256.tif",
+		P_GRAY8 = "/resources/images/tif/GRAY8.tif",
+		P_GRAY16 = "/resources/images/tif/GRAY16.tif",
+		P_GRAY32 = "/resources/images/tif/GRAY32.tif";
 	
 	
-	private ImagePlus imgA, imgB,imgC;
+	private ImagePlus imgA, imgB,imgC,imgD;
 	private final int nChannels, mode;
 	private URL url;
 
 	public ParallelShadowsTest(String s, int n, int m) 
 	{	
-		//url = this.getClass().getResource(s);
-		url = null;
+		url = this.getClass().getResource(s);
+		/*url = null;
 		try {
 			url = new URL(s);
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 		System.out.println(url.getPath());
 		nChannels = n;
 		mode = m;
@@ -89,12 +93,11 @@ public class ParallelShadowsTest {
 	@Parameters
 	public static Collection<Object[]> testImages() {
 		
-		Object[][] images = new Object[][] { {P_GRAY8 , CH_GRAY8, ImageProcessor.P_NONE }//,{ P_GRAY8, CH_GRAY8, ImageProcessor.P_SERIAL }, { P_GRAY8, CH_GRAY8, ImageProcessor.P_SIMPLE }
-				//{ P_COLOR_RGB, CH_COLOR_RGB, ImageProcessor.P_NONE }, { P_COLOR_RGB, CH_COLOR_RGB, ImageProcessor.P_SERIAL }, { P_COLOR_RGB, CH_COLOR_RGB, ImageProcessor.P_SIMPLE },
-				//{ P_COLOR_256, CH_COLOR_256, ImageProcessor.P_NONE }, { P_COLOR_256, CH_COLOR_256, ImageProcessor.P_SERIAL }, { P_COLOR_256, CH_COLOR_256, ImageProcessor.P_SIMPLE },
-				//{ P_GRAY8, CH_GRAY8, ImageProcessor.P_NONE }, { P_GRAY8, CH_GRAY8, ImageProcessor.P_SERIAL }, { P_GRAY8, CH_GRAY8, ImageProcessor.P_SIMPLE },
-				//{ P_GRAY16, CH_GRAY16 , ImageProcessor.P_NONE }, { P_GRAY16, CH_GRAY16 , ImageProcessor.P_SERIAL }, { P_GRAY16, CH_GRAY16 , ImageProcessor.P_SIMPLE },
-				//{ P_GRAY32, CH_GRAY32, ImageProcessor.P_NONE }, { P_GRAY32, CH_GRAY32, ImageProcessor.P_SERIAL }, { P_GRAY32, CH_GRAY32, ImageProcessor.P_SIMPLE }
+		Object[][] images = new Object[][] { {P_GRAY8 , CH_GRAY8, ImageProcessor.P_NONE },{ P_GRAY8, CH_GRAY8, ImageProcessor.P_SERIAL }, { P_GRAY8, CH_GRAY8, ImageProcessor.P_SIMPLE },
+				{ P_COLOR_RGB, CH_COLOR_RGB, ImageProcessor.P_NONE }, { P_COLOR_RGB, CH_COLOR_RGB, ImageProcessor.P_SERIAL }, { P_COLOR_RGB, CH_COLOR_RGB, ImageProcessor.P_SIMPLE },
+				{ P_COLOR_256, CH_COLOR_256, ImageProcessor.P_NONE }, { P_COLOR_256, CH_COLOR_256, ImageProcessor.P_SERIAL }, { P_COLOR_256, CH_COLOR_256, ImageProcessor.P_SIMPLE },
+				{ P_GRAY16, CH_GRAY16 , ImageProcessor.P_NONE }, { P_GRAY16, CH_GRAY16 , ImageProcessor.P_SERIAL }, { P_GRAY16, CH_GRAY16 , ImageProcessor.P_SIMPLE },
+				{ P_GRAY32, CH_GRAY32, ImageProcessor.P_NONE }, { P_GRAY32, CH_GRAY32, ImageProcessor.P_SERIAL }, { P_GRAY32, CH_GRAY32, ImageProcessor.P_SIMPLE }
 				
 		};
 		return Arrays.asList(images);
@@ -105,6 +108,7 @@ public class ParallelShadowsTest {
 		imgA = new ImagePlus(url.getPath());
         imgB = new ImagePlus(url.getPath());
 	    imgC = new ImagePlus(url.getPath());
+	    imgD = new ImagePlus(url.getPath());
 		//System.out.println(url.getPath());
 	}
 
@@ -115,14 +119,17 @@ public class ParallelShadowsTest {
 			Shadows ob = new Shadows();
 			ParallelShadows ob1 = new ParallelShadows();
 			ParallelShadows ob2 = new ParallelShadows();
+			ParallelShadows ob3 = new ParallelShadows();
 			ob.north(imgA.getProcessor()); //P_NONE
 			//ImageProcessor ipB = imgB.getProcessor();
 			ob1.northSimple(imgB.getProcessor()); //P_SIMPLE
-			//ob2.northExecutor(imgC.getProcessor());
+			ob2.northSerial(imgC.getProcessor());
+			ob3.northExecutor(imgD.getProcessor());
 			
 			int[] pixel1;
 			int[] pixel2;
-			//int[] pixel3;
+			int[] pixel3;
+			int[] pixel4;
 			
 			//System.out.println( imgA.getWidth());
 			
@@ -132,19 +139,25 @@ public class ParallelShadowsTest {
 				{
 					pixel1 = imgA.getPixel(x, y);
 					pixel2 = imgB.getPixel(x, y);
-				    //pixel3 = imgC.getPixel(x, y);
+				    pixel3 = imgC.getPixel(x, y);
+				    pixel4 = imgD.getPixel(x, y);
 					
 					for(int cnt=0;cnt<pixel1.length;cnt++)
 					{ 
 						int p1 = pixel1[cnt];
 						int p2 = pixel2[cnt];
-						//int p3 = pixel3[cnt];
+						int p3 = pixel3[cnt];
+						int p4 = pixel4[cnt];
+						
 						if(p1!=p2)
 						{
 						//System.out.println("PIXEL "+(y*imgA.getWidth()+x)+": "+p1+ " "+p2);
 						System.out.println("test failed" + x+" "+y+" "+p1+ " "+p2);
 						}
-						assertEquals(true,true);
+						assertEquals(p1,p2);
+						assertEquals(p1,p3);
+						assertEquals(p1,p4);
+						
 					}
 					
 				}

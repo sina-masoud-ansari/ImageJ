@@ -2,6 +2,8 @@ package ij.process;
 
 import java.awt.*;
 import java.awt.image.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import ij.parallel.Division;
 import ij.parallel.ImageDivision;
@@ -23,11 +25,10 @@ public class ColorProcessor extends ImageProcessor {
 	protected byte[] R, G, B;
 	protected ByteProcessor r, g, b;
 	protected Rectangle roi;
-	int p1_p,p2_p,p3_p,p4_p,p5_p,p6_p,p7_p,p8_p,p9_p;
 	int k1_p,k2_p,k3_p,k4_p,k5_p,k6_p,k7_p,k8_p,k9_p;
-	int offset_p,rowOffset_p,scale_p;
+	int rowOffset_p,scale_p;
 	int[] pixelsTemp;
-	int rsum_p, gsum_p,bsum_p,inc_p;
+	int inc_p;
 	
 	// Weighting factors used by getPixelValue(), getHistogram() and convertToByte().
 	// Enable "Weighted RGB Conversion" in <i>Edit/Options/Conversions</i>
@@ -1115,7 +1116,7 @@ public class ColorProcessor extends ImageProcessor {
 		int rsum = 0, gsum = 0, bsum = 0;
         int rowOffset = width;
 		
-        for (int y=yMin; y<=yMax; y++) {
+        for (int y=yMin; y<yMax; y++) {
 			offset = xMin + y * width;
 			p1 = 0;
 			p2 = pixels2[offset-rowOffset-1];
@@ -1127,7 +1128,7 @@ public class ColorProcessor extends ImageProcessor {
 			p8 = pixels2[offset+rowOffset-1];
 			p9 = pixels2[offset+rowOffset];
 
-			for (int x=xMin; x<=xMax; x++) {
+			for (int x=xMin; x<xMax; x++) {
 				p1 = p2; p2 = p3;
 				p3 = pixels2[offset-rowOffset+1];
 				p4 = p5; p5 = p6;
@@ -1185,6 +1186,7 @@ public class ColorProcessor extends ImageProcessor {
 		showProgress(1.0);
 	}
 	
+	@Override
 	public void convolve3x3_serial(int[] kernel)
 	{
 		k1_p=kernel[0]; k2_p=kernel[1]; k3_p=kernel[2];
@@ -1200,7 +1202,7 @@ public class ColorProcessor extends ImageProcessor {
 		
 		 pixelsTemp = (int[])getPixelsCopy();
 		
-		rsum_p = 0; gsum_p = 0; bsum_p = 0;
+		//rsum_p = 0; gsum_p = 0; bsum_p = 0;
         rowOffset_p = width;
         
         //ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, 1);
@@ -1214,10 +1216,10 @@ public class ColorProcessor extends ImageProcessor {
 		
 		div.processThreads(threads);
 		// indicate processing is finished	
-		showProgress(1.0);
+		//showProgress(1.0);
 	}
 	
-	
+	@Override
 	public void convolve3x3_simple(int[] kernel)
 	{
 		k1_p=kernel[0]; k2_p=kernel[1]; k3_p=kernel[2];
@@ -1233,7 +1235,7 @@ public class ColorProcessor extends ImageProcessor {
 		
 		 pixelsTemp = (int[])getPixelsCopy();
 		
-		rsum_p = 0; gsum_p = 0; bsum_p = 0;
+		//rsum_p = 0; gsum_p = 0; bsum_p = 0;
         rowOffset_p = width;
         
         //ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight,roiHeight);
@@ -1248,16 +1250,55 @@ public class ColorProcessor extends ImageProcessor {
 		
 		div.processThreads(threads);
 		// indicate processing is finished	
+		//showProgress(1.0);
+	}
+	
+	@Override
+	public void convolve3x3_executor(int[] kernel)
+	{
+		k1_p=kernel[0]; k2_p=kernel[1]; k3_p=kernel[2];
+	    k4_p=kernel[3]; k5_p=kernel[4]; k6_p=kernel[5];
+		k7_p=kernel[6]; k8_p=kernel[7]; k9_p=kernel[8];
+
+		scale_p = 0;
+		for (int i=0; i<kernel.length; i++)
+			scale_p += kernel[i];
+		if (scale_p==0) scale_p = 1;
+	    inc_p = roiHeight/25;
+		if (inc_p<1) inc_p = 1;
+		
+		 pixelsTemp = (int[])getPixelsCopy();
+		
+		//rsum_p = 0; gsum_p = 0; bsum_p = 0;
+        rowOffset_p = width;
+        
+ 		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, roiHeight, width, height);
+ 		 
+ 		ExecutorService executor = Executors.newFixedThreadPool(div.numThreads);
+ 		for (int i = 0; i < div.numThreads; i++)
+ 		{
+ 			Runnable worker = getRunnableConvolve(div.getDivision(i));
+ 			executor.execute(worker);
+ 		}
+ 		
+ 		executor.shutdown();
+ 		while (!executor.isTerminated()) {}
+     	
+		//div.processThreads(threads);
+		 //indicate processing is finished	
 		showProgress(1.0);
 	}
 
 	private Runnable getRunnableConvolve(final Division div)
 	{
 		return new Runnable(){
+			int rsum_p=0, gsum_p=0,bsum_p=0;
+			int p1_p,p2_p,p3_p,p4_p,p5_p,p6_p,p7_p,p8_p,p9_p;
+			int offset_p;
 			@Override
 			public void run() 
 			{	
-				for (int y=div.yStart; y<=div.yLimit; y++) {
+				for (int y=div.yStart; y<div.yLimit; y++) {
 					offset_p = div.xStart + y * width;
 					p1_p = 0;
 					p2_p = pixelsTemp[offset_p-rowOffset_p-1];
@@ -1269,14 +1310,15 @@ public class ColorProcessor extends ImageProcessor {
 					p8_p = pixelsTemp[offset_p+rowOffset_p-1];
 					p9_p = pixelsTemp[offset_p+rowOffset_p];
 
-					for (int x=div.xStart; x<=div.xEnd; x++) {
+					for (int x=div.xStart; x<div.xEnd; x++) {
 						p1_p = p2_p; p2_p = p3_p;
 						p3_p = pixelsTemp[offset_p-rowOffset_p+1];
 						p4_p = p5_p; p5_p = p6_p;
 						p6_p = pixelsTemp[offset_p+1];
 						p7_p = p8_p; p8_p = p9_p;
-						p9_p = pixelsTemp[offset_p+rowOffset_p+1];
 						
+						p9_p = pixelsTemp[offset_p+rowOffset_p+1];
+						//System.out.println(x+ "   "+y+ "   "+p9_p);
 
 						rsum_p = k1_p*((p1_p & 0xff0000) >> 16)
 						     + k2_p*((p2_p & 0xff0000) >> 16)

@@ -1930,6 +1930,7 @@ public abstract class ImageProcessor implements Cloneable {
 	public abstract void convolve3x3(int[] kernel);
 	public abstract void convolve3x3_serial(int[] kernel);
 	public abstract void convolve3x3_simple(int[] kernel);
+	public abstract void convolve3x3_executor(int[] kernel);
 	
 	/** A 3x3 filter operation, where the argument (BLUR_MORE,  FIND_EDGES, 
 	     MEDIAN_FILTER, MIN or MAX) determines the filter type. */
@@ -2399,5 +2400,7 @@ public abstract class ImageProcessor implements Cloneable {
 			return null;
 		}
 	}
+
+	
 
 }
