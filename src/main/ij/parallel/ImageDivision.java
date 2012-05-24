@@ -24,6 +24,7 @@ public class ImageDivision {
 		// TODO Auto-generated constructor stub
 		Prefs.setThreads(Runtime.getRuntime().availableProcessors());
 		numThreads = Math.min(Prefs.getThreads(), roiHeight);
+		//numThreads = Math.min(Math.max(threads, 1), roiHeight);
 		ratio = roiHeight / numThreads;
 		int a = 0;
 		mod = roiHeight % numThreads;
@@ -74,7 +75,6 @@ public class ImageDivision {
 		}
 	}
 }
-
 	private void setDivsionsWithKernel(int roiX, int roiY, int roiWidth, int roiHeight,int width, int height){
 		int numRows, yStart, yLimit, xEnd,xStart;
 		
@@ -88,11 +88,14 @@ public class ImageDivision {
 			int r = roiY+i*numRows;
 			yStart = Math.max(1, roiY+i*numRows); //max
 			yLimit = Math.min(yStart+numRows-1,height-2);
-			xEnd = Math.min(width - 2,roiX + roiWidth-1);
+
+			xEnd = Math.min(roiX + roiWidth - 1, width - 2);
+
+			
+
 			//xEnd = Math.min(roiX + roiWidth - 2, width - 1);
 			xStart=Math.max(roiX,1); //max
-			//int xMax =  Math.min(roiX + roiWidth - 1, width - 2);
-			//int yMax = Math.min(yStart + roiHeight - 1, height - 2);
+			
 			divs[i] = new Division(i, numRows, yStart, yLimit, xStart, xEnd);
 		}		
 	}	

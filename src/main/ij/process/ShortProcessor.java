@@ -1,6 +1,8 @@
  package ij.process;
 
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.awt.*;
 import java.awt.image.*;
 
@@ -19,9 +21,6 @@ public class ShortProcessor extends ImageProcessor {
 	private short[] snapshotPixels;
 	private byte[] LUT;
 	private boolean fixedScale;
-	int v1_p, v2_p, v3_p;           //input pixel values around the current pixel
-    int v4_p, v5_p, v6_p;
-    int v7_p, v8_p, v9_p;
     int k1_p,k2_p,k3_p,k4_p,k5_p,k6_p,k7_p,k8_p,k9_p,scale_p;
     short[] pixelsTemp;
 
@@ -1328,7 +1327,7 @@ public class ShortProcessor extends ImageProcessor {
         if (inc<1) inc = 1;
         pixelsTemp = (short[])getPixelsCopy();
         
-        ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight,roiHeight);
+        ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
     	
 		Thread[] threads = new Thread[div.numThreads];
 		for (int i = 0; i < div.numThreads; i++)
@@ -1340,13 +1339,53 @@ public class ShortProcessor extends ImageProcessor {
 		// indicate processing is finished	
 		showProgress(1.0);
 	}
+	
+	@Override
+	public void convolve3x3_executor(int[] kernel) 
+	{
+         k1_p=0; k2_p=0; k3_p=0;  //kernel values (used for CONVOLVE only)
+         k4_p=0; k5_p=0; k6_p=0;
+         k7_p=0; k8_p=0; k9_p=0;
+         scale_p = 0;
+        
+            k1_p=kernel[0]; k2_p=kernel[1]; k3_p=kernel[2];
+            k4_p=kernel[3]; k5_p=kernel[4]; k6_p=kernel[5];
+            k7_p=kernel[6]; k8_p=kernel[7]; k9_p=kernel[8];
+            for (int i=0; i<kernel.length; i++)
+                scale_p += kernel[i];
+            if (scale_p==0) scale_p = 1;
+        
+        int inc = roiHeight/25;
+        if (inc<1) inc = 1;
+        pixelsTemp = (short[])getPixelsCopy();
+        
+        ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
+    	
+        ExecutorService executor = Executors.newFixedThreadPool(div.numThreads);
+		for (int i = 0; i < div.numThreads; i++)
+		{
+			Runnable worker = getRunnableConvolve(div.getDivision(i));
+			executor.execute(worker);
+		}
+		
+		executor.shutdown();
+		while (!executor.isTerminated()) {}
+		
+		//div.processThreads(executor);
+		// indicate processing is finished	
+		showProgress(1.0);
+	}
+
 
 	private Runnable getRunnableConvolve(final Division div)
     {
     	return new Runnable(){
 			@Override
 			public void run() 
-			{		
+			{	
+				int v1_p, v2_p, v3_p;           //input pixel values around the current pixel
+		    	int v4_p, v5_p, v6_p;
+		    	int v7_p, v8_p, v9_p;
 				// for each row
 				for (int y = div.yStart; y < div.yLimit; y++)
 				{
@@ -1384,6 +1423,7 @@ public class ShortProcessor extends ImageProcessor {
 						showProgress((double)(y-roiY)/roiHeight);
 					}
 				} // end y loop
+				
 			} 				
 		}; 		
     	
