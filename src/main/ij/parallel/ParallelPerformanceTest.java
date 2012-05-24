@@ -145,7 +145,7 @@ public class ParallelPerformanceTest {
 				} else {
 					iter = Integer.parseInt(args[6]);
 				}
-				if (iter < 0) {
+				if (iter < 1) {
 					printError("Argument 'iterations' should be a positive integer");
 				}
 			}
@@ -171,6 +171,11 @@ public class ParallelPerformanceTest {
 	public static void main(String[] args) {
 	
 		if (args.length < 6){
+			String s = args.length+" ARGS:";
+			for (String a : args){
+				s+=" "+a;
+			}
+			System.out.println(s);
 			printUsage();
 		} else {
 			processArgs(args);
@@ -180,7 +185,7 @@ public class ParallelPerformanceTest {
 		if (setup.equals(DEPENDENT)){
 			runner = TestRunnerFactory.createTestRunner(file, filter, stage, method, threads, iter);
 		} else if (setup.equals(INDEPENDENT)){
-			runner = TestRunnerFactory.createTestRunner(file, filter, stage, method, threads, iter);
+			runner = TestRunnerFactory.createTestRunner(file, filter, stage, method, threads);
 		}
 		if (runner == null){
 			printError("Unable to initialise test runner");
@@ -193,7 +198,7 @@ public class ParallelPerformanceTest {
 			long timetaken = runner.timetaken;
 			
 			// FileName, NumChannels, BitDepth, TotalPixels, Threads, Setup, Filter, Stage, TimeTaken
-			System.out.printf("%s,%d,%d,%d", fname, nchannels, bitdepth, totalPixels, threads, setup, filter, stage, timetaken);
+			System.out.printf("%s,%d,%d,%d,%d,%s,%s,%s,%d\n", fname, nchannels, bitdepth, totalPixels, threads, setup, filter, stage, timetaken);
 		}
 	}
 
