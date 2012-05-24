@@ -35,5 +35,10 @@ class ShadowsFilterPerformanceTest extends PerformanceTest {
 		ob.northSimple(ip);
 	}
 	
+	public void run_P_EXECUTOR() {
+		ParallelShadows ob= new ParallelShadows();
+		ob.northExecutor(ip);
+	}
+	
 	
 }
