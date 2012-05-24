@@ -1,9 +1,12 @@
  package ij.process;
 
 import java.util.*;
+<<<<<<< HEAD
+import java.util.concurrent.ConcurrentLinkedQueue;
+=======
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ConcurrentLinkedQueue;
+>>>>>>> 4d732c21d0cc43b13f65bbf5ff0516e03c456d84
 import java.awt.*;
 import java.awt.image.*;
 

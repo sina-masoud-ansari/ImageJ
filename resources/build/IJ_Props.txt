@@ -240,15 +240,16 @@ noise14="Remove NaNs...",ij.plugin.filter.RankFilters("nan")
 shadows01="North",ij.plugin.filter.Shadows("north")
 shadows02="North Serial",ij.parallel.plugin.filter.ParallelShadows("northSerial")
 shadows03="North Simple",ij.parallel.plugin.filter.ParallelShadows("northSimple")
-shadows04="Northeast",ij.plugin.filter.Shadows("northeast")
-shadows05="East",ij.plugin.filter.Shadows("east")
-shadows06="Southeast",ij.plugin.filter.Shadows("southeast")
-shadows07="South",ij.plugin.filter.Shadows("south")
-shadows08="Southwest",ij.plugin.filter.Shadows("southwest")
-shadows09="West",ij.plugin.filter.Shadows("west")
-shadows10="Northwest",ij.plugin.filter.Shadows("northwest")
-shadows11=-
-shadows12="Shadows Demo",ij.plugin.filter.Shadows("demo")
+shadows04="North Executor",ij.parallel.plugin.filter.ParallelShadows("northExecutor")
+shadows05="Northeast",ij.plugin.filter.Shadows("northeast")
+shadows06="East",ij.plugin.filter.Shadows("east")
+shadows07="Southeast",ij.plugin.filter.Shadows("southeast")
+shadows08="South",ij.plugin.filter.Shadows("south")
+shadows09="Southwest",ij.plugin.filter.Shadows("southwest")
+shadows10="West",ij.plugin.filter.Shadows("west")
+shadows11="Northwest",ij.plugin.filter.Shadows("northwest")
+shadows12=-
+shadows13="Shadows Demo",ij.plugin.filter.Shadows("demo")
 
 # Plugins installed in the Process/Binary submenu
 binary01="Make Binary",ij.plugin.Thresholder
