@@ -27,7 +27,8 @@ public class ParallelPerformanceTest {
 	static final String
 		P_NONE_STR = "P_NONE",
 		P_SERIAL_STR = "P_SERIAL",
-		P_SIMPLE_STR = "P_SIMPLE";
+		P_SIMPLE_STR = "P_SIMPLE",
+		P_EXECUTOR_STR = "P_EXECUTOR";
 		// TODO: add executor etc
 	
 	static final String 
@@ -77,6 +78,9 @@ public class ParallelPerformanceTest {
 		} else if (m.equals(P_SIMPLE_STR)) {
 			method = ImageProcessor.P_SIMPLE;
 			return true;
+		} else if (m.equals(P_EXECUTOR_STR)) {
+			method = ImageProcessor.P_SIMPLE;
+			return true;
 		} else {
 			return false;
 		}
@@ -111,7 +115,7 @@ public class ParallelPerformanceTest {
 		if (methodString.isEmpty()){
 			printError("Fourth argument must be a non-empty string");
 		} else if (!validMethod(methodString)){
-			printError("Fourth argument must be one of {'"+P_NONE_STR+"','"+P_SERIAL_STR+"', '"+P_SIMPLE_STR+"'}");
+			printError("Fourth argument must be one of {'"+P_NONE_STR+"','"+P_SERIAL_STR+"', '"+P_SIMPLE_STR+"', '"+P_EXECUTOR_STR+"'}");
 		}
 		
 		// Check for valid threads

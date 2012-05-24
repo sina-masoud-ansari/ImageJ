@@ -33,4 +33,9 @@ class NoiseFilterPerformanceTest extends PerformanceTest {
 		ip.noise_P_SIMPLE(RANGE);
 	}
 	
+	@Override
+	public void run_P_EXECUTOR() {
+		// TODO Auto-generated method stub
+	}
+	
 }

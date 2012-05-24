@@ -26,7 +26,8 @@ public abstract class PerformanceTest {
 	
 	public abstract void run_P_NONE();
 	public abstract void run_P_SERIAL();
-	public abstract void run_P_SIMPLE();	
+	public abstract void run_P_SIMPLE();
+	public abstract void run_P_EXECUTOR();	
 	
 }
 

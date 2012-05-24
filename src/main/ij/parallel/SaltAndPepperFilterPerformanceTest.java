@@ -46,4 +46,9 @@ public class SaltAndPepperFilterPerformanceTest extends PerformanceTest {
 
 	}
 
+	@Override
+	public void run_P_EXECUTOR() {
+		// TODO Auto-generated method stub
+	}	
+
 }

@@ -46,8 +46,8 @@ public class TestRunner {
 		test.setup();
 	}
 	
+	// requires performSETUP to be called first
 	private void performRUN(){
-		test.setup();
 		switch (method){
 			case ImageProcessor.P_NONE:
 				test.run_P_NONE();
@@ -58,6 +58,9 @@ public class TestRunner {
 			case ImageProcessor.P_SIMPLE:
 				test.run_P_SIMPLE();
 				break;
+			case ImageProcessor.P_EXECUTOR:
+				test.run_P_EXECUTOR();
+				break;				
 		}
 	}
 	
@@ -67,10 +70,13 @@ public class TestRunner {
 			long timeTotal = 0L;
 			long timeStart, timeFinish;
 			for (int i = 0; i < iter; i++){
-				timeStart = System.currentTimeMillis();
+				
 				if (stage == SETUP) {
+					timeStart = System.currentTimeMillis();
 					performSETUP();
 				} else {
+					performSETUP();
+					timeStart = System.currentTimeMillis();
 					performRUN();
 				}
 				timeFinish =  System.currentTimeMillis();
@@ -78,10 +84,13 @@ public class TestRunner {
 			}
 			return timeTotal/iter;
 		} else {
-			long timeStart = System.currentTimeMillis();
-			if (stage == SETUP) {			
+			long timeStart; 
+			if (stage == SETUP) {
+				timeStart = System.currentTimeMillis();
 				performSETUP();
 			} else {
+				performSETUP();
+				timeStart = System.currentTimeMillis();
 				performRUN();
 			}	
 			long timeFinish =  System.currentTimeMillis();
