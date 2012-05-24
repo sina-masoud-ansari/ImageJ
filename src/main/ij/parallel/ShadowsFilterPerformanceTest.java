@@ -35,4 +35,5 @@ class ShadowsFilterPerformanceTest extends PerformanceTest {
 		ob.northSimple(ip);
 	}
 	
+	
 }

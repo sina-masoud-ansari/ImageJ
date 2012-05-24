@@ -11,7 +11,6 @@ public class ImageDivision {
 	// Decide best number of threads automatically
 	public ImageDivision(int roiX, int roiY, int roiWidth, int roiHeight) {
 		// TODO Auto-generated constructor stub
-		Prefs.setThreads(Runtime.getRuntime().availableProcessors());
 		numThreads = Math.min(Prefs.getThreads(), roiHeight);
 		ratio = roiHeight / numThreads;
 		mod = roiHeight % numThreads;
@@ -22,20 +21,17 @@ public class ImageDivision {
 
 	public ImageDivision(int roiX, int roiY, int roiWidth, int roiHeight, int width, int height) {
 		// TODO Auto-generated constructor stub
-		Prefs.setThreads(Runtime.getRuntime().availableProcessors());
 		numThreads = Math.min(Prefs.getThreads(), roiHeight);
 		//numThreads = Math.min(Math.max(threads, 1), roiHeight);
 		ratio = roiHeight / numThreads;
-		int a = 0;
 		mod = roiHeight % numThreads;
 		divs = new Division[numThreads];
-		setDivsionsWithKernel(roiX, roiY, roiWidth, roiHeight, width, height);
+		setDivsionsWithKernel(roiX, roiY, roiWidth,roiHeight, width, height);
 	}	
 
 	// set thread limit e.g serial
 	public ImageDivision(int roiX, int roiY, int roiWidth, int roiHeight, int limit, int width, int height) {
 		// TODO Auto-generated constructor stub
-		Prefs.setThreads(Runtime.getRuntime().availableProcessors());
 		numThreads = Math.min(Prefs.getThreads(), limit);
 		ratio = roiHeight / numThreads;
 		mod = roiHeight % numThreads;
@@ -88,11 +84,7 @@ public class ImageDivision {
 			int r = roiY+i*numRows;
 			yStart = Math.max(1, roiY+i*numRows); //max
 			yLimit = Math.min(yStart+numRows-1,height-2);
-
 			xEnd = Math.min(roiX + roiWidth - 1, width - 2);
-
-			
-
 			//xEnd = Math.min(roiX + roiWidth - 2, width - 1);
 			xStart=Math.max(roiX,1); //max
 			
@@ -112,8 +104,6 @@ public class ImageDivision {
 		
 		// start threads
 		for (Thread t : threads){
-			long name = t.getId();
-		    System.out.println("Thread id: " + name);
 			t.start();
 		}
 		// wait for threads to finish
