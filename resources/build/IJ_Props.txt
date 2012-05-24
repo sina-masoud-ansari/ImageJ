@@ -231,10 +231,12 @@ noise07=-
 noise08="Salt and Pepper ORIGINAL",ij.plugin.filter.SaltAndPepper("salt_and_pepper")
 noise09="Salt and Pepper SERIAL",ij.parallel.plugin.filter.ParallelSaltAndPepper("salt_and_pepper serial")
 noise10="Salt and Pepper SIMPLE",ij.parallel.plugin.filter.ParallelSaltAndPepper("salt_and_pepper simple")
-noise11=-
-noise12="Despeckle",ij.plugin.filter.RankFilters("despeckle")
-noise13="Remove Outliers...",ij.plugin.filter.RankFilters("outliers")
-noise14="Remove NaNs...",ij.plugin.filter.RankFilters("nan")
+noise11="Salt and Pepper EXECUTOR",ij.parallel.plugin.filter.ParallelSaltAndPepper("salt_and_pepper executor")
+noise12="Salt and Pepper PARATASK",ij.parallel.plugin.filter.ParallelSaltAndPepper("salt_and_pepper paratask")
+noise13=-
+noise14="Despeckle",ij.plugin.filter.RankFilters("despeckle")
+noise15="Remove Outliers...",ij.plugin.filter.RankFilters("outliers")
+noise16="Remove NaNs...",ij.plugin.filter.RankFilters("nan")
 
 # Plugins installed in the Process/Shadows submenu
 shadows01="North",ij.plugin.filter.Shadows("north")

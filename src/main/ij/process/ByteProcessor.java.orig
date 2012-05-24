@@ -1,15 +1,17 @@
 package ij.process;
 
 import java.util.*;
-import java.util.concurrent.ExecutorService;
+<<<<<<< HEAD
 import java.util.concurrent.ConcurrentLinkedQueue;
+=======
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+>>>>>>> 4d732c21d0cc43b13f65bbf5ff0516e03c456d84
 //import java.util.concurrent.ForkJoinPool;
 import java.awt.*;
 import java.awt.image.*;
-import ij.parallel.pt.ParallelTask;
+import ij.parallel.pt.ByteProcessorPT;
 import ij.gui.*;
-import ij.parallel.Division;
 import ij.parallel.ForkAction;
 import ij.parallel.ImageDivision;
 import ij.Prefs;
@@ -1097,8 +1099,13 @@ public class ByteProcessor extends ImageProcessor{
 			if (y%20==0)
 				showProgress((double)(y-roiY)/roiHeight);
 		}
+<<<<<<< HEAD
+//		long name = Thread.currentThread().getId();
+//	    System.out.println("Thread id: " + name);
+=======
 		long name = Thread.currentThread().getId();
 	   
+>>>>>>> 4d732c21d0cc43b13f65bbf5ff0516e03c456d84
 		showProgress(1.0);
     }
     
@@ -1122,7 +1129,11 @@ public class ByteProcessor extends ImageProcessor{
 	@Override
 	public void noise_P_SIMPLE(double range) 
 	{
+<<<<<<< HEAD
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
+=======
 		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight,2);
+>>>>>>> 4d732c21d0cc43b13f65bbf5ff0516e03c456d84
 		Thread[] threads = new Thread[div.numThreads];
 		for (int i = 0; i < div.numThreads; i++)
 		{
@@ -1160,8 +1171,13 @@ public class ByteProcessor extends ImageProcessor{
 			pixels[ry*width+rx] = (byte)0;
 		}
 //		SimulateWork();
+<<<<<<< HEAD
+//		long name = Thread.currentThread().getId();
+//	    System.out.println("Thread id: " + name);
+=======
 		long name = Thread.currentThread().getId();
 	   
+>>>>>>> 4d732c21d0cc43b13f65bbf5ff0516e03c456d84
 	}
 	
 	@Override
@@ -1233,26 +1249,10 @@ public class ByteProcessor extends ImageProcessor{
 			tasks.add(getSaltAndPepperRunnable(n,imDiv.getDivision(i),imDiv.divs.length,r));
 		}
 		
-		ParallelTask pt = new ParallelTask();
+		ByteProcessorPT pt = new ByteProcessorPT();
 		pt.salt_and_pepper_PARATASK(tasks);
 	}
 
-	public  void salt_and_pepper_EXECUTOR(double percent) {
-		ImageDivision imDiv = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
-		Random r = new Random();
-		int n = (int)(percent*roiWidth*roiHeight);
-		
-    	ExecutorService executor = Executors.newFixedThreadPool(imDiv.numThreads);
-		for (int i = 0; i < imDiv.numThreads; i++)
-		{
-			Runnable worker = getSaltAndPepperRunnable(n,imDiv.getDivision(i),imDiv.divs.length,r);
-			executor.execute(worker);
-		}
-		
-		executor.shutdown();
-		while (!executor.isTerminated()) {}
-		
-	}
 	/** Scales the image or selection using the specified scale factors.
 		@see ImageProcessor#setInterpolate
 	*/
