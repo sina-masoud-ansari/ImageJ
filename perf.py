@@ -54,7 +54,7 @@ max_mem = sys.argv[4]
 xboot = sys.argv[5]
 
 ### Setup the basic command to run
-java_cmd = "java -Xmx{0} -Xbootclasspath/p:{1} -classpath {2}/ij.jar ij.parallel.SinglePerformanceTest".format(max_mem, xboot, bin_dir)
+java_cmd = "java -Xmx{0} -Xbootclasspath/p:{1} -classpath {2}/ij.jar ij.parallel.ParallelPerformanceTest".format(max_mem, xboot, bin_dir)
 
 if debug :
 	print "ImageJ performance testing\nPython version: %s" % sys.version
@@ -67,9 +67,12 @@ for f in filters :
 			for c in range(1, cpus+1) :
 				for t in stages :
 					if s == "DEPENDENT" :
-						print '{0} {1} "{2}" {3} {4} {5} {6} {7}'.format(java_cmd, file, f, s, p, c, t, iter)					
+						#print '{0} {1} "{2}" {3} {4} {5} {6} {7}'.format(java_cmd, file, f, s, p, c, t, iter)
+						#call([java_cmd, file, s, p, str(c), t])
+						call(["echo", "hello"])
    					else :
 		                                for i in range(1, int(iter)+1) :
-        		                                print '{0} {1} "{2}" {3} {4} {5} {6}'.format(java_cmd, file, f, s, p, c, t)
-                		                        #call([java_cmd, file, s, p, c, t])
+        		                                #print '{0} {1} "{2}" {3} {4} {5} {6}'.format(java_cmd, file, f, s, p, c, t)
+                		                        #call([java_cmd, file, s, p, str(c), t])
+							call(["echo", "hello"])
 

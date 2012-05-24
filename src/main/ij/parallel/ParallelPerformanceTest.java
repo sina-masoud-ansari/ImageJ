@@ -11,6 +11,7 @@ public class ParallelPerformanceTest {
 	static String filter;
 	static String setup;
 	static String stage;
+	static String methodString;
 	static int method;
 	static int threads;
 	static int iter;
@@ -111,7 +112,7 @@ public class ParallelPerformanceTest {
 		}		
 		
 		// Check for valid method
-		String methodString = args[3];
+		methodString = args[3];
 		if (methodString.isEmpty()){
 			printError("Fourth argument must be a non-empty string");
 		} else if (!validMethod(methodString)){
@@ -184,7 +185,15 @@ public class ParallelPerformanceTest {
 		if (runner == null){
 			printError("Unable to initialise test runner");
 		} else {
-			System.out.println(runner.run());
+			runner.run();
+			String fname = file.getName();
+			int nchannels = runner.test.img.getNChannels();
+			int bitdepth = runner.test.img.getBitDepth();
+			int totalPixels = runner.test.img.getWidth() * runner.test.img.getHeight();
+			long timetaken = runner.timetaken;
+			
+			// FileName, NumChannels, BitDepth, TotalPixels, Threads, Setup, Filter, Stage, TimeTaken
+			System.out.printf("%s,%d,%d,%d", fname, nchannels, bitdepth, totalPixels, threads, setup, filter, stage, timetaken);
 		}
 	}
 

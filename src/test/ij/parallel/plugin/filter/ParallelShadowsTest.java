@@ -66,7 +66,7 @@ public class ParallelShadowsTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}*/
-		System.out.println(url.getPath());
+		//System.out.println(url.getPath());
 		nChannels = n;
 		mode = m;
 	}

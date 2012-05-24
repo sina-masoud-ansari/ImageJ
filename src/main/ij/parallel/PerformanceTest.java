@@ -8,9 +8,9 @@ import ij.process.ImageProcessor;
 
 public abstract class PerformanceTest {
 
-	private File file;
-	private int threads;
-	private ImagePlus img;	
+	protected File file;
+	protected int threads;
+	protected ImagePlus img;	
 	protected ImageProcessor ip;
 	
 	public PerformanceTest(File file, int threads){

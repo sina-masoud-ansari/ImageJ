@@ -3,7 +3,7 @@ package ij.parallel;
 import java.util.ArrayList;
 
 public class OldParallelPerformanceTest {
-	
+	/*
 	private int iter; //number of iterations
 	private int maxt; //max threads to use;
 	
@@ -57,9 +57,7 @@ public class OldParallelPerformanceTest {
 		}
 	}
 	
-	/**
-	 * @param args
-	 */
+
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		int maxt = Runtime.getRuntime().availableProcessors(); // max number of threads to use.
@@ -72,12 +70,13 @@ public class OldParallelPerformanceTest {
 		//int iter = 1;
 		
 		OldParallelPerformanceTest test = new OldParallelPerformanceTest(iter, maxt);
-	    test.add(new NoiseFilterPerformanceTest(url));
-		test.add(new SaltAndPepperFilterPerformanceTest(url));
-		test.add(new ShadowsFilterPerformanceTest(url));
+	   // test.add(new NoiseFilterPerformanceTest(url));
+		//test.add(new SaltAndPepperFilterPerformanceTest(url));
+		//test.add(new ShadowsFilterPerformanceTest(url));
 		test.start();
 		test.collate();
 	}
+	*/
 
 }
 

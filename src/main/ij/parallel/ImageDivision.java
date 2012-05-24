@@ -113,7 +113,6 @@ public class ImageDivision {
 		// start threads
 		for (Thread t : threads){
 			long name = t.getId();
-		    System.out.println("Thread id: " + name);
 			t.start();
 		}
 		// wait for threads to finish

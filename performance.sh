@@ -20,9 +20,11 @@ for image in $SAMPLE_DIR/*.tif; do
 	csv=$(basename $image)
 	csv=$csv".csv"
 	echo "Processing $image @ $(date) ..."
-	./perf.py $image 2 $BIN_DIR $MAX_MEM $XBOOT
+	cmd="./perf.py $image 2 $BIN_DIR $MAX_MEM $XBOOT"
+	echo "CMD: $cmd"
+	exec $cmd
 	#cmd="java -Xmx$MAX_MEM -Xbootclasspath/p:$XBOOT -classpath $BIN_DIR/ij.jar ij.parallel.SinglePerformanceTest $image 10"
-	exec $cmd > $RESULTS_DIR/$csv
+	#exec $cmd > $RESULTS_DIR/$csv
 done
 
 

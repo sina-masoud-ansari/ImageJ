@@ -1,5 +1,6 @@
 package ij.parallel;
 
+import ij.ImagePlus;
 import ij.process.ImageProcessor;
 
 public class TestRunner {
@@ -9,11 +10,12 @@ public class TestRunner {
 		SETUP = 0,
 		RUN = 1;
 	
-	private PerformanceTest test;
+	protected PerformanceTest test;
 	private int stage;
 	private int method;
 	private int iter;
 	private boolean doIter;
+	protected long timetaken;
 	
 	public TestRunner(PerformanceTest test, String stage, int method) {
 		this.test = test;
@@ -64,7 +66,7 @@ public class TestRunner {
 		}
 	}
 	
-	public long run() {
+	public void run() {
 		
 		if (doIter) {
 			long timeTotal = 0L;
@@ -82,7 +84,7 @@ public class TestRunner {
 				timeFinish =  System.currentTimeMillis();
 				timeTotal += timeFinish - timeStart;
 			}
-			return timeTotal/iter;
+			timetaken = timeTotal/iter;
 		} else {
 			long timeStart; 
 			if (stage == SETUP) {
@@ -94,7 +96,7 @@ public class TestRunner {
 				performRUN();
 			}	
 			long timeFinish =  System.currentTimeMillis();
-			return timeFinish - timeStart;
+			timetaken = timeFinish - timeStart;
 		}
 	}
 	
