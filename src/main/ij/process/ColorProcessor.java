@@ -2,6 +2,7 @@ package ij.process;
 
 import java.awt.*;
 import java.awt.image.*;
+import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -874,6 +875,25 @@ public class ColorProcessor extends ImageProcessor {
 //		b.salt_and_pepper_PARATASK(percent); 
 //		System.out.println("B channel done"); 
 		finish();	
+	}
+	
+	public  void salt_and_pepper_EXECUTOR(double percent) {
+		setup();
+		r.salt_and_pepper_EXECUTOR(percent); 
+		g.salt_and_pepper_EXECUTOR(percent); 
+		b.salt_and_pepper_EXECUTOR(percent); 
+		
+//		System.out.println("R channel start");
+//		r.salt_and_pepper_EXECUTOR(percent); 
+//		System.out.println("R channel done");
+//		System.out.println("G channel start");
+//		g.salt_and_pepper_EXECUTOR(percent); 
+//		System.out.println("G channel done");
+//		System.out.println("B channel start");
+//		b.salt_and_pepper_EXECUTOR(percent); 
+//		System.out.println("B channel done"); 
+		finish();	
+		
 	}
     
 	public void medianFilter() {

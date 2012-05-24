@@ -11,7 +11,7 @@ import ij.Prefs;
 import ij.gui.*;
 import ij.parallel.Division;
 import ij.parallel.ImageDivision;
-import ij.parallel.pt.ByteProcessorPT;
+import ij.parallel.pt.ParallelTask;
 
 /** ShortProcessors contain a 16-bit unsigned image
 	and methods that operate on that image. */
@@ -1235,8 +1235,25 @@ public class ShortProcessor extends ImageProcessor {
 			tasks.add(getSaltAndPepperRunnable(n,imDiv.getDivision(i),imDiv.numThreads,r));
 		}
 		
-		ByteProcessorPT pt = new ByteProcessorPT();
+		ParallelTask pt = new ParallelTask();
 		pt.salt_and_pepper_PARATASK(tasks);
+	}
+	
+	public  void salt_and_pepper_EXECUTOR(double percent) {
+		ImageDivision imDiv = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
+		Random r = new Random();
+		int n = (int)(percent*roiWidth*roiHeight);
+		
+    	ExecutorService executor = Executors.newFixedThreadPool(imDiv.numThreads);
+		for (int i = 0; i < imDiv.numThreads; i++)
+		{
+			Runnable worker = getSaltAndPepperRunnable(n,imDiv.getDivision(i),imDiv.divs.length,r);
+			executor.execute(worker);
+		}
+		
+		executor.shutdown();
+		while (!executor.isTerminated()) {}
+		
 	}
 
 	/** Returns a FloatProcessor with the same image, no scaling or calibration

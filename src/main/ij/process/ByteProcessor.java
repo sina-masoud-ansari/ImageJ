@@ -7,7 +7,7 @@ import java.util.concurrent.Executors;
 //import java.util.concurrent.ForkJoinPool;
 import java.awt.*;
 import java.awt.image.*;
-import ij.parallel.pt.ByteProcessorPT;
+import ij.parallel.pt.ParallelTask;
 import ij.gui.*;
 import ij.parallel.Division;
 import ij.parallel.ForkAction;
@@ -1233,10 +1233,26 @@ public class ByteProcessor extends ImageProcessor{
 			tasks.add(getSaltAndPepperRunnable(n,imDiv.getDivision(i),imDiv.divs.length,r));
 		}
 		
-		ByteProcessorPT pt = new ByteProcessorPT();
+		ParallelTask pt = new ParallelTask();
 		pt.salt_and_pepper_PARATASK(tasks);
 	}
 
+	public  void salt_and_pepper_EXECUTOR(double percent) {
+		ImageDivision imDiv = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
+		Random r = new Random();
+		int n = (int)(percent*roiWidth*roiHeight);
+		
+    	ExecutorService executor = Executors.newFixedThreadPool(imDiv.numThreads);
+		for (int i = 0; i < imDiv.numThreads; i++)
+		{
+			Runnable worker = getSaltAndPepperRunnable(n,imDiv.getDivision(i),imDiv.divs.length,r);
+			executor.execute(worker);
+		}
+		
+		executor.shutdown();
+		while (!executor.isTerminated()) {}
+		
+	}
 	/** Scales the image or selection using the specified scale factors.
 		@see ImageProcessor#setInterpolate
 	*/
