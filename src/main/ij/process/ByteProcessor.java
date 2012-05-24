@@ -1095,7 +1095,7 @@ public class ByteProcessor extends ImageProcessor{
 				showProgress((double)(y-roiY)/roiHeight);
 		}
 		long name = Thread.currentThread().getId();
-	    System.out.println("Thread id: " + name);
+	   
 		showProgress(1.0);
     }
     
@@ -1158,7 +1158,7 @@ public class ByteProcessor extends ImageProcessor{
 		}
 //		SimulateWork();
 		long name = Thread.currentThread().getId();
-	    System.out.println("Thread id: " + name);
+	   
 	}
 	
 	@Override
