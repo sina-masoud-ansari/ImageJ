@@ -1,7 +1,7 @@
 package ij.parallel.plugin.filter;
 
 import ij.ImagePlus;
-import ij.parallel.Division;
+import ij.div.Division;
 import ij.parallel.ImageDivision;
 import ij.plugin.filter.SaltAndPepper;
 import ij.process.ImageProcessor;
@@ -31,10 +31,12 @@ public class ParallelSaltAndPepper extends SaltAndPepper {
 	 		return;
 	 	}
 		
-//		if (arg.equals("salt_and_pepper paratask")) {
-//			ip.salt_and_pepper_PARATASK(0.05);
-//	 		return;
-//		}
+		System.out.println("going to ParallelSaltAndPepper PARATASK");
+		if (arg.equals("salt_and_pepper paratask")) {
+			System.out.println("in ParallelSaltAndPepper PARATASK");
+			ip.salt_and_pepper_PARATASK(0.05);
+	 		return;
+		}
 	}	
 	
 }

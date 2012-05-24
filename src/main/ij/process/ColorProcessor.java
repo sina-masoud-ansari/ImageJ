@@ -769,7 +769,17 @@ public class ColorProcessor extends ImageProcessor {
 		setup();
 		r.noise_P_SIMPLE(range); showProgress(0.40);
 		g.noise_P_SIMPLE(range); showProgress(0.65);
-		b.noise_P_SIMPLE(range); showProgress(0.90);		
+		b.noise_P_SIMPLE(range); showProgress(0.90);	
+		
+//		System.out.println("R channel start");
+//		r.noise_P_SIMPLE(range); showProgress(0.40);
+//		System.out.println("R channel done");
+//		System.out.println("G channel start");
+//		System.out.println("G channel done");
+//		System.out.println("B channel start");
+//		b.noise_P_SIMPLE(range); showProgress(0.90);
+//		System.out.println("B channel done"); 
+		
 		finish();		
 		
 	}
@@ -791,6 +801,16 @@ public class ColorProcessor extends ImageProcessor {
 		r.salt_and_pepper_NONE(percent); 
 		g.salt_and_pepper_NONE(percent); 
 		b.salt_and_pepper_NONE(percent); 
+		
+//		System.out.println("R channel start");
+//		r.salt_and_pepper_NONE(percent); 
+//		System.out.println("R channel done");
+//		System.out.println("G channel start");
+//		g.salt_and_pepper_NONE(percent); 
+//		System.out.println("G channel done");
+//		System.out.println("B channel start");
+//		b.salt_and_pepper_NONE(percent); 
+//		System.out.println("B channel done");
 		finish();	
 		
 	}
@@ -800,8 +820,18 @@ public class ColorProcessor extends ImageProcessor {
 		// TODO Auto-generated method stub
 		setup();
 		r.salt_and_pepper_SERIAL(percent); 
-		g.salt_and_pepper_SERIAL(percent);
+		g.salt_and_pepper_SERIAL(percent); 
 		b.salt_and_pepper_SERIAL(percent); 
+		
+//		System.out.println("R channel start");
+//		r.salt_and_pepper_SERIAL(percent); 
+//		System.out.println("R channel done");
+//		System.out.println("G channel start");
+//		g.salt_and_pepper_SERIAL(percent); 
+//		System.out.println("G channel done");
+//		System.out.println("B channel start");
+//		b.salt_and_pepper_SERIAL(percent); 
+//		System.out.println("B channel done"); 
 		finish();	
 		
 	}
@@ -813,8 +843,36 @@ public class ColorProcessor extends ImageProcessor {
 		r.salt_and_pepper_SIMPLE(percent); 
 		g.salt_and_pepper_SIMPLE(percent); 
 		b.salt_and_pepper_SIMPLE(percent); 
+		
+//		System.out.println("R channel start");
+//		r.salt_and_pepper_SIMPLE(percent); 
+//		System.out.println("R channel done");
+//		System.out.println("G channel start");
+//		g.salt_and_pepper_SIMPLE(percent); 
+//		System.out.println("G channel done");
+//		System.out.println("B channel start");
+//		b.salt_and_pepper_SIMPLE(percent); 
+//		System.out.println("B channel done"); 
 		finish();	
 		
+	}
+	
+	public void salt_and_pepper_PARATASK(double percent) {
+		setup();
+		r.salt_and_pepper_PARATASK(percent); 
+		g.salt_and_pepper_PARATASK(percent); 
+		b.salt_and_pepper_PARATASK(percent); 
+		
+//		System.out.println("R channel start");
+//		r.salt_and_pepper_PARATASK(percent); 
+//		System.out.println("R channel done");
+//		System.out.println("G channel start");
+//		g.salt_and_pepper_PARATASK(percent); 
+//		System.out.println("G channel done");
+//		System.out.println("B channel start");
+//		b.salt_and_pepper_PARATASK(percent); 
+//		System.out.println("B channel done"); 
+		finish();	
 	}
     
 	public void medianFilter() {

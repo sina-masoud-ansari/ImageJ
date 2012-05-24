@@ -1,14 +1,16 @@
 package ij.process;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 //import java.util.concurrent.ForkJoinPool;
 import java.awt.*;
 import java.awt.image.*;
+import ij.parallel.pt.ByteProcessorPT;
 import ij.gui.*;
-import ij.parallel.Division;
 import ij.parallel.ForkAction;
 import ij.parallel.ImageDivision;
 import ij.Prefs;
+import ij.parallel.Division;
 
 /**
 This is an 8-bit image and methods that operate on that image. Based on the ImageProcessor class
@@ -1021,8 +1023,8 @@ public class ByteProcessor extends ImageProcessor{
 			if (y%20==0)
 				showProgress((double)(y-roiY)/roiHeight);
 		}
-		long name = Thread.currentThread().getId();
-	    System.out.println("Thread id: " + name);
+//		long name = Thread.currentThread().getId();
+//	    System.out.println("Thread id: " + name);
 		showProgress(1.0);
     }
     
@@ -1046,7 +1048,7 @@ public class ByteProcessor extends ImageProcessor{
 	@Override
 	public void noise_P_SIMPLE(double range) 
 	{
-		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight,roiHeight);
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
 		Thread[] threads = new Thread[div.numThreads];
 		for (int i = 0; i < div.numThreads; i++)
 		{
@@ -1084,8 +1086,8 @@ public class ByteProcessor extends ImageProcessor{
 			pixels[ry*width+rx] = (byte)0;
 		}
 //		SimulateWork();
-		long name = Thread.currentThread().getId();
-	    System.out.println("Thread id: " + name);
+//		long name = Thread.currentThread().getId();
+//	    System.out.println("Thread id: " + name);
 	}
 	
 	@Override
@@ -1108,14 +1110,14 @@ public class ByteProcessor extends ImageProcessor{
 	@Override
 	public void salt_and_pepper_SIMPLE(double percent) {
 		// TODO Auto-generated method stub
-		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight,roiHeight);
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
 		Thread[] threads = new Thread[div.numThreads];
 		
 		Random r = new Random();
 		int n = (int)(percent*roiWidth*roiHeight);
 		
 		for (int i = 0; i < div.numThreads; i++) {
-			threads[i] = new Thread(getSaltAndPepperRunnable(n,div.getDivision(i),div.numThreads,r));
+			threads[i] = new Thread(getSaltAndPepperRunnable(n,div.getDivision(i),div.divs.length,r));
 		}
 		
 		div.processThreads(threads);
@@ -1126,7 +1128,7 @@ public class ByteProcessor extends ImageProcessor{
 		return min + (int)(r.nextDouble()*(max-min));
 	}
 	
-	private Runnable getSaltAndPepperRunnable(final int n, final Division div, final int numThreads, final Random r) {
+	private Runnable getSaltAndPepperRunnable(final int n, final Division div, final int numDivs, final Random r) {
 		return new Runnable () {
 			@Override
 			public void run() {
@@ -1134,7 +1136,7 @@ public class ByteProcessor extends ImageProcessor{
 				//filter is not done per pixel but per block of rows
 				//random pixel is picked to be either 255 or 0
 				//we need to decrease the percentage as it is per block
-				for (int i=0; i<n/(2*numThreads); i++) {
+				for (int i=0; i<n/(2*numDivs); i++) {
 					rx = rand(div.xStart, div.xEnd,r);
 					ry = rand(div.yStart, div.yLimit,r);
 					pixels[ry*roiWidth+rx] = (byte)255;
@@ -1144,6 +1146,21 @@ public class ByteProcessor extends ImageProcessor{
 				}
 			}
 		};
+	}
+	
+	public void salt_and_pepper_PARATASK(double percent) {
+		
+		ImageDivision imDiv = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
+		Random r = new Random();
+		int n = (int)(percent*roiWidth*roiHeight);
+		ConcurrentLinkedQueue<Runnable> tasks = new ConcurrentLinkedQueue<Runnable>();
+
+		for (int i = 0; i < imDiv.divs.length; i++) {
+			tasks.add(getSaltAndPepperRunnable(n,imDiv.getDivision(i),imDiv.divs.length,r));
+		}
+		
+		ByteProcessorPT pt = new ByteProcessorPT();
+		pt.salt_and_pepper_PARATASK(tasks);
 	}
 
 	/** Scales the image or selection using the specified scale factors.

@@ -1,6 +1,7 @@
  package ij.process;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.awt.*;
 import java.awt.image.*;
 
@@ -8,6 +9,7 @@ import ij.Prefs;
 import ij.gui.*;
 import ij.parallel.Division;
 import ij.parallel.ImageDivision;
+import ij.parallel.pt.ByteProcessorPT;
 
 /** ShortProcessors contain a 16-bit unsigned image
 	and methods that operate on that image. */
@@ -1189,10 +1191,9 @@ public class ShortProcessor extends ImageProcessor {
 		
 		Random r = new Random();
 		int n = (int)(percent*roiWidth*roiHeight);
-		int nForEachTask = (n/2)/div.numThreads;
 		
 		for (int i = 0; i < div.numThreads; i++) {
-			threads[i] = new Thread(getSaltAndPepperRunnable(nForEachTask,div.getDivision(i),div.numThreads,r));
+			threads[i] = new Thread(getSaltAndPepperRunnable(n,div.getDivision(i),div.numThreads,r));
 		}
 		
 		div.processThreads(threads);
@@ -1203,7 +1204,7 @@ public class ShortProcessor extends ImageProcessor {
 		return min + (int)(r.nextDouble()*(max-min));
 	}
 	
-	private Runnable getSaltAndPepperRunnable(final int nForEachTask, final Division div, final int numThreads, final Random r) {
+	private Runnable getSaltAndPepperRunnable(final int n, final Division div, final int numDivs, final Random r) {
 		return new Runnable () {
 			@Override
 			public void run() {
@@ -1211,7 +1212,7 @@ public class ShortProcessor extends ImageProcessor {
 				//filter is not done per pixel but per block of rows
 				//random pixel is picked to be either 255 or 0
 				//we need to decrease the percentage as it is per block
-				for (int i=0; i<nForEachTask; i++) {
+				for (int i=0; i<n/(2*numDivs); i++) {
 					rx = rand(div.xStart, div.xEnd,r);
 					ry = rand(div.yStart, div.yLimit,r);
 					pixels[ry*roiWidth+rx] = (short)255;
@@ -1221,6 +1222,22 @@ public class ShortProcessor extends ImageProcessor {
 				}
 			}
 		};
+	}
+
+	@Override
+	public void salt_and_pepper_PARATASK(double percent) {
+		// TODO Auto-generated method stub
+		ImageDivision imDiv = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
+		Random r = new Random();
+		int n = (int)(percent*roiWidth*roiHeight);
+		ConcurrentLinkedQueue<Runnable> tasks = new ConcurrentLinkedQueue<Runnable>();
+
+		for (int i = 0; i < imDiv.divs.length; i++) {
+			tasks.add(getSaltAndPepperRunnable(n,imDiv.getDivision(i),imDiv.numThreads,r));
+		}
+		
+		ByteProcessorPT pt = new ByteProcessorPT();
+		pt.salt_and_pepper_PARATASK(tasks);
 	}
 
 	/** Returns a FloatProcessor with the same image, no scaling or calibration
@@ -1388,6 +1405,7 @@ public class ShortProcessor extends ImageProcessor {
 		}; 		
     	
     }
+
 
 	
 
