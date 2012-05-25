@@ -1,7 +1,7 @@
 package ij.parallel.plugin.filter;
 
 import ij.ImagePlus;
-import ij.div.Division;
+import ij.parallel.Division;
 import ij.parallel.ImageDivision;
 import ij.plugin.filter.SaltAndPepper;
 import ij.process.ImageProcessor;

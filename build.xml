@@ -1,5 +1,6 @@
 <!-- Ant makefile for ImageJ -->
 <project name="ImageJ" default="test" basedir=".">
+	<property name="src.dir" location="src"/>
 	<property name="src.main" location="src/main"/>
 	<property name="src.test" location="src/test"/>
 	<property name="reports.test" location="reports"/>
@@ -11,7 +12,7 @@
 	<property name="sample.dir" location="${build.dir}/resources/images/sample"/>
 	<property name="num.samples" value="10" />
 	<property name="reports.dir" location="reports"/>
-	<property name="results.dir" location="results"/>	
+	<property name="results.dir" location="results"/>
 	<property name="resources.build" location="resources/build"/>
 	<property name="resources.test" location="resources/test" />
 	<property name="hexa.rt" location="/usr/lib/jvm/java-1.6.0-openjdk/jre/lib/rt.jar" />
@@ -22,7 +23,7 @@
 			<pathelement location="${lib.dir}/ant-contrib-0.6.jar"/>
 		</classpath>
 	</taskdef>
-
+	
 	<path id="build.classpath">
 		<fileset dir="${lib.dir}">
 			<include name="**/*.jar" />
@@ -32,7 +33,7 @@
 	<path id="run.classpath">
 		<fileset dir="${bin.dir}">
 			<include name="**/*.jar" />
-		</fileset>	
+		</fileset>
 	</path>
 	<!--
 	<target name="compile_test" description="Compile everything">
@@ -47,6 +48,13 @@
 	<target name="compile" description="Compile everything">
 		<!-- First, ensure the build directory exists. -->
 		<mkdir dir="${build.dir}" />
+		<!-- Run the Parallel Task source to source complier -->
+		<foreach>
+			<fileset dir="${src.dir}">
+				<include name="**/*.ptjava" />
+			</fileset>
+			<antcall target="PTcomplile" />
+		</foreach>
 		<!-- Build everything; add debug="on" to debug -->
 		<!-- If compiling on hexa.ece.auckland.ac.nz use bootclasspath parameter -->
 		<if>
@@ -69,6 +77,13 @@
 
 	</target>
 
+	<target name="PTcompile" description="Compile Parallel Task source to Java source">
+		<echo message="PTComplie: ${foreach.file}" />
+		<java classpathref="build.classpath" classname="paratask.compiler.ParaTaskParser" fork="yes">
+			<arg value="${foreach.file}"/>
+		</java>
+	</target>
+
 	<target name="build" depends="compile" description="Build ij.jar.">
 		<!-- Copy needed files into the build directory. -->
 		<copy file="${resources.build}/IJ_Props.txt" todir="${build.dir}" />
@@ -86,12 +101,12 @@
 			<fileset dir="${lib.dir}">
 				<include name="**/*.jar" />
 			</fileset>
-		</copy>	
-        <copy todir="${bin.dir}">
-                <fileset dir="${lib.dir}">
-                        <include name="**/*.jar" />
-                </fileset>
-        </copy>		
+		</copy>
+		<copy todir="${bin.dir}">
+			<fileset dir="${lib.dir}">
+				<include name="**/*.jar" />
+			</fileset>
+		</copy>
 		<jar jarfile="${bin.dir}/ij.jar" basedir="${build.dir}" manifest="MANIFEST.MF" />
 	</target>
 
@@ -219,7 +234,7 @@
 			</elseif>
 		</if>
 	</target>
-	
+
 	<target name="performance-small" depends="clean, test" description="Initiate performance testing">
 		<delete dir="${results.dir}" />
 		<mkdir dir="${results.dir}" />
@@ -251,8 +266,8 @@
 				</then>
 			</elseif>
 		</if>
-	</target>	
-	
+	</target>
+
 	<target name="cluster-performance" depends="clean, build" description="Initiate performance testing on NeSI cluster">
 		<delete dir="${results.dir}" />
 		<mkdir dir="${results.dir}" />
@@ -278,8 +293,8 @@
 				</then>
 			</elseif>
 		</if>
-	</target>	
-	
+	</target>
+
 	<target name="bestgrid-performance" depends="clean, build" description="Initiate performance testing on NeSI cluster">
 		<delete dir="${results.dir}" />
 		<mkdir dir="${results.dir}" />
@@ -305,7 +320,7 @@
 				</then>
 			</elseif>
 		</if>
-	</target>	
+	</target>
 
 	<!-- NOT USED -->
 	<target name="javadocs" description="Build the JavaDocs.">
