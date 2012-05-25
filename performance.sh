@@ -5,7 +5,7 @@ RESULTS_DIR=$2
 MAX_MEM=$3
 SAMPLE_DIR=$4
 #NUM_SAMPLES=$5
-NUM_SAMPLES=2
+NUM_SAMPLES=1
 XBOOT=$6
 
 if [ ! -d $SAMPLE_DIR ]; then
@@ -22,9 +22,7 @@ for image in $SAMPLE_DIR/*.tif; do
 	echo "Processing $image @ $(date) ..."
 	cmd="./perf.py $image 2 $BIN_DIR $MAX_MEM $XBOOT"
 	echo "CMD: $cmd"
-	exec $cmd
-	#cmd="java -Xmx$MAX_MEM -Xbootclasspath/p:$XBOOT -classpath $BIN_DIR/ij.jar ij.parallel.SinglePerformanceTest $image 10"
-	#exec $cmd > $RESULTS_DIR/$csv
+	exec $cmd >> $RESULTS_DIR/$csv
 done
 
 

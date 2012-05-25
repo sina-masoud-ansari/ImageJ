@@ -59,14 +59,6 @@ public class ParallelShadowsTest {
 	public ParallelShadowsTest(String s, int n, int m) 
 	{	
 		url = this.getClass().getResource(s);
-		/*url = null;
-		try {
-			url = new URL(s);
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
-		//System.out.println(url.getPath());
 		nChannels = n;
 		mode = m;
 	}
@@ -149,11 +141,6 @@ public class ParallelShadowsTest {
 						int p3 = pixel3[cnt];
 						int p4 = pixel4[cnt];
 						
-						if(p1!=p2)
-						{
-						//System.out.println("PIXEL "+(y*imgA.getWidth()+x)+": "+p1+ " "+p2);
-						System.out.println("test failed" + x+" "+y+" "+p1+ " "+p2);
-						}
 						assertEquals(p1,p2);
 						assertEquals(p1,p3);
 						assertEquals(p1,p4);

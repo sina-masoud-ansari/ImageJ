@@ -1274,7 +1274,7 @@ public class ColorProcessor extends ImageProcessor {
 		//rsum_p = 0; gsum_p = 0; bsum_p = 0;
         rowOffset_p = width;
         
- 		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, roiHeight, width, height);
+ 		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, width, height);
  		 
  		ExecutorService executor = Executors.newFixedThreadPool(div.numThreads);
  		for (int i = 0; i < div.numThreads; i++)
@@ -1288,7 +1288,7 @@ public class ColorProcessor extends ImageProcessor {
      	
 		//div.processThreads(threads);
 		 //indicate processing is finished	
-		showProgress(1.0);
+		//showProgress(1.0);
 	}
 
 	private Runnable getRunnableConvolve(final Division div)

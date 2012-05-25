@@ -38,7 +38,6 @@ class ShadowsFilterPerformanceTest extends PerformanceTest {
 	@Override
 	public void run_P_EXECUTOR() {
 		ParallelShadows ob= new ParallelShadows();
-		ob.northSimple(ip);
-	}	
-	
+		ob.northExecutor(ip);
+	}
 }
