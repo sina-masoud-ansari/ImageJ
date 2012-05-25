@@ -668,13 +668,45 @@ public class ByteProcessor extends ImageProcessor{
 		showProgress(1.0);
     }
     
+    public void convolve3x3_PARATASK(int[] kernel) {
+    	
+    	scale_p = 0;
+ 		k1_p=kernel[0]; k2_p=kernel[1]; k3_p=kernel[2];
+ 		k4_p=kernel[3]; k5_p=kernel[4]; k6_p=kernel[5];
+ 		k7_p=kernel[6]; k8_p=kernel[7]; k9_p=kernel[8];
+ 		
+ 		for (int i=0; i<kernel.length; i++)
+ 		scale_p += kernel[i];
+ 		
+ 		if (scale_p==0) scale_p = 1;
+        int inc = roiHeight/25;
+        if (inc<1) inc = 1;
+        
+		
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
+		
+		pixelsTemp = (byte[])getPixelsCopy();
+		ConcurrentLinkedQueue<Runnable> tasks = new ConcurrentLinkedQueue<Runnable>();
+		
+
+		for (int i = 0; i < div.numThreads; i++) {
+			tasks.add(getRunnableConvolve(div.getDivision(i)));
+		}
+		
+		ParallelTask pt = new ParallelTask();
+		pt.salt_and_pepper_PARATASK(tasks);	
+	}
+    
     private Runnable getRunnableConvolve(final Division div)
     {
     	
     	return new Runnable(){
+    		
 			@Override
+			
 			public void run() 
-			{	int v1_p,v2_p,v3_p,v4_p,v5_p,v6_p,v7_p,v8_p,v9_p;
+			{
+				int v1_p,v2_p,v3_p,v4_p,v5_p,v6_p,v7_p,v8_p,v9_p;
 				// for each row
 				for (int y = div.yStart; y < div.yLimit; y++)
 				{
@@ -687,13 +719,7 @@ public class ByteProcessor extends ImageProcessor{
 					int p3 = p6 - (y>0 ? width : 0); 
 					int p9 = p6 + (y<height-1 ? width : 0);
 					
-
-					v2_p = pixelsTemp[p3]&0xff;
-					
-					//System.out.println("y:"+y+"  "+"pixelsTemp[p3]:"+pixelsTemp[p3]+"  "+Integer.toBinaryString(pixelsTemp[p3])+"  "+"0xff:"+Integer.toBinaryString(0xff)+"   v2_p:"+v2_p+ " "+Integer.toBinaryString(v2_p));
-					//System.out.printf("y:%d  pixelsTemp[p3]:%d  %x  v2_p:%d  %x \n",y,pixelsTemp[p3],pixelsTemp[p3],v2_p,v2_p);
-					//System.out.println("y:"+y+"  "+"p3:"+p3+"  "+"pixelsTemp:"+pixelsTemp[p3]+"  "+"v2_p:"+v2_p);
-					//System.out.printf("hex v2_p:%x   pixelstemp[p3]:%x\n\n", v2_p,pixelsTemp[p3]);
+					v2_p = pixelsTemp[p3]&0xff;				
 					v5_p = pixelsTemp[p6]&0xff;  
 					v8_p = pixelsTemp[p9]&0xff;
 					if (roiX>0) { p3++; p6++; p9++; }

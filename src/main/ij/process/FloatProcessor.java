@@ -1334,11 +1334,43 @@ public class FloatProcessor extends ImageProcessor {
 		executor.shutdown();
 		while (!executor.isTerminated()) {}
     	
-		
 		//div.processThreads(threads);
 		// indicate processing is finished	
 		showProgress(1.0);
+	}
+	
+	public void convolve3x3_PARATASK(int[] kernel) {
+		k1_p=0f; k2_p=0f; k3_p=0f;	//kernel values (used for CONVOLVE only)
+		k4_p=0f; k5_p=0f; k6_p=0f;
+		k7_p=0f; k8_p=0f; k9_p=0f;
+		scale_p = 0f;
+		
+		
+		k1_p=kernel[0]; k2_p=kernel[1]; k3_p=kernel[2];
+		k4_p=kernel[3]; k5_p=kernel[4]; k6_p=kernel[5];
+		k7_p=kernel[6]; k8_p=kernel[7]; k9_p=kernel[8];
+		
+		for (int i=0; i<kernel.length; i++)
+				scale_p += kernel[i];
+			if (scale_p==0) scale_p = 1f;
+			scale_p = 1f/scale_p; //multiplication factor (multiply is faster than divide)
+		
+		inc_p = roiHeight/25;
+		if (inc_p<1) inc_p = 1;
+		
+		pixelsTemp = (float[])getPixelsCopy();
 
+		
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
+		
+		ConcurrentLinkedQueue<Runnable> tasks = new ConcurrentLinkedQueue<Runnable>();
+
+		for (int i = 0; i < div.numThreads; i++) {
+			tasks.add(getRunnableConvolve(div.getDivision(i)));
+		}
+		
+		ParallelTask pt = new ParallelTask();
+		pt.salt_and_pepper_PARATASK(tasks);	
 	}
 
 	
