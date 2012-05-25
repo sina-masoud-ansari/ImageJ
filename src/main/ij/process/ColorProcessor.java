@@ -2,11 +2,14 @@ package ij.process;
 
 import java.awt.*;
 import java.awt.image.*;
+import java.util.Random;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import ij.parallel.Division;
 import ij.parallel.ImageDivision;
+import ij.parallel.pt.ParallelTask;
 import ij.process.ByteProcessor;
 import ij.ImageStack;
 
@@ -770,7 +773,17 @@ public class ColorProcessor extends ImageProcessor {
 		setup();
 		r.noise_P_SIMPLE(range); showProgress(0.40);
 		g.noise_P_SIMPLE(range); showProgress(0.65);
-		b.noise_P_SIMPLE(range); showProgress(0.90);		
+		b.noise_P_SIMPLE(range); showProgress(0.90);	
+		
+//		System.out.println("R channel start");
+//		r.noise_P_SIMPLE(range); showProgress(0.40);
+//		System.out.println("R channel done");
+//		System.out.println("G channel start");
+//		System.out.println("G channel done");
+//		System.out.println("B channel start");
+//		b.noise_P_SIMPLE(range); showProgress(0.90);
+//		System.out.println("B channel done"); 
+		
 		finish();		
 		
 	}
@@ -792,6 +805,16 @@ public class ColorProcessor extends ImageProcessor {
 		r.salt_and_pepper_NONE(percent); 
 		g.salt_and_pepper_NONE(percent); 
 		b.salt_and_pepper_NONE(percent); 
+		
+//		System.out.println("R channel start");
+//		r.salt_and_pepper_NONE(percent); 
+//		System.out.println("R channel done");
+//		System.out.println("G channel start");
+//		g.salt_and_pepper_NONE(percent); 
+//		System.out.println("G channel done");
+//		System.out.println("B channel start");
+//		b.salt_and_pepper_NONE(percent); 
+//		System.out.println("B channel done");
 		finish();	
 		
 	}
@@ -801,8 +824,18 @@ public class ColorProcessor extends ImageProcessor {
 		// TODO Auto-generated method stub
 		setup();
 		r.salt_and_pepper_SERIAL(percent); 
-		g.salt_and_pepper_SERIAL(percent);
+		g.salt_and_pepper_SERIAL(percent); 
 		b.salt_and_pepper_SERIAL(percent); 
+		
+//		System.out.println("R channel start");
+//		r.salt_and_pepper_SERIAL(percent); 
+//		System.out.println("R channel done");
+//		System.out.println("G channel start");
+//		g.salt_and_pepper_SERIAL(percent); 
+//		System.out.println("G channel done");
+//		System.out.println("B channel start");
+//		b.salt_and_pepper_SERIAL(percent); 
+//		System.out.println("B channel done"); 
 		finish();	
 		
 	}
@@ -814,6 +847,53 @@ public class ColorProcessor extends ImageProcessor {
 		r.salt_and_pepper_SIMPLE(percent); 
 		g.salt_and_pepper_SIMPLE(percent); 
 		b.salt_and_pepper_SIMPLE(percent); 
+		
+//		System.out.println("R channel start");
+//		r.salt_and_pepper_SIMPLE(percent); 
+//		System.out.println("R channel done");
+//		System.out.println("G channel start");
+//		g.salt_and_pepper_SIMPLE(percent); 
+//		System.out.println("G channel done");
+//		System.out.println("B channel start");
+//		b.salt_and_pepper_SIMPLE(percent); 
+//		System.out.println("B channel done"); 
+		finish();	
+		
+	}
+	
+	public void salt_and_pepper_PARATASK(double percent) {
+		setup();
+		r.salt_and_pepper_PARATASK(percent); 
+		g.salt_and_pepper_PARATASK(percent); 
+		b.salt_and_pepper_PARATASK(percent); 
+		
+//		System.out.println("R channel start");
+//		r.salt_and_pepper_PARATASK(percent); 
+//		System.out.println("R channel done");
+//		System.out.println("G channel start");
+//		g.salt_and_pepper_PARATASK(percent); 
+//		System.out.println("G channel done");
+//		System.out.println("B channel start");
+//		b.salt_and_pepper_PARATASK(percent); 
+//		System.out.println("B channel done"); 
+		finish();	
+	}
+	
+	public  void salt_and_pepper_EXECUTOR(double percent) {
+		setup();
+		r.salt_and_pepper_EXECUTOR(percent); 
+		g.salt_and_pepper_EXECUTOR(percent); 
+		b.salt_and_pepper_EXECUTOR(percent); 
+		
+//		System.out.println("R channel start");
+//		r.salt_and_pepper_EXECUTOR(percent); 
+//		System.out.println("R channel done");
+//		System.out.println("G channel start");
+//		g.salt_and_pepper_EXECUTOR(percent); 
+//		System.out.println("G channel done");
+//		System.out.println("B channel start");
+//		b.salt_and_pepper_EXECUTOR(percent); 
+//		System.out.println("B channel done"); 
 		finish();	
 		
 	}
@@ -1221,8 +1301,7 @@ public class ColorProcessor extends ImageProcessor {
 	
 	@Override
 	public void convolve3x3_simple(int[] kernel)
-	{
-		
+	{	
 		showProgress(0.01);
 		k1_p=kernel[0]; k2_p=kernel[1]; k3_p=kernel[2];
 	    k4_p=kernel[3]; k5_p=kernel[4]; k6_p=kernel[5];
@@ -1289,6 +1368,36 @@ public class ColorProcessor extends ImageProcessor {
 		//div.processThreads(threads);
 		 //indicate processing is finished	
 		//showProgress(1.0);
+	}
+	
+	public void convolve3x3_PARATASK(int[] kernel) 
+	{
+		k1_p=kernel[0]; k2_p=kernel[1]; k3_p=kernel[2];
+	    k4_p=kernel[3]; k5_p=kernel[4]; k6_p=kernel[5];
+		k7_p=kernel[6]; k8_p=kernel[7]; k9_p=kernel[8];
+
+		scale_p = 0;
+		for (int i=0; i<kernel.length; i++)
+			scale_p += kernel[i];
+		if (scale_p==0) scale_p = 1;
+	    inc_p = roiHeight/25;
+		if (inc_p<1) inc_p = 1;
+		
+		 pixelsTemp = (int[])getPixelsCopy();
+		
+		//rsum_p = 0; gsum_p = 0; bsum_p = 0;
+        rowOffset_p = width;
+        
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, width, height);
+		
+		ConcurrentLinkedQueue<Runnable> tasks = new ConcurrentLinkedQueue<Runnable>();
+
+		for (int i = 0; i < div.numThreads; i++) {
+			tasks.add(getRunnableConvolve(div.getDivision(i)));
+		}
+		
+		ParallelTask pt = new ParallelTask();
+		pt.salt_and_pepper_PARATASK(tasks);	
 	}
 
 	private Runnable getRunnableConvolve(final Division div)

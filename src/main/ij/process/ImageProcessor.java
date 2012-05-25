@@ -1931,6 +1931,7 @@ public abstract class ImageProcessor implements Cloneable {
 	public abstract void convolve3x3_serial(int[] kernel);
 	public abstract void convolve3x3_simple(int[] kernel);
 	public abstract void convolve3x3_executor(int[] kernel);
+	public abstract void convolve3x3_PARATASK(int[] kernel);
 	
 	/** A 3x3 filter operation, where the argument (BLUR_MORE,  FIND_EDGES, 
 	     MEDIAN_FILTER, MIN or MAX) determines the filter type. */
@@ -1950,7 +1951,8 @@ public abstract class ImageProcessor implements Cloneable {
 	public abstract void salt_and_pepper_NONE(double percent);
 	public abstract void salt_and_pepper_SERIAL(double percent);
 	public abstract void salt_and_pepper_SIMPLE(double percent);
-//	public abstract void salt_and_pepper_PARATASK(double d);
+	public abstract void salt_and_pepper_EXECUTOR(double percent);
+	public abstract void salt_and_pepper_PARATASK(double percent);
     
 	/** Creates a new processor containing an image
 		that corresponds to the current ROI. */
