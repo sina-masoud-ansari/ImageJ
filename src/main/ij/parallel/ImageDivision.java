@@ -1,6 +1,9 @@
 package ij.parallel;
 
+import java.util.Collection;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import ij.Prefs;
 
@@ -132,6 +135,20 @@ public class ImageDivision {
 	public void processTasks(ConcurrentLinkedQueue<Runnable> tasks){
 		PTRunner runner = new PTRunner(tasks);
 		runner.run();
+	}
+	
+	public void processFutures(Collection<Future<?>> futures){
+		for (Future<?> future:futures) {
+		    try {
+				future.get();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}		
 	}
 
 }

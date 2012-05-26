@@ -1,9 +1,11 @@
 package ij.process;
 
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 //import java.util.concurrent.ForkJoinPool;
 import java.awt.*;
 import java.awt.image.*;
@@ -1157,7 +1159,16 @@ public class ByteProcessor extends ImageProcessor{
 	
 	@Override
 	public void noise_P_EXECUTOR(double range){
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
 		
+		Collection<Future<?>> futures = new LinkedList<Future<?>>();
+				
+		for (Division d : div.getDivisions()){
+			futures.add(executor.submit(getNoiseRunnable(range, d)));
+		}
+		
+		// wait for tasks to finish
+		div.processFutures(futures);	
 	}
 	
 	@Override

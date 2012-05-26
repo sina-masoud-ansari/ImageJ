@@ -1,5 +1,7 @@
 package ij.process;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.awt.*;
 import java.awt.image.*;
 import ij.gui.*;
@@ -70,6 +72,8 @@ public abstract class ImageProcessor implements Cloneable {
 		P_FORK_JOIN=3, 
 		P_EXECUTOR=4, 
 		P_PARATASK=5;		
+	
+	protected final static ExecutorService executor = Executors.newFixedThreadPool(Prefs.getThreads());
 	
 	int fgColor = 0;
 	protected int lineWidth = 1;

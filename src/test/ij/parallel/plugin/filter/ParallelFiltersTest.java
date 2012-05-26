@@ -35,7 +35,7 @@ public class ParallelFiltersTest {
 	
 		// Statistical parameters
 		RANGE = 25,
-		ALPHA = 0.05,
+		ALPHA = 0.01,
 		PERCENT = 0.05;
 
 	private final static String 
@@ -69,11 +69,11 @@ public class ParallelFiltersTest {
 	public static Collection<Object[]> testImages() {
 		
 		Object[][] images = new Object[][] { 
-				{ P_COLOR_RGB, CH_COLOR_RGB, ImageProcessor.P_NONE }, { P_COLOR_RGB, CH_COLOR_RGB, ImageProcessor.P_SERIAL }, { P_COLOR_RGB, CH_COLOR_RGB, ImageProcessor.P_SIMPLE }, { P_COLOR_RGB, CH_COLOR_RGB, ImageProcessor.P_PARATASK },
-				{ P_COLOR_256, CH_COLOR_256, ImageProcessor.P_NONE }, { P_COLOR_256, CH_COLOR_256, ImageProcessor.P_SERIAL }, { P_COLOR_256, CH_COLOR_256, ImageProcessor.P_SIMPLE }, { P_COLOR_256, CH_COLOR_256, ImageProcessor.P_PARATASK },
-				{ P_GRAY8, CH_GRAY8, ImageProcessor.P_NONE }, { P_GRAY8, CH_GRAY8, ImageProcessor.P_SERIAL }, { P_GRAY8, CH_GRAY8, ImageProcessor.P_SIMPLE },  { P_GRAY8, CH_GRAY8, ImageProcessor.P_PARATASK },
-				{ P_GRAY16, CH_GRAY16 , ImageProcessor.P_NONE }, { P_GRAY16, CH_GRAY16 , ImageProcessor.P_SERIAL }, { P_GRAY16, CH_GRAY16 , ImageProcessor.P_SIMPLE }, { P_GRAY16, CH_GRAY16 , ImageProcessor.P_PARATASK },
-				{ P_GRAY32, CH_GRAY32, ImageProcessor.P_NONE }, { P_GRAY32, CH_GRAY32, ImageProcessor.P_SERIAL }, { P_GRAY32, CH_GRAY32, ImageProcessor.P_SIMPLE },  { P_GRAY32, CH_GRAY32, ImageProcessor.P_PARATASK }
+				{ P_COLOR_RGB, CH_COLOR_RGB, ImageProcessor.P_NONE }, { P_COLOR_RGB, CH_COLOR_RGB, ImageProcessor.P_SERIAL }, { P_COLOR_RGB, CH_COLOR_RGB, ImageProcessor.P_SIMPLE }, { P_COLOR_RGB, CH_COLOR_RGB, ImageProcessor.P_EXECUTOR }, { P_COLOR_RGB, CH_COLOR_RGB, ImageProcessor.P_PARATASK },
+				{ P_COLOR_256, CH_COLOR_256, ImageProcessor.P_NONE }, { P_COLOR_256, CH_COLOR_256, ImageProcessor.P_SERIAL }, { P_COLOR_256, CH_COLOR_256, ImageProcessor.P_SIMPLE }, { P_COLOR_256, CH_COLOR_256, ImageProcessor.P_EXECUTOR }, { P_COLOR_256, CH_COLOR_256, ImageProcessor.P_PARATASK },
+				{ P_GRAY8, CH_GRAY8, ImageProcessor.P_NONE }, { P_GRAY8, CH_GRAY8, ImageProcessor.P_SERIAL }, { P_GRAY8, CH_GRAY8, ImageProcessor.P_SIMPLE },  { P_GRAY8, CH_GRAY8, ImageProcessor.P_EXECUTOR },  { P_GRAY8, CH_GRAY8, ImageProcessor.P_PARATASK },
+				{ P_GRAY16, CH_GRAY16 , ImageProcessor.P_NONE }, { P_GRAY16, CH_GRAY16 , ImageProcessor.P_SERIAL }, { P_GRAY16, CH_GRAY16 , ImageProcessor.P_SIMPLE }, { P_GRAY16, CH_GRAY16 , ImageProcessor.P_EXECUTOR }, { P_GRAY16, CH_GRAY16 , ImageProcessor.P_PARATASK },
+				{ P_GRAY32, CH_GRAY32, ImageProcessor.P_NONE }, { P_GRAY32, CH_GRAY32, ImageProcessor.P_SERIAL }, { P_GRAY32, CH_GRAY32, ImageProcessor.P_SIMPLE },  { P_GRAY32, CH_GRAY32, ImageProcessor.P_EXECUTOR }, { P_GRAY32, CH_GRAY32, ImageProcessor.P_PARATASK }
 		};
 		return Arrays.asList(images);
 	}
@@ -104,18 +104,31 @@ public class ParallelFiltersTest {
 			case ImageProcessor.P_SIMPLE:
 				ipB.noise_P_SIMPLE(RANGE);
 				break;
+			case ImageProcessor.P_EXECUTOR:
+				ipB.noise_P_EXECUTOR(RANGE);
+				break;				
 			case ImageProcessor.P_PARATASK:
 				ipB.noise_P_PARATASK(RANGE);
 				break;		
 		}
 		
-		ArrayList<double[]> aChannles = getChannels(imgA);
-		ArrayList<double[]> bChannles = getChannels(imgB);
+		ArrayList<double[]> aChannels = getChannels(imgA);
+		ArrayList<double[]> bChannels = getChannels(imgB);
 		
 		TTest test = new TTest();
 		boolean reject;
 		for (int i = 0; i < nChannels; i++){
-			reject = test.homoscedasticTTest(aChannles.get(i), bChannles.get(i), ALPHA);
+			reject = test.homoscedasticTTest(aChannels.get(i), bChannels.get(i), ALPHA);
+			if (reject){
+				double mA = getMean(aChannels.get(i));
+				double mB = getMean(bChannels.get(i));
+				double diff = Math.abs( (mB - mA) / mA ) * 100.0;
+				System.out.println("Mean A: "+ mA);
+				System.out.println("Mean B: "+ mB);
+				System.out.println("% Diff: "+ diff);
+				System.out.println("");				
+				System.err.println("Rejected");
+			}
 			assertEquals(false, reject);
 		}
 	}
@@ -136,6 +149,9 @@ public class ParallelFiltersTest {
 			case ImageProcessor.P_SIMPLE:
 				ipB.salt_and_pepper_SIMPLE(PERCENT);
 				break;
+			case ImageProcessor.P_EXECUTOR:
+				ipB.salt_and_pepper_EXECUTOR(PERCENT);
+				break;				
 			case ImageProcessor.P_PARATASK:
 				ipB.salt_and_pepper_PARATASK(PERCENT);
 				break;
@@ -156,6 +172,14 @@ public class ParallelFiltersTest {
 	 * Add your ij.plugin.filters class test here
 	 */
 
+	private double getMean(double[] values){
+		double total = 0;
+		for (double d : values){
+			total += d;
+		}
+		return total / values.length;
+	}
+	
 	// TODO: need to write a test for this?
 	private ArrayList<double[]> getChannels(ImagePlus imp) {
 		

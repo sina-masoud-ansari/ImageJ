@@ -780,8 +780,11 @@ public class ColorProcessor extends ImageProcessor {
 
 	@Override
 	public void noise_P_EXECUTOR(double range) {
-		// TODO Auto-generated method stub
-		
+		setup();
+		r.noise_P_EXECUTOR(range); showProgress(0.40);
+		g.noise_P_EXECUTOR(range); showProgress(0.65);
+		b.noise_P_EXECUTOR(range); showProgress(0.90);
+		finish();
 	}
 
 	@Override
