@@ -13,7 +13,7 @@ public class ImageDivision {
 	public final Division[] divs;
 	
 
-	// Decide best number of threads automatically
+	// Decide best number of divisions automatically
 	public ImageDivision(int roiX, int roiY, int roiWidth, int roiHeight) {
 		// TODO Auto-generated constructor stub
 		numThreads = Math.min(Prefs.getThreads(), roiHeight);
@@ -23,12 +23,22 @@ public class ImageDivision {
 		
 		setDivsions(roiX, roiY, roiWidth);
 	}
+	
+	// Set specific number of divisions
+	public ImageDivision(int roiX, int roiY, int roiWidth, int roiHeight, int divisions) 
+	{
+		numThreads = divisions == 0 ? 1 : divisions;
+		ratio = roiHeight / numThreads;
+		mod = roiHeight % numThreads;
+		divs = new Division[numThreads];	
+		setDivsions(roiX, roiY, roiWidth);
+	}		
 
+	// Constructor that creates divisions with x and y boundaries
 	public ImageDivision(int roiX, int roiY, int roiWidth, int roiHeight, int width, int height) {
 		// TODO Auto-generated constructor stub
 		Prefs.setThreads(Runtime.getRuntime().availableProcessors());
 		numThreads = Math.min(Prefs.getThreads(), roiHeight);
-		//numThreads = Math.min(Math.max(threads, 1), roiHeight);
 		ratio = roiHeight / numThreads;
 		int a = 0;
 		mod = roiHeight % numThreads;
@@ -37,28 +47,16 @@ public class ImageDivision {
 		setDivsionsWithKernel(roiX, roiY, roiWidth,roiHeight, width, height);
 	}	
 
-	// set thread limit e.g serial
-	public ImageDivision(int roiX, int roiY, int roiWidth, int roiHeight, int limit, int width, int height) {
+	// Constructor that creates divisions with x and y boundaries, sets specific number of divisions
+	public ImageDivision(int roiX, int roiY, int roiWidth, int roiHeight, int divisions, int width, int height) {
 		// TODO Auto-generated constructor stub
 		Prefs.setThreads(Runtime.getRuntime().availableProcessors());
-		numThreads = Math.min(Prefs.getThreads(), limit);
+		numThreads = divisions == 0 ? 1 : divisions;
 		ratio = roiHeight / numThreads;
 		mod = roiHeight % numThreads;
 		divs = new Division[numThreads];
 		setDivsionsWithKernel(roiX, roiY, roiWidth,roiHeight, width, height);
 	}
-	
-	
-	// Set specific number of threads
-	public ImageDivision(int roiX, int roiY, int roiWidth, int roiHeight, int threads) 
-	{
-		// TODO Auto-generated constructor stub
-		numThreads = Math.min(Math.max(threads, 1), roiHeight);
-		ratio = roiHeight / numThreads;
-		mod = roiHeight % numThreads;
-		divs = new Division[numThreads];	
-		setDivsions(roiX, roiY, roiWidth);
-	}	
 	
 	private void setDivsions(int roiX, int roiY, int roiWidth){
 	{
@@ -76,7 +74,7 @@ public class ImageDivision {
 			yLimit = yStart + numRows;
 			xStart = roiX;
 			xEnd = roiX + roiWidth;
-			divs[i] = new Division(i, numRows, yStart, yLimit, xStart, xEnd);
+			divs[i] = new Division(numRows, yStart, yLimit, xStart, xEnd);
 		}
 	}
 }
@@ -96,12 +94,9 @@ public class ImageDivision {
 			yLimit = Math.min(yStart+numRows-1,height-2);
 			xEnd = Math.min(width - 2,roiX + roiWidth-1);
 			xEnd = Math.min(roiX + roiWidth - 1, width - 2);
-			//xEnd = Math.min(roiX + roiWidth - 2, width - 1);
-			xStart=Math.max(roiX,1); //max
-			//int xMax =  Math.min(roiX + roiWidth - 1, width - 2);
-			//int yMax = Math.min(yStart + roiHeight - 1, height - 2);
+			xStart=Math.max(roiX,1); //max	
 			
-			divs[i] = new Division(i, numRows, yStart, yLimit, xStart, xEnd);
+			divs[i] = new Division(numRows, yStart, yLimit, xStart, xEnd);
 		}		
 	}	
 	
@@ -111,7 +106,24 @@ public class ImageDivision {
 	
 	public Division[] getDivisions(){
 		return divs;
-	}	
+	}
+	
+	public static Division[] splitDivision(Division div){
+		Division[] split = new Division[2];
+		
+		int rem = div.numRows % 2; // remainder of rows
+		int rows = div.numRows/2;
+		int yStart = div.yStart;
+		int yLimit = div.yLimit;
+		int xStart = div.xStart;
+		int xEnd = div.xEnd;
+		
+		split[0] = new Division(rows, yStart, (yStart + rows), xStart, xEnd);
+		split[1] = new Division((rows + rem) , (yStart + rows), yLimit, xStart, xEnd);
+		
+		return split;
+		
+	}
 	
 	public void processThreads(Thread[] threads){
 		
@@ -126,7 +138,6 @@ public class ImageDivision {
 			try {
 				t.join();
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}	

@@ -2,10 +2,12 @@ package ij.process;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 import java.awt.*;
 import java.awt.image.*;
 import ij.gui.*;
 import ij.util.*;
+import ij.parallel.Division;
 import ij.plugin.filter.GaussianBlur;
 import ij.plugin.Binner;
 import ij.process.AutoThresholder.Method;
@@ -74,6 +76,7 @@ public abstract class ImageProcessor implements Cloneable {
 		P_PARATASK=5;		
 	
 	protected final static ExecutorService executor = Executors.newFixedThreadPool(Prefs.getThreads());
+	protected final static ForkJoinPool fjp = new ForkJoinPool();
 	
 	int fgColor = 0;
 	protected int lineWidth = 1;
@@ -1947,6 +1950,7 @@ public abstract class ImageProcessor implements Cloneable {
     /** Adds random noise to the image or ROI.
     	@param range	the range of random numbers
     */
+	public abstract Runnable getNoiseRunnable(double range, Division div);
 	public abstract void noise_P_NONE(double range);
 	public abstract void noise_P_SERIAL(double range);
 	public abstract void noise_P_SIMPLE(double range);    
