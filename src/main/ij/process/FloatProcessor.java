@@ -794,6 +794,22 @@ public class FloatProcessor extends ImageProcessor {
 		// indicate processing is finished	
 		showProgress(1.0);
     } 
+
+	@Override
+	public void noise_P_EXECUTOR(double range) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void noise_P_PARATASK(double range){
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
+		ConcurrentLinkedQueue<Runnable> tasks = new ConcurrentLinkedQueue<Runnable>();
+		for (Division d : div.getDivisions()){
+			tasks.add(getNoiseRunnable(range, d));
+		}
+		div.processTasks(tasks);
+	}	
 	
 	@Override
 	public void noise_P_FORK_JOIN(double range) {
@@ -897,6 +913,20 @@ public class FloatProcessor extends ImageProcessor {
 		ParallelTask pt = new ParallelTask();
 		pt.salt_and_pepper_PARATASK(tasks);
 		*/
+		
+		/**
+		 * Using shared code:
+		 */
+		
+		Random r = new Random();
+		int n = (int)(percent*roiWidth*roiHeight);
+		
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
+		ConcurrentLinkedQueue<Runnable> tasks = new ConcurrentLinkedQueue<Runnable>();
+		for (Division d : div.getDivisions()){
+			tasks.add(getSaltAndPepperRunnable(n, d, div.divs.length, r));
+		}
+		div.processTasks(tasks);		
 	}
 	
 	public  void salt_and_pepper_EXECUTOR(double percent) {
@@ -1341,7 +1371,7 @@ public class FloatProcessor extends ImageProcessor {
 	}
 	
 	public void convolve3x3_PARATASK(int[] kernel) {
-		/*
+		
 		k1_p=0f; k2_p=0f; k3_p=0f;	//kernel values (used for CONVOLVE only)
 		k4_p=0f; k5_p=0f; k6_p=0f;
 		k7_p=0f; k8_p=0f; k9_p=0f;
@@ -1362,18 +1392,13 @@ public class FloatProcessor extends ImageProcessor {
 		
 		pixelsTemp = (float[])getPixelsCopy();
 
-		
-		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
-		
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, width, height);
 		ConcurrentLinkedQueue<Runnable> tasks = new ConcurrentLinkedQueue<Runnable>();
-
-		for (int i = 0; i < div.numThreads; i++) {
-			tasks.add(getRunnableConvolve(div.getDivision(i)));
+		for (Division d : div.getDivisions()){
+			tasks.add(getRunnableConvolve(d));
 		}
+		div.processTasks(tasks);		
 		
-		ParallelTask pt = new ParallelTask();
-		pt.salt_and_pepper_PARATASK(tasks);	
-		*/
 	}
 
 	
@@ -1429,21 +1454,7 @@ public class FloatProcessor extends ImageProcessor {
     	
     }
 
-	@Override
-	public void noise_P_EXECUTOR(double range) {
-		// TODO Auto-generated method stub
-		
-	}
 
-	@Override
-	public void noise_P_PARATASK(double range){
-		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
-		ConcurrentLinkedQueue<Runnable> tasks = new ConcurrentLinkedQueue<Runnable>();
-		for (Division d : div.getDivisions()){
-			tasks.add(getNoiseRunnable(range, d));
-		}
-		div.processTasks(tasks);
-	}	
 	
 
 

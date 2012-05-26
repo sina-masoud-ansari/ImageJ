@@ -669,7 +669,7 @@ public class ByteProcessor extends ImageProcessor{
     }
     
     public void convolve3x3_PARATASK(int[] kernel) {
-    	/*
+    	
     	scale_p = 0;
  		k1_p=kernel[0]; k2_p=kernel[1]; k3_p=kernel[2];
  		k4_p=kernel[3]; k5_p=kernel[4]; k6_p=kernel[5];
@@ -681,21 +681,16 @@ public class ByteProcessor extends ImageProcessor{
  		if (scale_p==0) scale_p = 1;
         int inc = roiHeight/25;
         if (inc<1) inc = 1;
-        
-		
-		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
 		
 		pixelsTemp = (byte[])getPixelsCopy();
+		
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
 		ConcurrentLinkedQueue<Runnable> tasks = new ConcurrentLinkedQueue<Runnable>();
-		
-
-		for (int i = 0; i < div.numThreads; i++) {
-			tasks.add(getRunnableConvolve(div.getDivision(i)));
+		for (Division d : div.getDivisions()){
+			tasks.add(getRunnableConvolve(d));
 		}
+		div.processTasks(tasks);
 		
-		ParallelTask pt = new ParallelTask();
-		pt.salt_and_pepper_PARATASK(tasks);	
-		*/
 	}
     
     private Runnable getRunnableConvolve(final Division div)
@@ -1275,6 +1270,21 @@ public class ByteProcessor extends ImageProcessor{
 		ParallelTask pt = new ParallelTask();
 		pt.salt_and_pepper_PARATASK(tasks);
 		*/
+		
+		/**
+		 * Using shared code:
+		 */
+		
+		Random r = new Random();
+		int n = (int)(percent*roiWidth*roiHeight);
+		
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
+		ConcurrentLinkedQueue<Runnable> tasks = new ConcurrentLinkedQueue<Runnable>();
+		for (Division d : div.getDivisions()){
+			tasks.add(getSaltAndPepperRunnable(n, d, div.divs.length, r));
+		}
+		div.processTasks(tasks);
+				
 	}
 
 	public  void salt_and_pepper_EXECUTOR(double percent) {

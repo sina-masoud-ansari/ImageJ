@@ -773,17 +773,7 @@ public class ColorProcessor extends ImageProcessor {
 		setup();
 		r.noise_P_SIMPLE(range); showProgress(0.40);
 		g.noise_P_SIMPLE(range); showProgress(0.65);
-		b.noise_P_SIMPLE(range); showProgress(0.90);	
-		
-//		System.out.println("R channel start");
-//		r.noise_P_SIMPLE(range); showProgress(0.40);
-//		System.out.println("R channel done");
-//		System.out.println("G channel start");
-//		System.out.println("G channel done");
-//		System.out.println("B channel start");
-//		b.noise_P_SIMPLE(range); showProgress(0.90);
-//		System.out.println("B channel done"); 
-		
+		b.noise_P_SIMPLE(range); showProgress(0.90);			
 		finish();		
 		
 	}
@@ -799,7 +789,8 @@ public class ColorProcessor extends ImageProcessor {
 		setup();
 		r.noise_P_SIMPLE(range); showProgress(0.40);
 		g.noise_P_SIMPLE(range); showProgress(0.65);
-		b.noise_P_SIMPLE(range); showProgress(0.90);	
+		b.noise_P_SIMPLE(range); showProgress(0.90);
+		finish();
 	}	
 	
 	@Override
@@ -819,39 +810,17 @@ public class ColorProcessor extends ImageProcessor {
 		r.salt_and_pepper_NONE(percent); 
 		g.salt_and_pepper_NONE(percent); 
 		b.salt_and_pepper_NONE(percent); 
-		
-//		System.out.println("R channel start");
-//		r.salt_and_pepper_NONE(percent); 
-//		System.out.println("R channel done");
-//		System.out.println("G channel start");
-//		g.salt_and_pepper_NONE(percent); 
-//		System.out.println("G channel done");
-//		System.out.println("B channel start");
-//		b.salt_and_pepper_NONE(percent); 
-//		System.out.println("B channel done");
 		finish();	
 		
 	}
 
 	@Override
 	public void salt_and_pepper_SERIAL(double percent) {
-		// TODO Auto-generated method stub
 		setup();
 		r.salt_and_pepper_SERIAL(percent); 
 		g.salt_and_pepper_SERIAL(percent); 
 		b.salt_and_pepper_SERIAL(percent); 
-		
-//		System.out.println("R channel start");
-//		r.salt_and_pepper_SERIAL(percent); 
-//		System.out.println("R channel done");
-//		System.out.println("G channel start");
-//		g.salt_and_pepper_SERIAL(percent); 
-//		System.out.println("G channel done");
-//		System.out.println("B channel start");
-//		b.salt_and_pepper_SERIAL(percent); 
-//		System.out.println("B channel done"); 
-		finish();	
-		
+		finish();		
 	}
 
 	@Override
@@ -1386,7 +1355,7 @@ public class ColorProcessor extends ImageProcessor {
 	
 	public void convolve3x3_PARATASK(int[] kernel) 
 	{
-		/*
+		
 		k1_p=kernel[0]; k2_p=kernel[1]; k3_p=kernel[2];
 	    k4_p=kernel[3]; k5_p=kernel[4]; k6_p=kernel[5];
 		k7_p=kernel[6]; k8_p=kernel[7]; k9_p=kernel[8];
@@ -1404,16 +1373,12 @@ public class ColorProcessor extends ImageProcessor {
         rowOffset_p = width;
         
 		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, width, height);
-		
 		ConcurrentLinkedQueue<Runnable> tasks = new ConcurrentLinkedQueue<Runnable>();
-
-		for (int i = 0; i < div.numThreads; i++) {
-			tasks.add(getRunnableConvolve(div.getDivision(i)));
+		for (Division d : div.getDivisions()){
+			tasks.add(getRunnableConvolve(d));
 		}
+		div.processTasks(tasks);
 		
-		ParallelTask pt = new ParallelTask();
-		pt.salt_and_pepper_PARATASK(tasks);	
-		*/
 	}
 
 	private Runnable getRunnableConvolve(final Division div)

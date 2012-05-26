@@ -120,7 +120,7 @@ public class ParallelFiltersTest {
 		}
 	}
 	
-	@Test
+	
 	public void testSaltAndPepper() {
 	
 		imgA.getProcessor().salt_and_pepper_NONE(PERCENT);
@@ -155,11 +155,7 @@ public class ParallelFiltersTest {
 	/**
 	 * Add your ij.plugin.filters class test here
 	 */
-	//@Test
-	//public void testMyFilter() {
-	//	assertEquals(true, true);
-	//}
-	
+
 	// TODO: need to write a test for this?
 	private ArrayList<double[]> getChannels(ImagePlus imp) {
 		

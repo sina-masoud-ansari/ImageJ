@@ -1129,6 +1129,22 @@ public class ShortProcessor extends ImageProcessor {
     } 
 	
 	@Override
+	public void noise_P_EXECUTOR(double range) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void noise_P_PARATASK(double range){
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
+		ConcurrentLinkedQueue<Runnable> tasks = new ConcurrentLinkedQueue<Runnable>();
+		for (Division d : div.getDivisions()){
+			tasks.add(getNoiseRunnable(range, d));
+		}
+		div.processTasks(tasks);
+	}		
+	
+	@Override
 	public void noise_P_FORK_JOIN(double range) {
 		// TODO Auto-generated method stub
 		
@@ -1239,6 +1255,22 @@ public class ShortProcessor extends ImageProcessor {
 		ParallelTask pt = new ParallelTask();
 		pt.salt_and_pepper_PARATASK(tasks);
 		*/
+		
+		/**
+		 * Using shared code:
+		 */
+		
+		Random r = new Random();
+		int n = (int)(percent*roiWidth*roiHeight);
+		
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
+		ConcurrentLinkedQueue<Runnable> tasks = new ConcurrentLinkedQueue<Runnable>();
+		for (Division d : div.getDivisions()){
+			tasks.add(getSaltAndPepperRunnable(n, d, div.divs.length, r));
+		}
+		div.processTasks(tasks);
+			
+		
 	}
 	
 	public  void salt_and_pepper_EXECUTOR(double percent) {
@@ -1414,7 +1446,7 @@ public class ShortProcessor extends ImageProcessor {
 
 	
 	public void convolve3x3_PARATASK(int[] kernel) {
-		/*
+		
 		 k1_p=0; k2_p=0; k3_p=0;  //kernel values (used for CONVOLVE only)
          k4_p=0; k5_p=0; k6_p=0;
          k7_p=0; k8_p=0; k9_p=0;
@@ -1431,17 +1463,13 @@ public class ShortProcessor extends ImageProcessor {
         if (inc<1) inc = 1;
         pixelsTemp = (short[])getPixelsCopy();
         
-        ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
-		
+        ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, width, height);
 		ConcurrentLinkedQueue<Runnable> tasks = new ConcurrentLinkedQueue<Runnable>();
-
-		for (int i = 0; i < div.numThreads; i++) {
-			tasks.add(getRunnableConvolve(div.getDivision(i)));
+		for (Division d : div.getDivisions()){
+			tasks.add(getRunnableConvolve(d));
 		}
+		div.processTasks(tasks);
 		
-		ParallelTask pt = new ParallelTask();
-		pt.salt_and_pepper_PARATASK(tasks);	
-		*/
 	}
 	
 	private Runnable getRunnableConvolve(final Division div)
@@ -1495,26 +1523,5 @@ public class ShortProcessor extends ImageProcessor {
 		}; 		
     	
     }
-
-	@Override
-	public void noise_P_EXECUTOR(double range) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void noise_P_PARATASK(double range){
-		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
-		ConcurrentLinkedQueue<Runnable> tasks = new ConcurrentLinkedQueue<Runnable>();
-		for (Division d : div.getDivisions()){
-			tasks.add(getNoiseRunnable(range, d));
-		}
-		div.processTasks(tasks);
-	}	
-	
-
-
-	
-
 }
 

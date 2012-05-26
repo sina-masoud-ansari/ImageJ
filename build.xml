@@ -191,7 +191,8 @@
 	</target>
 
 	<target name="debug" depends="build" description="Build and debug ImageJ.">
-		<java maxmemory="${memory.max}" classpathref="run.classpath" classname="ij.ImageJ" fork="yes">
+		<java maxmemory="${memory.max}" classpathref="run.classpath" jar="${bin.dir}/ij.jar" fork="yes">
+			<jvmarg value="-Xbootclasspath/p:${lib.dir}/PTRuntime.jar" />
 			<jvmarg value="-Xbootclasspath/p:${lib.dir}/jsr166.jar" />
 			<jvmarg value="-Xdebug" />
 			<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000" />
