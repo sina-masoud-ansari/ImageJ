@@ -19,7 +19,6 @@ class ShadowsFilterPerformanceTest extends PerformanceTest {
 	public void run_P_NONE() {
 		Shadows ob=new Shadows();
 		ob.north(ip);
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -40,4 +39,16 @@ class ShadowsFilterPerformanceTest extends PerformanceTest {
 		ParallelShadows ob= new ParallelShadows();
 		ob.northExecutor(ip);
 	}
+	
+	@Override
+	public void run_P_PARATASK() {
+		ParallelShadows ob= new ParallelShadows();
+		ob.northParatask(ip);
+	}
+
+	@Override
+	public void run_P_FORK_JOIN() {
+		// TODO Auto-generated method stub
+		
+	}	
 }

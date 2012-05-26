@@ -27,11 +27,9 @@ public abstract class PerformanceTest {
 	public abstract void run_P_NONE();
 	public abstract void run_P_SERIAL();
 	public abstract void run_P_SIMPLE();
-
-	public void run_P_EXECUTOR() {
-		// TODO Auto-generated method stub
-		
-	}
+	public abstract void run_P_EXECUTOR();
+	public abstract void run_P_PARATASK();
+	public abstract void run_P_FORK_JOIN();
 	
 }
 

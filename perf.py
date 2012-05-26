@@ -19,7 +19,7 @@ cpus=multiprocessing.cpu_count()
 filters = ['Add Noise', 'Shadows', 'Salt and Pepper']
 
 ### List the parallel processing options
-ptype = ['P_NONE', 'P_SERIAL', 'P_SIMPLE', 'P_EXECUTOR']
+ptype = ['P_NONE', 'P_SERIAL', 'P_SIMPLE', 'P_EXECUTOR', 'P_PARATASK', 'P_FORK_JOIN']
 
 ### List possible setups
 setups = ['INDEPENDENT', 'DEPENDENT']
@@ -33,7 +33,7 @@ def usage() :
 	print """
 USAGE:
 
-perf.py file iterations java_cmd
+perf.py file iterations bin_dir max_mem xboot
 
 """
 
