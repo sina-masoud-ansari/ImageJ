@@ -74,28 +74,28 @@ public class TestRunner {
 			for (int i = 0; i < iter; i++){
 				
 				if (stage == SETUP) {
-					timeStart = System.currentTimeMillis();
+					timeStart = System.nanoTime();
 					performSETUP();
 				} else {
 					performSETUP();
-					timeStart = System.currentTimeMillis();
+					timeStart = System.nanoTime();
 					performRUN();
 				}
-				timeFinish =  System.currentTimeMillis();
+				timeFinish =  System.nanoTime();
 				timeTotal += timeFinish - timeStart;
 			}
 			timetaken = timeTotal/iter;
 		} else {
 			long timeStart; 
 			if (stage == SETUP) {
-				timeStart = System.currentTimeMillis();
+				timeStart = System.nanoTime();
 				performSETUP();
 			} else {
 				performSETUP();
-				timeStart = System.currentTimeMillis();
+				timeStart = System.nanoTime();
 				performRUN();
 			}	
-			long timeFinish =  System.currentTimeMillis();
+			long timeFinish =  System.nanoTime();
 			timetaken = timeFinish - timeStart;
 		}
 	}

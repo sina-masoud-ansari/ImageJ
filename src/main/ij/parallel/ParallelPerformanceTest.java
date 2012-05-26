@@ -31,7 +31,9 @@ public class ParallelPerformanceTest {
 		P_NONE_STR = "P_NONE",
 		P_SERIAL_STR = "P_SERIAL",
 		P_SIMPLE_STR = "P_SIMPLE",
-		P_EXECUTOR_STR = "P_EXECUTOR";
+		P_EXECUTOR_STR = "P_EXECUTOR",
+		P_PARATASK_STR = "P_PARATASK",
+		P_FORK_JOIN_STR = "P_FORK_JOIN";
 		// TODO: add executor etc
 	
 	static final String 
@@ -82,7 +84,13 @@ public class ParallelPerformanceTest {
 			method = ImageProcessor.P_SIMPLE;
 			return true;
 		} else if (m.equals(P_EXECUTOR_STR)) {
-			method = ImageProcessor.P_SIMPLE;
+			method = ImageProcessor.P_EXECUTOR;
+			return true;
+		} else if (m.equals(P_PARATASK_STR)) {
+			method = ImageProcessor.P_PARATASK;
+			return true;
+		} else if (m.equals(P_FORK_JOIN_STR)) {
+			method = ImageProcessor.P_FORK_JOIN;
 			return true;
 		} else {
 			return false;
@@ -118,7 +126,7 @@ public class ParallelPerformanceTest {
 		if (methodString.isEmpty()){
 			printError("Fourth argument must be a non-empty string");
 		} else if (!validMethod(methodString)){
-			printError("Fourth argument must be one of {'"+P_NONE_STR+"','"+P_SERIAL_STR+"', '"+P_SIMPLE_STR+"', '"+P_EXECUTOR_STR+"'}");
+			printError("Fourth argument must be one of {'"+P_NONE_STR+"','"+P_SERIAL_STR+"', '"+P_SIMPLE_STR+"', '"+P_EXECUTOR_STR+"', '"+P_PARATASK_STR+"', '"+P_FORK_JOIN_STR+"'}");
 		}
 		
 		// Check for valid threads

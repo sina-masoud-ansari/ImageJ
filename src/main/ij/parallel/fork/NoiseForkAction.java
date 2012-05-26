@@ -17,8 +17,8 @@ public class NoiseForkAction extends ForkAction{
 	@Override
 	void recurse() {
 		Division[] divs = ImageDivision.splitDivision(division);
-		NoiseForkAction first = new NoiseForkAction(ip, ip.getNoiseRunnable(range, division), divs[0], limit, numDivisions+1, range);
-		NoiseForkAction second = new NoiseForkAction(ip, ip.getNoiseRunnable(range, division), divs[1], limit, numDivisions+1, range);
+		NoiseForkAction first = new NoiseForkAction(ip, ip.getNoiseRunnable(range, divs[0]), divs[0], limit, numDivisions+1, range);
+		NoiseForkAction second = new NoiseForkAction(ip, ip.getNoiseRunnable(range, divs[1]), divs[1], limit, numDivisions+1, range);
 		invokeAll(first, second);
 	}
 	

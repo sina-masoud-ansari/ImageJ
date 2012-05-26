@@ -130,7 +130,7 @@ public class ParallelFiltersTest {
 				System.out.println("Mean B: "+ mB);
 				System.out.println("% Diff: "+ diff);
 				System.out.println("");				
-				System.err.println("Rejected");
+				System.out.println("Rejected");
 			}
 			assertEquals(false, reject);
 		}
