@@ -1678,6 +1678,12 @@ public class ColorProcessor extends ImageProcessor {
 		}
 	}
 
+	@Override
+	public Runnable getNoiseRunnable(double range, Division div) {
+		// Handled by the ByteProcessor class
+		return null;
+	}
+
 
 
 	

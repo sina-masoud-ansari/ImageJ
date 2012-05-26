@@ -5,6 +5,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.Future;
 //import java.util.concurrent.ForkJoinPool;
 import java.awt.*;
@@ -12,10 +13,11 @@ import java.awt.image.*;
 //import ij.parallel.pt.ParallelTask;
 import ij.gui.*;
 import ij.parallel.Division;
-import ij.parallel.ForkAction;
 import ij.parallel.ImageDivision;
 import ij.Prefs;
 import ij.parallel.Division;
+import ij.parallel.fork.ForkAction;
+import ij.parallel.fork.NoiseForkAction;
 
 /**
 This is an 8-bit image and methods that operate on that image. Based on the ImageProcessor class
@@ -1061,7 +1063,8 @@ public class ByteProcessor extends ImageProcessor{
 		filter(MEDIAN_FILTER);
 	}
 	
-    private Runnable getNoiseRunnable(final double range, final Division div){
+	@Override
+    public Runnable getNoiseRunnable(final double range, final Division div){
 	 	
     	return new Runnable(){
 			@Override
@@ -1178,9 +1181,11 @@ public class ByteProcessor extends ImageProcessor{
 	
 	@Override
 	public void noise_P_FORK_JOIN(double range) {
-		// TODO Auto-generated method stub
-//		ForkJoinPool fjp = new ForkJoinPool();
-//		ForkAction fa = new ForkAction();
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, 1);
+		Division whole = div.getDivisions()[0];
+		Runnable r = getNoiseRunnable(range, whole);
+		NoiseForkAction fa = new NoiseForkAction(this, r, whole, Prefs.getThreads(), 1, range);
+		fjp.invoke(fa);
 	}	
 	
 	@Override

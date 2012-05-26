@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.Future;
 import java.awt.*;
 import java.awt.image.*;
@@ -13,6 +14,7 @@ import ij.gui.*;
 import ij.parallel.Division;
 import ij.parallel.ImageDivision;
 //import ij.parallel.pt.ParallelTask;
+import ij.parallel.fork.NoiseForkAction;
 
 /** ShortProcessors contain a 16-bit unsigned image
 	and methods that operate on that image. */
@@ -1062,7 +1064,8 @@ public class ShortProcessor extends ImageProcessor {
 		resetMinAndMax();
     }
     
-    private Runnable getNoiseRunnable(final double range, final Division div){
+    @Override
+    public Runnable getNoiseRunnable(final double range, final Division div){
     	 	
     	//TODO : Upadte with div.xStart
     	return new Runnable(){
@@ -1155,8 +1158,11 @@ public class ShortProcessor extends ImageProcessor {
 	
 	@Override
 	public void noise_P_FORK_JOIN(double range) {
-		// TODO Auto-generated method stub
-		
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, 1);
+		Division whole = div.getDivisions()[0];
+		Runnable r = getNoiseRunnable(range, whole);
+		NoiseForkAction fa = new NoiseForkAction(this, r, whole, Prefs.getThreads(), 1, range);
+		fjp.invoke(fa);
 	}		
     
 	public void threshold(int level) {

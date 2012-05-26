@@ -69,11 +69,11 @@ public class ParallelFiltersTest {
 	public static Collection<Object[]> testImages() {
 		
 		Object[][] images = new Object[][] { 
-				{ P_COLOR_RGB, CH_COLOR_RGB, ImageProcessor.P_NONE }, { P_COLOR_RGB, CH_COLOR_RGB, ImageProcessor.P_SERIAL }, { P_COLOR_RGB, CH_COLOR_RGB, ImageProcessor.P_SIMPLE }, { P_COLOR_RGB, CH_COLOR_RGB, ImageProcessor.P_EXECUTOR }, { P_COLOR_RGB, CH_COLOR_RGB, ImageProcessor.P_PARATASK },
-				{ P_COLOR_256, CH_COLOR_256, ImageProcessor.P_NONE }, { P_COLOR_256, CH_COLOR_256, ImageProcessor.P_SERIAL }, { P_COLOR_256, CH_COLOR_256, ImageProcessor.P_SIMPLE }, { P_COLOR_256, CH_COLOR_256, ImageProcessor.P_EXECUTOR }, { P_COLOR_256, CH_COLOR_256, ImageProcessor.P_PARATASK },
-				{ P_GRAY8, CH_GRAY8, ImageProcessor.P_NONE }, { P_GRAY8, CH_GRAY8, ImageProcessor.P_SERIAL }, { P_GRAY8, CH_GRAY8, ImageProcessor.P_SIMPLE },  { P_GRAY8, CH_GRAY8, ImageProcessor.P_EXECUTOR },  { P_GRAY8, CH_GRAY8, ImageProcessor.P_PARATASK },
-				{ P_GRAY16, CH_GRAY16 , ImageProcessor.P_NONE }, { P_GRAY16, CH_GRAY16 , ImageProcessor.P_SERIAL }, { P_GRAY16, CH_GRAY16 , ImageProcessor.P_SIMPLE }, { P_GRAY16, CH_GRAY16 , ImageProcessor.P_EXECUTOR }, { P_GRAY16, CH_GRAY16 , ImageProcessor.P_PARATASK },
-				{ P_GRAY32, CH_GRAY32, ImageProcessor.P_NONE }, { P_GRAY32, CH_GRAY32, ImageProcessor.P_SERIAL }, { P_GRAY32, CH_GRAY32, ImageProcessor.P_SIMPLE },  { P_GRAY32, CH_GRAY32, ImageProcessor.P_EXECUTOR }, { P_GRAY32, CH_GRAY32, ImageProcessor.P_PARATASK }
+				{ P_COLOR_RGB, CH_COLOR_RGB, ImageProcessor.P_NONE }, { P_COLOR_RGB, CH_COLOR_RGB, ImageProcessor.P_SERIAL }, { P_COLOR_RGB, CH_COLOR_RGB, ImageProcessor.P_SIMPLE }, { P_COLOR_RGB, CH_COLOR_RGB, ImageProcessor.P_EXECUTOR }, { P_COLOR_RGB, CH_COLOR_RGB, ImageProcessor.P_PARATASK }, { P_COLOR_RGB, CH_COLOR_RGB, ImageProcessor.P_FORK_JOIN },
+				{ P_COLOR_256, CH_COLOR_256, ImageProcessor.P_NONE }, { P_COLOR_256, CH_COLOR_256, ImageProcessor.P_SERIAL }, { P_COLOR_256, CH_COLOR_256, ImageProcessor.P_SIMPLE }, { P_COLOR_256, CH_COLOR_256, ImageProcessor.P_EXECUTOR }, { P_COLOR_256, CH_COLOR_256, ImageProcessor.P_PARATASK }, { P_COLOR_256, CH_COLOR_256, ImageProcessor.P_FORK_JOIN },
+				{ P_GRAY8, CH_GRAY8, ImageProcessor.P_NONE }, { P_GRAY8, CH_GRAY8, ImageProcessor.P_SERIAL }, { P_GRAY8, CH_GRAY8, ImageProcessor.P_SIMPLE },  { P_GRAY8, CH_GRAY8, ImageProcessor.P_EXECUTOR },  { P_GRAY8, CH_GRAY8, ImageProcessor.P_PARATASK }, { P_GRAY8, CH_GRAY8, ImageProcessor.P_FORK_JOIN },
+				{ P_GRAY16, CH_GRAY16 , ImageProcessor.P_NONE }, { P_GRAY16, CH_GRAY16 , ImageProcessor.P_SERIAL }, { P_GRAY16, CH_GRAY16 , ImageProcessor.P_SIMPLE }, { P_GRAY16, CH_GRAY16 , ImageProcessor.P_EXECUTOR }, { P_GRAY16, CH_GRAY16 , ImageProcessor.P_PARATASK }, { P_GRAY16, CH_GRAY16 , ImageProcessor.P_FORK_JOIN },
+				{ P_GRAY32, CH_GRAY32, ImageProcessor.P_NONE }, { P_GRAY32, CH_GRAY32, ImageProcessor.P_SERIAL }, { P_GRAY32, CH_GRAY32, ImageProcessor.P_SIMPLE },  { P_GRAY32, CH_GRAY32, ImageProcessor.P_EXECUTOR }, { P_GRAY32, CH_GRAY32, ImageProcessor.P_PARATASK }, { P_GRAY32, CH_GRAY32, ImageProcessor.P_FORK_JOIN }
 		};
 		return Arrays.asList(images);
 	}
@@ -109,7 +109,10 @@ public class ParallelFiltersTest {
 				break;				
 			case ImageProcessor.P_PARATASK:
 				ipB.noise_P_PARATASK(RANGE);
-				break;		
+				break;	
+			case ImageProcessor.P_FORK_JOIN:
+				ipB.noise_P_FORK_JOIN(RANGE);
+				break;				
 		}
 		
 		ArrayList<double[]> aChannels = getChannels(imgA);
