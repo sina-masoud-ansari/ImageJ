@@ -40,18 +40,18 @@ public class ParallelShadowsTest {
 	 */
 	private final static String 
 	
-	P_GRAY8 = "file://C:/Users/Rucha/git/ImageJ/resources/test/images/tif/GRAY8.tif",
+	/*P_GRAY8 = "file://C:/Users/Rucha/git/ImageJ/resources/test/images/tif/GRAY8.tif",
 	P_GRAY16 = "file://C:/Users/Rucha/git/ImageJ/resources/test/images/tif/GRAY16.tif",
 	P_GRAY32 = "file://C:/Users/Rucha/git/ImageJ/resources/test/images/tif/GRAY32.tif",
 	P_COLOR_256 = "file://C:/Users/Rucha/git/ImageJ/resources/test/images/tif/COLOR_256.tif",
-	P_COLOR_RGB = "file://C:/Users/Rucha/git/ImageJ/resources/test/images/tif/COLOR_RGB.tif";
+	P_COLOR_RGB = "file://C:/Users/Rucha/git/ImageJ/resources/test/images/tif/COLOR_RGB.tif";*/
 	 
 	//Example image paths for each image type
-	/*P_COLOR_RGB = "/resources/images/tif/COLOR_RGB.tif",
+	P_COLOR_RGB = "/resources/images/tif/COLOR_RGB.tif",
 	P_COLOR_256 = "/resources/images/tif/COLOR_256.tif",
 	P_GRAY8 = "/resources/images/tif/GRAY8.tif",
 	P_GRAY16 = "/resources/images/tif/GRAY16.tif",
-	P_GRAY32 = "/resources/images/tif/GRAY32.tif";*/
+	P_GRAY32 = "/resources/images/tif/GRAY32.tif";
 
 	private ImagePlus imgA, imgB,imgC,imgD,imgE,imgF;
 	private final int nChannels, mode;
@@ -60,18 +60,17 @@ public class ParallelShadowsTest {
 	public ParallelShadowsTest(String s, int n, int m) 
 	{	
 
-		//url = this.getClass().getResource(s);
-		url = null;
+		url = this.getClass().getResource(s);
+		//url = null;
 		
-		try {
+		/*try {
 			url = new URL(s);
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 		 
-		System.out.println(url);
-
+		
 		nChannels = n;
 		mode = m;
 	}
@@ -172,9 +171,7 @@ public class ParallelShadowsTest {
 					assertEquals(p1,p3);
 					assertEquals(p1,p4);
 					assertEquals(p1,p5);
-					assertEquals(p1,p6);
-					
-					
+					assertEquals(p1,p6);				
 					
 
 				}
