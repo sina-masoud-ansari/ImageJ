@@ -2,10 +2,13 @@ package ij.process;
 
 import java.awt.*;
 import java.awt.image.*;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import ij.parallel.Division;
 import ij.parallel.ImageDivision;
@@ -1341,19 +1344,17 @@ public class ColorProcessor extends ImageProcessor {
         
  		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, width, height);
  		 
- 		ExecutorService executor = Executors.newFixedThreadPool(div.numThreads);
- 		for (int i = 0; i < div.numThreads; i++)
- 		{
- 			Runnable worker = getRunnableConvolve(div.getDivision(i));
- 			executor.execute(worker);
- 		}
- 		
- 		executor.shutdown();
- 		while (!executor.isTerminated()) {}
-     	
+ 		Collection<Future<?>> futures = new LinkedList<Future<?>>();
+		
+		for (Division d : div.getDivisions()){
+			futures.add(executor.submit(getRunnableConvolve(d)));
+		}
+		
+		// wait for tasks to finish
+		div.processFutures(futures);	
 		//div.processThreads(threads);
 		 //indicate processing is finished	
-		//showProgress(1.0);
+		showProgress(1.0);
 	}
 	
 	public void convolve3x3_PARATASK(int[] kernel) 

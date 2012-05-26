@@ -55,7 +55,7 @@ public class ParallelShadowsTest {
 
 	private ImagePlus imgA, imgB,imgC,imgD,imgE;
 	private final int nChannels, mode;
-	private URL url;
+	private final URL url;
 
 	public ParallelShadowsTest(String s, int n, int m) 
 	{	

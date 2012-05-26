@@ -1438,15 +1438,14 @@ public class ShortProcessor extends ImageProcessor {
         
         ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
     	
-        ExecutorService executor = Executors.newFixedThreadPool(div.numThreads);
-		for (int i = 0; i < div.numThreads; i++)
-		{
-			Runnable worker = getRunnableConvolve(div.getDivision(i));
-			executor.execute(worker);
+        Collection<Future<?>> futures = new LinkedList<Future<?>>();
+		
+		for (Division d : div.getDivisions()){
+			futures.add(executor.submit(getRunnableConvolve(d)));
 		}
 		
-		executor.shutdown();
-		while (!executor.isTerminated()) {}
+		// wait for tasks to finish
+		div.processFutures(futures);	
 		
 		//div.processThreads(executor);
 		// indicate processing is finished	
