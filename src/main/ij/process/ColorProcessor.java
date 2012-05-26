@@ -12,9 +12,11 @@ import java.util.concurrent.Future;
 
 import ij.parallel.Division;
 import ij.parallel.ImageDivision;
+import ij.parallel.fork.ShadowsForkAction;
 //import ij.parallel.pt.ParallelTask;
 import ij.process.ByteProcessor;
 import ij.ImageStack;
+import ij.Prefs;
 
 /**
 This is an 32-bit RGB image and methods that operate on that image.. Based on the ImageProcessor class from
@@ -1384,8 +1386,33 @@ public class ColorProcessor extends ImageProcessor {
 		div.processTasks(tasks);
 		
 	}
+	
+	public void convolve3x3_forkJoin(int[] kernel) 
+	{
+		k1_p=kernel[0]; k2_p=kernel[1]; k3_p=kernel[2];
+	    k4_p=kernel[3]; k5_p=kernel[4]; k6_p=kernel[5];
+		k7_p=kernel[6]; k8_p=kernel[7]; k9_p=kernel[8];
 
-	private Runnable getRunnableConvolve(final Division div)
+		scale_p = 0;
+		for (int i=0; i<kernel.length; i++)
+			scale_p += kernel[i];
+		if (scale_p==0) scale_p = 1;
+	    inc_p = roiHeight/25;
+		if (inc_p<1) inc_p = 1;
+		
+		 pixelsTemp = (int[])getPixelsCopy();
+		
+		//rsum_p = 0; gsum_p = 0; bsum_p = 0;
+        rowOffset_p = width;
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, 1, width, height);
+		Division whole = div.getDivisions()[0];
+		Runnable r = getRunnableConvolve( whole);
+		ShadowsForkAction sa = new ShadowsForkAction(this, r, whole, Prefs.getThreads(), 1, 0);
+		fjp.invoke(sa);
+	}
+
+	@Override
+	public Runnable getRunnableConvolve(final Division div)
 	{
 		return new Runnable(){
 			int rsum_p=0, gsum_p=0,bsum_p=0;

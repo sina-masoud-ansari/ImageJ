@@ -16,8 +16,9 @@ import ij.parallel.Division;
 import ij.parallel.ImageDivision;
 import ij.Prefs;
 import ij.parallel.Division;
-import ij.parallel.fork.ForkAction;
+//import ij.parallel.ForkAction;
 import ij.parallel.fork.NoiseForkAction;
+import ij.parallel.fork.ShadowsForkAction;
 
 /**
 This is an 8-bit image and methods that operate on that image. Based on the ImageProcessor class
@@ -692,7 +693,32 @@ public class ByteProcessor extends ImageProcessor{
 		
 	}
     
-    private Runnable getRunnableConvolve(final Division div)
+    @Override
+	public void convolve3x3_forkJoin(int[] kernel) {
+    	scale_p = 0;
+ 		k1_p=kernel[0]; k2_p=kernel[1]; k3_p=kernel[2];
+ 		k4_p=kernel[3]; k5_p=kernel[4]; k6_p=kernel[5];
+ 		k7_p=kernel[6]; k8_p=kernel[7]; k9_p=kernel[8];
+ 		
+ 		for (int i=0; i<kernel.length; i++)
+ 		scale_p += kernel[i];
+ 		
+ 		if (scale_p==0) scale_p = 1;
+        int inc = roiHeight/25;
+        if (inc<1) inc = 1;
+		
+		pixelsTemp = (byte[])getPixelsCopy();
+		
+		
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, 1);
+		Division whole = div.getDivisions()[0];
+		Runnable r = getRunnableConvolve( whole);
+		ShadowsForkAction sa = new ShadowsForkAction(this, r, whole, Prefs.getThreads(), 1, 0);
+		fjp.invoke(sa);
+	}	
+    
+    @Override
+    public Runnable getRunnableConvolve(final Division div)
     {
     	
     	return new Runnable(){

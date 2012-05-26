@@ -15,6 +15,7 @@ import ij.parallel.Division;
 import ij.parallel.ImageDivision;
 //import ij.parallel.pt.ParallelTask;
 import ij.parallel.fork.NoiseForkAction;
+import ij.parallel.fork.ShadowsForkAction;
 
 /** This is an 32-bit floating-point image and methods that operate on that image. */
 public class FloatProcessor extends ImageProcessor {
@@ -1405,7 +1406,7 @@ public class FloatProcessor extends ImageProcessor {
 		
 		pixelsTemp = (float[])getPixelsCopy();
 
-		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, width, height);
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
 		ConcurrentLinkedQueue<Runnable> tasks = new ConcurrentLinkedQueue<Runnable>();
 		for (Division d : div.getDivisions()){
 			tasks.add(getRunnableConvolve(d));
@@ -1413,9 +1414,38 @@ public class FloatProcessor extends ImageProcessor {
 		div.processTasks(tasks);		
 		
 	}
+	
+	public void convolve3x3_forkJoin(int[] kernel) {
+		k1_p=0f; k2_p=0f; k3_p=0f;	//kernel values (used for CONVOLVE only)
+		k4_p=0f; k5_p=0f; k6_p=0f;
+		k7_p=0f; k8_p=0f; k9_p=0f;
+		scale_p = 0f;
+		
+		
+		k1_p=kernel[0]; k2_p=kernel[1]; k3_p=kernel[2];
+		k4_p=kernel[3]; k5_p=kernel[4]; k6_p=kernel[5];
+		k7_p=kernel[6]; k8_p=kernel[7]; k9_p=kernel[8];
+		
+		for (int i=0; i<kernel.length; i++)
+				scale_p += kernel[i];
+			if (scale_p==0) scale_p = 1f;
+			scale_p = 1f/scale_p; //multiplication factor (multiply is faster than divide)
+		
+		inc_p = roiHeight/25;
+		if (inc_p<1) inc_p = 1;
+		
+		pixelsTemp = (float[])getPixelsCopy();
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, 1);
+		Division whole = div.getDivisions()[0];
+		Runnable r = getRunnableConvolve( whole);
+		ShadowsForkAction sa = new ShadowsForkAction(this, r, whole, Prefs.getThreads(), 1, 0);
+		fjp.invoke(sa);
+		
+	}
 
 	
-	private Runnable getRunnableConvolve(final Division div)
+	@Override
+	public Runnable getRunnableConvolve(final Division div)
     {
     	return new Runnable(){
     		float v1_p, v2_p, v3_p;			//input pixel values around the current pixel
