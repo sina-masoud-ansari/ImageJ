@@ -17,6 +17,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+import paratask.runtime.ParaTask;
+
 @RunWith(value = Parameterized.class)
 public class ParallelFiltersTest {
 
@@ -67,17 +69,18 @@ public class ParallelFiltersTest {
 	public static Collection<Object[]> testImages() {
 		
 		Object[][] images = new Object[][] { 
-				{ P_COLOR_RGB, CH_COLOR_RGB, ImageProcessor.P_NONE }, { P_COLOR_RGB, CH_COLOR_RGB, ImageProcessor.P_SERIAL }, { P_COLOR_RGB, CH_COLOR_RGB, ImageProcessor.P_SIMPLE },
-				{ P_COLOR_256, CH_COLOR_256, ImageProcessor.P_NONE }, { P_COLOR_256, CH_COLOR_256, ImageProcessor.P_SERIAL }, { P_COLOR_256, CH_COLOR_256, ImageProcessor.P_SIMPLE },
-				{ P_GRAY8, CH_GRAY8, ImageProcessor.P_NONE }, { P_GRAY8, CH_GRAY8, ImageProcessor.P_SERIAL }, { P_GRAY8, CH_GRAY8, ImageProcessor.P_SIMPLE },
-				{ P_GRAY16, CH_GRAY16 , ImageProcessor.P_NONE }, { P_GRAY16, CH_GRAY16 , ImageProcessor.P_SERIAL }, { P_GRAY16, CH_GRAY16 , ImageProcessor.P_SIMPLE },
-				{ P_GRAY32, CH_GRAY32, ImageProcessor.P_NONE }, { P_GRAY32, CH_GRAY32, ImageProcessor.P_SERIAL }, { P_GRAY32, CH_GRAY32, ImageProcessor.P_SIMPLE }
+				{ P_COLOR_RGB, CH_COLOR_RGB, ImageProcessor.P_NONE }, { P_COLOR_RGB, CH_COLOR_RGB, ImageProcessor.P_SERIAL }, { P_COLOR_RGB, CH_COLOR_RGB, ImageProcessor.P_SIMPLE }, { P_COLOR_RGB, CH_COLOR_RGB, ImageProcessor.P_PARATASK },
+				{ P_COLOR_256, CH_COLOR_256, ImageProcessor.P_NONE }, { P_COLOR_256, CH_COLOR_256, ImageProcessor.P_SERIAL }, { P_COLOR_256, CH_COLOR_256, ImageProcessor.P_SIMPLE }, { P_COLOR_256, CH_COLOR_256, ImageProcessor.P_PARATASK },
+				{ P_GRAY8, CH_GRAY8, ImageProcessor.P_NONE }, { P_GRAY8, CH_GRAY8, ImageProcessor.P_SERIAL }, { P_GRAY8, CH_GRAY8, ImageProcessor.P_SIMPLE },  { P_GRAY8, CH_GRAY8, ImageProcessor.P_PARATASK },
+				{ P_GRAY16, CH_GRAY16 , ImageProcessor.P_NONE }, { P_GRAY16, CH_GRAY16 , ImageProcessor.P_SERIAL }, { P_GRAY16, CH_GRAY16 , ImageProcessor.P_SIMPLE }, { P_GRAY16, CH_GRAY16 , ImageProcessor.P_PARATASK },
+				{ P_GRAY32, CH_GRAY32, ImageProcessor.P_NONE }, { P_GRAY32, CH_GRAY32, ImageProcessor.P_SERIAL }, { P_GRAY32, CH_GRAY32, ImageProcessor.P_SIMPLE },  { P_GRAY32, CH_GRAY32, ImageProcessor.P_PARATASK }
 		};
 		return Arrays.asList(images);
 	}
 	
 	@Before
 	public void setUp(){
+		ParaTask.init();
 		imgA = new ImagePlus(url.getPath());
 		imgB = new ImagePlus(url.getPath());	
 	}
@@ -101,6 +104,9 @@ public class ParallelFiltersTest {
 			case ImageProcessor.P_SIMPLE:
 				ipB.noise_P_SIMPLE(RANGE);
 				break;
+			case ImageProcessor.P_PARATASK:
+				ipB.noise_P_PARATASK(RANGE);
+				break;		
 		}
 		
 		ArrayList<double[]> aChannles = getChannels(imgA);
@@ -130,7 +136,7 @@ public class ParallelFiltersTest {
 			case ImageProcessor.P_SIMPLE:
 				ipB.salt_and_pepper_SIMPLE(PERCENT);
 				break;
-			case ImageProcessor.P_PARALLEL_TASK:
+			case ImageProcessor.P_PARATASK:
 				ipB.salt_and_pepper_PARATASK(PERCENT);
 				break;
 		}

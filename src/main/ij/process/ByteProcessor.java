@@ -7,7 +7,7 @@ import java.util.concurrent.Executors;
 //import java.util.concurrent.ForkJoinPool;
 import java.awt.*;
 import java.awt.image.*;
-import ij.parallel.pt.ParallelTask;
+//import ij.parallel.pt.ParallelTask;
 import ij.gui.*;
 import ij.parallel.Division;
 import ij.parallel.ForkAction;
@@ -669,7 +669,7 @@ public class ByteProcessor extends ImageProcessor{
     }
     
     public void convolve3x3_PARATASK(int[] kernel) {
-    	
+    	/*
     	scale_p = 0;
  		k1_p=kernel[0]; k2_p=kernel[1]; k3_p=kernel[2];
  		k4_p=kernel[3]; k5_p=kernel[4]; k6_p=kernel[5];
@@ -695,6 +695,7 @@ public class ByteProcessor extends ImageProcessor{
 		
 		ParallelTask pt = new ParallelTask();
 		pt.salt_and_pepper_PARATASK(tasks);	
+		*/
 	}
     
     private Runnable getRunnableConvolve(final Division div)
@@ -1147,7 +1148,7 @@ public class ByteProcessor extends ImageProcessor{
 	@Override
 	public void noise_P_SIMPLE(double range) 
 	{
-		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight,2);
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
 		Thread[] threads = new Thread[div.numThreads];
 		for (int i = 0; i < div.numThreads; i++)
 		{
@@ -1157,8 +1158,22 @@ public class ByteProcessor extends ImageProcessor{
 		div.processThreads(threads);
 		// indicate processing is finished	
 		showProgress(1.0);
-		
 	}   
+	
+	@Override
+	public void noise_P_EXECUTOR(double range){
+		
+	}
+	
+	@Override
+	public void noise_P_PARATASK(double range){
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
+		ConcurrentLinkedQueue<Runnable> tasks = new ConcurrentLinkedQueue<Runnable>();
+		for (Division d : div.getDivisions()){
+			tasks.add(getNoiseRunnable(range, d));
+		}
+		div.processTasks(tasks);
+	}	
 	
 	@Override
 	public void noise_P_FORK_JOIN(double range) {
@@ -1247,6 +1262,7 @@ public class ByteProcessor extends ImageProcessor{
 	
 	public void salt_and_pepper_PARATASK(double percent) {
 		
+		/*
 		ImageDivision imDiv = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
 		Random r = new Random();
 		int n = (int)(percent*roiWidth*roiHeight);
@@ -1258,6 +1274,7 @@ public class ByteProcessor extends ImageProcessor{
 		
 		ParallelTask pt = new ParallelTask();
 		pt.salt_and_pepper_PARATASK(tasks);
+		*/
 	}
 
 	public  void salt_and_pepper_EXECUTOR(double percent) {

@@ -1,0 +1,34 @@
+package ij.parallel;
+
+import java.util.concurrent.ConcurrentLinkedQueue;
+import paratask.runtime.TaskIDGroup;
+
+public class PTRunner {
+
+	ConcurrentLinkedQueue<Runnable> tasks;
+
+	public PTRunner(ConcurrentLinkedQueue<Runnable> tasks){
+		this.tasks = tasks;
+	}
+
+	public void run (){
+		TaskIDGroup group = processTasks();
+		try {
+			group.waitTillFinished();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}		
+
+	}
+
+	TASK(*) private void processTasks() {
+
+		Runnable t = null;
+		while ( (t = tasks.poll()) != null) {
+			t.run();
+		}
+	}	
+
+}

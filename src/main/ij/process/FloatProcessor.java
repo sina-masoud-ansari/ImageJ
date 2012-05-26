@@ -11,7 +11,7 @@ import ij.Prefs;
 import ij.gui.*;
 import ij.parallel.Division;
 import ij.parallel.ImageDivision;
-import ij.parallel.pt.ParallelTask;
+//import ij.parallel.pt.ParallelTask;
 
 /** This is an 32-bit floating-point image and methods that operate on that image. */
 public class FloatProcessor extends ImageProcessor {
@@ -883,6 +883,7 @@ public class FloatProcessor extends ImageProcessor {
 	
 	@Override
 	public void salt_and_pepper_PARATASK(double percent) {
+		/*
 		// TODO Auto-generated method stub
 		ImageDivision imDiv = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
 		Random r = new Random();
@@ -895,7 +896,7 @@ public class FloatProcessor extends ImageProcessor {
 		
 		ParallelTask pt = new ParallelTask();
 		pt.salt_and_pepper_PARATASK(tasks);
-		
+		*/
 	}
 	
 	public  void salt_and_pepper_EXECUTOR(double percent) {
@@ -1340,6 +1341,7 @@ public class FloatProcessor extends ImageProcessor {
 	}
 	
 	public void convolve3x3_PARATASK(int[] kernel) {
+		/*
 		k1_p=0f; k2_p=0f; k3_p=0f;	//kernel values (used for CONVOLVE only)
 		k4_p=0f; k5_p=0f; k6_p=0f;
 		k7_p=0f; k8_p=0f; k9_p=0f;
@@ -1371,6 +1373,7 @@ public class FloatProcessor extends ImageProcessor {
 		
 		ParallelTask pt = new ParallelTask();
 		pt.salt_and_pepper_PARATASK(tasks);	
+		*/
 	}
 
 	
@@ -1425,6 +1428,23 @@ public class FloatProcessor extends ImageProcessor {
 		}; 		
     	
     }
+
+	@Override
+	public void noise_P_EXECUTOR(double range) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void noise_P_PARATASK(double range){
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
+		ConcurrentLinkedQueue<Runnable> tasks = new ConcurrentLinkedQueue<Runnable>();
+		for (Division d : div.getDivisions()){
+			tasks.add(getNoiseRunnable(range, d));
+		}
+		div.processTasks(tasks);
+	}	
+	
 
 
 

@@ -9,7 +9,7 @@ import java.util.concurrent.Executors;
 
 import ij.parallel.Division;
 import ij.parallel.ImageDivision;
-import ij.parallel.pt.ParallelTask;
+//import ij.parallel.pt.ParallelTask;
 import ij.process.ByteProcessor;
 import ij.ImageStack;
 
@@ -789,6 +789,20 @@ public class ColorProcessor extends ImageProcessor {
 	}
 
 	@Override
+	public void noise_P_EXECUTOR(double range) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void noise_P_PARATASK(double range) {
+		setup();
+		r.noise_P_SIMPLE(range); showProgress(0.40);
+		g.noise_P_SIMPLE(range); showProgress(0.65);
+		b.noise_P_SIMPLE(range); showProgress(0.90);	
+	}	
+	
+	@Override
 	public void noise_P_FORK_JOIN(double range) {
 		// TODO Auto-generated method stub
 		setup();
@@ -1372,6 +1386,7 @@ public class ColorProcessor extends ImageProcessor {
 	
 	public void convolve3x3_PARATASK(int[] kernel) 
 	{
+		/*
 		k1_p=kernel[0]; k2_p=kernel[1]; k3_p=kernel[2];
 	    k4_p=kernel[3]; k5_p=kernel[4]; k6_p=kernel[5];
 		k7_p=kernel[6]; k8_p=kernel[7]; k9_p=kernel[8];
@@ -1398,6 +1413,7 @@ public class ColorProcessor extends ImageProcessor {
 		
 		ParallelTask pt = new ParallelTask();
 		pt.salt_and_pepper_PARATASK(tasks);	
+		*/
 	}
 
 	private Runnable getRunnableConvolve(final Division div)
@@ -1692,6 +1708,7 @@ public class ColorProcessor extends ImageProcessor {
 			pixels[i] = (pixels[i]&resetMask) | ((int)value<<shift);
 		}
 	}
+
 
 
 	

@@ -1,5 +1,7 @@
 package ij.parallel;
 
+import java.util.concurrent.ConcurrentLinkedQueue;
+
 import ij.Prefs;
 
 public class ImageDivision {
@@ -125,6 +127,11 @@ public class ImageDivision {
 				e.printStackTrace();
 			}
 		}	
+	}
+	
+	public void processTasks(ConcurrentLinkedQueue<Runnable> tasks){
+		PTRunner runner = new PTRunner(tasks);
+		runner.run();
 	}
 
 }

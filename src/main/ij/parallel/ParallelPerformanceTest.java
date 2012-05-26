@@ -4,6 +4,8 @@ import ij.process.ImageProcessor;
 
 import java.io.File;
 
+import paratask.runtime.ParaTask;
+
 public class ParallelPerformanceTest {
 
 	static final int ARGC = 6;
@@ -169,7 +171,7 @@ public class ParallelPerformanceTest {
 	 * [iter]	: Optional. The number of iterations to perform on dependent setups.
 	 */
 	public static void main(String[] args) {
-	
+		ParaTask.init();
 		if (args.length < 6){
 			String s = args.length+" ARGS:";
 			for (String a : args){

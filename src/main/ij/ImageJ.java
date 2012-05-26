@@ -19,6 +19,8 @@ import ij.io.Opener;
 import ij.util.*;
 import javax.swing.ImageIcon;
 
+import paratask.runtime.ParaTask;
+
 /**
 This frame is the main ImageJ class.
 <p>
@@ -582,6 +584,7 @@ public class ImageJ extends Frame implements ActionListener,
 	}
 
 	public static void main(String args[]) {
+		ParaTask.init();
 		if (System.getProperty("java.version").substring(0,3).compareTo("1.5")<0) {
 			javax.swing.JOptionPane.showMessageDialog(null,"ImageJ "+VERSION+" requires Java 1.5 or later.");
 			System.exit(0);

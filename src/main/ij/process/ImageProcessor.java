@@ -69,7 +69,7 @@ public abstract class ImageProcessor implements Cloneable {
 		P_SIMPLE=2, 
 		P_FORK_JOIN=3, 
 		P_EXECUTOR=4, 
-		P_PARALLEL_TASK=5;		
+		P_PARATASK=5;		
 	
 	int fgColor = 0;
 	protected int lineWidth = 1;
@@ -1946,6 +1946,8 @@ public abstract class ImageProcessor implements Cloneable {
 	public abstract void noise_P_NONE(double range);
 	public abstract void noise_P_SERIAL(double range);
 	public abstract void noise_P_SIMPLE(double range);    
+	public abstract void noise_P_EXECUTOR(double range);
+	public abstract void noise_P_PARATASK(double range);
 	public abstract void noise_P_FORK_JOIN(double range);
 	
 	public abstract void salt_and_pepper_NONE(double percent);
