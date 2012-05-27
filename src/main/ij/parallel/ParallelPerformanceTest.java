@@ -207,8 +207,8 @@ public class ParallelPerformanceTest {
 			int totalPixels = runner.test.img.getWidth() * runner.test.img.getHeight();
 			long timetaken = runner.timetaken;
 			
-			// FileName, NumChannels, BitDepth, TotalPixels, Threads, Setup, Filter, Stage, TimeTaken
-			System.out.printf("%s,%d,%d,%d,%d,%s,%s,%s,%d\n", fname, nchannels, bitdepth, totalPixels, threads, setup, filter, stage, timetaken);
+			// FileName, NumChannels, BitDepth, TotalPixels, Threads, Setup, Filter, Method, Stage, TimeTaken
+			System.out.printf("%s,%d,%d,%d,%d,%s,%s,%s,%s,%d\n", fname, nchannels, bitdepth, totalPixels, threads, setup, filter, methodString, stage, timetaken);
 		}
 	}
 

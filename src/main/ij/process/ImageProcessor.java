@@ -2415,4 +2415,9 @@ public abstract class ImageProcessor implements Cloneable {
 		return null;
 		}
 	}
+	
+	public void shutdownThreadPools(){
+		executor.shutdown();
+		fjp.shutdown();
+	}
 }

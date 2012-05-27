@@ -24,6 +24,12 @@ public abstract class PerformanceTest {
 		Prefs.setThreads(threads);		
 	}
 	
+	protected void shutdown(){
+		if (ip != null){
+			ip.shutdownThreadPools();
+		}
+	}
+	
 	public abstract void run_P_NONE();
 	public abstract void run_P_SERIAL();
 	public abstract void run_P_SIMPLE();

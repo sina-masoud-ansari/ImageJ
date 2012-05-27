@@ -63,7 +63,17 @@ public class TestRunner {
 			case ImageProcessor.P_EXECUTOR:
 				test.run_P_EXECUTOR();
 				break;				
+			case ImageProcessor.P_PARATASK:
+				test.run_P_PARATASK();
+				break;
+			case ImageProcessor.P_FORK_JOIN:
+				test.run_P_FORK_JOIN();
+				break;				
 		}
+	}
+	
+	private void performSHUTDOWN(){
+		test.shutdown();
 	}
 	
 	public void run() {
@@ -98,6 +108,7 @@ public class TestRunner {
 			long timeFinish =  System.nanoTime();
 			timetaken = timeFinish - timeStart;
 		}
+		performSHUTDOWN();
 	}
 	
 }
