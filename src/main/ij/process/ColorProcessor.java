@@ -838,16 +838,6 @@ public class ColorProcessor extends ImageProcessor {
 		r.salt_and_pepper_SIMPLE(percent); 
 		g.salt_and_pepper_SIMPLE(percent); 
 		b.salt_and_pepper_SIMPLE(percent); 
-		
-//		System.out.println("R channel start");
-//		r.salt_and_pepper_SIMPLE(percent); 
-//		System.out.println("R channel done");
-//		System.out.println("G channel start");
-//		g.salt_and_pepper_SIMPLE(percent); 
-//		System.out.println("G channel done");
-//		System.out.println("B channel start");
-//		b.salt_and_pepper_SIMPLE(percent); 
-//		System.out.println("B channel done"); 
 		finish();	
 		
 	}
@@ -857,16 +847,6 @@ public class ColorProcessor extends ImageProcessor {
 		r.salt_and_pepper_PARATASK(percent); 
 		g.salt_and_pepper_PARATASK(percent); 
 		b.salt_and_pepper_PARATASK(percent); 
-		
-//		System.out.println("R channel start");
-//		r.salt_and_pepper_PARATASK(percent); 
-//		System.out.println("R channel done");
-//		System.out.println("G channel start");
-//		g.salt_and_pepper_PARATASK(percent); 
-//		System.out.println("G channel done");
-//		System.out.println("B channel start");
-//		b.salt_and_pepper_PARATASK(percent); 
-//		System.out.println("B channel done"); 
 		finish();	
 	}
 	
@@ -875,16 +855,6 @@ public class ColorProcessor extends ImageProcessor {
 		r.salt_and_pepper_EXECUTOR(percent); 
 		g.salt_and_pepper_EXECUTOR(percent); 
 		b.salt_and_pepper_EXECUTOR(percent); 
-		
-//		System.out.println("R channel start");
-//		r.salt_and_pepper_EXECUTOR(percent); 
-//		System.out.println("R channel done");
-//		System.out.println("G channel start");
-//		g.salt_and_pepper_EXECUTOR(percent); 
-//		System.out.println("G channel done");
-//		System.out.println("B channel start");
-//		b.salt_and_pepper_EXECUTOR(percent); 
-//		System.out.println("B channel done"); 
 		finish();	
 		
 	}
