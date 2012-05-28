@@ -15,6 +15,7 @@ import ij.parallel.Division;
 import ij.parallel.ImageDivision;
 //import ij.parallel.pt.ParallelTask;
 import ij.parallel.fork.NoiseForkAction;
+import ij.parallel.fork.SaltAndPepperForkAction;
 import ij.parallel.fork.ShadowsForkAction;
 
 /** ShortProcessors contain a 16-bit unsigned image
@@ -1235,7 +1236,7 @@ public class ShortProcessor extends ImageProcessor {
 		return min + (int)(r.nextDouble()*(max-min));
 	}
 	
-	private Runnable getSaltAndPepperRunnable(final int n, final Division div, final int numDivs, final Random r) {
+	public Runnable getSaltAndPepperRunnable(final int n, final Division div, final int numDivs, final Random r) {
 		return new Runnable () {
 			@Override
 			public void run() {
@@ -1255,27 +1256,7 @@ public class ShortProcessor extends ImageProcessor {
 		};
 	}
 
-	@Override
 	public void salt_and_pepper_PARATASK(double percent) {
-		/*
-		// TODO Auto-generated method stub
-		ImageDivision imDiv = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
-		Random r = new Random();
-		int n = (int)(percent*roiWidth*roiHeight);
-		ConcurrentLinkedQueue<Runnable> tasks = new ConcurrentLinkedQueue<Runnable>();
-
-		for (int i = 0; i < imDiv.divs.length; i++) {
-			tasks.add(getSaltAndPepperRunnable(n,imDiv.getDivision(i),imDiv.numThreads,r));
-		}
-		
-		ParallelTask pt = new ParallelTask();
-		pt.salt_and_pepper_PARATASK(tasks);
-		*/
-		
-		/**
-		 * Using shared code:
-		 */
-		
 		Random r = new Random();
 		int n = (int)(percent*roiWidth*roiHeight);
 		
@@ -1285,25 +1266,33 @@ public class ShortProcessor extends ImageProcessor {
 			tasks.add(getSaltAndPepperRunnable(n, d, div.divs.length, r));
 		}
 		div.processTasks(tasks);
-			
+				
+	}
+
+	public  void salt_and_pepper_EXECUTOR(double percent) {	
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
+		Random r = new Random();
+		int n = (int)(percent*roiWidth*roiHeight);
+		Collection<Future<?>> futures = new LinkedList<Future<?>>();
+				
+		for (Division d : div.getDivisions()){
+			futures.add(executor.submit(getSaltAndPepperRunnable(n,d,div.divs.length,r)));
+		}
+		
+		// wait for tasks to finish
+		div.processFutures(futures);	
 		
 	}
 	
-	public  void salt_and_pepper_EXECUTOR(double percent) {
-		ImageDivision imDiv = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
-		Random r = new Random();
+	public void salt_and_pepper_FORK_JOIN(double percent) {
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, 1);
+		Division whole = div.getDivisions()[0];
+		Random rand = new Random();
 		int n = (int)(percent*roiWidth*roiHeight);
-		
-    	ExecutorService executor = Executors.newFixedThreadPool(imDiv.numThreads);
-		for (int i = 0; i < imDiv.numThreads; i++)
-		{
-			Runnable worker = getSaltAndPepperRunnable(n,imDiv.getDivision(i),imDiv.divs.length,r);
-			executor.execute(worker);
-		}
-		
-		executor.shutdown();
-		while (!executor.isTerminated()) {}
-		
+		Runnable runnable = getSaltAndPepperRunnable(n,whole,div.divs.length,rand);
+		SaltAndPepperForkAction fa = new SaltAndPepperForkAction(this, runnable, 
+				whole, Prefs.getThreads(), 1, percent, n, rand);
+		fjp.invoke(fa);
 	}
 
 	/** Returns a FloatProcessor with the same image, no scaling or calibration

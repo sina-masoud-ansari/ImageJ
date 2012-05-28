@@ -158,6 +158,9 @@ public class ParallelFiltersTest {
 			case ImageProcessor.P_PARATASK:
 				ipB.salt_and_pepper_PARATASK(PERCENT);
 				break;
+			case ImageProcessor.P_FORK_JOIN:
+				ipB.noise_P_FORK_JOIN(RANGE);
+				break;	
 		}
 		
 		ArrayList<double[]> aChannles = getChannels(imgA);

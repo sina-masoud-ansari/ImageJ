@@ -858,6 +858,14 @@ public class ColorProcessor extends ImageProcessor {
 		finish();	
 		
 	}
+	
+	public void salt_and_pepper_FORK_JOIN(double percent) {
+		setup();
+		r.salt_and_pepper_FORK_JOIN(percent); 
+		g.salt_and_pepper_FORK_JOIN(percent); 
+		b.salt_and_pepper_FORK_JOIN(percent); 
+		finish();
+	}
     
 	public void medianFilter() {
     	filterRGB(RGB_MEDIAN, 0.0);
@@ -1677,6 +1685,13 @@ public class ColorProcessor extends ImageProcessor {
 
 	@Override
 	public Runnable getNoiseRunnable(double range, Division div) {
+		// Handled by the ByteProcessor class
+		return null;
+	}
+
+	@Override
+	public Runnable getSaltAndPepperRunnable(int n, Division div, int numDivs,
+			Random r) {
 		// Handled by the ByteProcessor class
 		return null;
 	}
