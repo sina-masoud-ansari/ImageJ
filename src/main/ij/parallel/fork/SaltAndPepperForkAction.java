@@ -27,10 +27,10 @@ public class SaltAndPepperForkAction extends ForkAction {
 		Division[] divs = ImageDivision.splitDivision(division);
 		SaltAndPepperForkAction first = new SaltAndPepperForkAction(ip, 
 				ip.getSaltAndPepperRunnable(n,divs[0],divs.length,rand), divs[0], 
-				limit, numDivisions+1, percent, n, rand);
+				limit, numDivisions+1, percent, n/2, rand);
 		SaltAndPepperForkAction second = new SaltAndPepperForkAction(ip, 
 				ip.getSaltAndPepperRunnable(n,divs[1],divs.length,rand), divs[1], 
-				limit, numDivisions+1, percent, n, rand);
+				limit, numDivisions+1, percent, n/2, rand);
 		invokeAll(first, second);
 	}
 	
