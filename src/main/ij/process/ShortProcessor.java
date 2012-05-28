@@ -4,6 +4,8 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.Future;
 import java.awt.*;
 import java.awt.image.*;
 
@@ -11,7 +13,9 @@ import ij.Prefs;
 import ij.gui.*;
 import ij.parallel.Division;
 import ij.parallel.ImageDivision;
-import ij.parallel.pt.ParallelTask;
+//import ij.parallel.pt.ParallelTask;
+import ij.parallel.fork.NoiseForkAction;
+import ij.parallel.fork.ShadowsForkAction;
 
 /** ShortProcessors contain a 16-bit unsigned image
 	and methods that operate on that image. */
@@ -1061,7 +1065,8 @@ public class ShortProcessor extends ImageProcessor {
 		resetMinAndMax();
     }
     
-    private Runnable getNoiseRunnable(final double range, final Division div){
+    @Override
+    public Runnable getNoiseRunnable(final double range, final Division div){
     	 	
     	//TODO : Upadte with div.xStart
     	return new Runnable(){
@@ -1129,9 +1134,36 @@ public class ShortProcessor extends ImageProcessor {
     } 
 	
 	@Override
-	public void noise_P_FORK_JOIN(double range) {
-		// TODO Auto-generated method stub
+	public void noise_P_EXECUTOR(double range){
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
 		
+		Collection<Future<?>> futures = new LinkedList<Future<?>>();
+				
+		for (Division d : div.getDivisions()){
+			futures.add(executor.submit(getNoiseRunnable(range, d)));
+		}
+		
+		// wait for tasks to finish
+		div.processFutures(futures);	
+	}
+
+	@Override
+	public void noise_P_PARATASK(double range){
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
+		ConcurrentLinkedQueue<Runnable> tasks = new ConcurrentLinkedQueue<Runnable>();
+		for (Division d : div.getDivisions()){
+			tasks.add(getNoiseRunnable(range, d));
+		}
+		div.processTasks(tasks);
+	}		
+	
+	@Override
+	public void noise_P_FORK_JOIN(double range) {
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, 1);
+		Division whole = div.getDivisions()[0];
+		Runnable r = getNoiseRunnable(range, whole);
+		NoiseForkAction fa = new NoiseForkAction(this, r, whole, Prefs.getThreads(), 1, range);
+		fjp.invoke(fa);
 	}		
     
 	public void threshold(int level) {
@@ -1225,6 +1257,7 @@ public class ShortProcessor extends ImageProcessor {
 
 	@Override
 	public void salt_and_pepper_PARATASK(double percent) {
+		/*
 		// TODO Auto-generated method stub
 		ImageDivision imDiv = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
 		Random r = new Random();
@@ -1237,6 +1270,23 @@ public class ShortProcessor extends ImageProcessor {
 		
 		ParallelTask pt = new ParallelTask();
 		pt.salt_and_pepper_PARATASK(tasks);
+		*/
+		
+		/**
+		 * Using shared code:
+		 */
+		
+		Random r = new Random();
+		int n = (int)(percent*roiWidth*roiHeight);
+		
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
+		ConcurrentLinkedQueue<Runnable> tasks = new ConcurrentLinkedQueue<Runnable>();
+		for (Division d : div.getDivisions()){
+			tasks.add(getSaltAndPepperRunnable(n, d, div.divs.length, r));
+		}
+		div.processTasks(tasks);
+			
+		
 	}
 	
 	public  void salt_and_pepper_EXECUTOR(double percent) {
@@ -1374,6 +1424,32 @@ public class ShortProcessor extends ImageProcessor {
 		showProgress(1.0);
 	}
 	
+	public void convolve3x3_forkJoin(int[] kernel) {
+		// TODO Auto-generated method stub
+		 k1_p=0; k2_p=0; k3_p=0;  //kernel values (used for CONVOLVE only)
+         k4_p=0; k5_p=0; k6_p=0;
+         k7_p=0; k8_p=0; k9_p=0;
+         scale_p = 0;
+        
+            k1_p=kernel[0]; k2_p=kernel[1]; k3_p=kernel[2];
+            k4_p=kernel[3]; k5_p=kernel[4]; k6_p=kernel[5];
+            k7_p=kernel[6]; k8_p=kernel[7]; k9_p=kernel[8];
+            for (int i=0; i<kernel.length; i++)
+                scale_p += kernel[i];
+            if (scale_p==0) scale_p = 1;
+        
+        int inc = roiHeight/25;
+        if (inc<1) inc = 1;
+        pixelsTemp = (short[])getPixelsCopy();
+        
+        ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, 1);
+		Division whole = div.getDivisions()[0];
+		Runnable r = getRunnableConvolve( whole);
+		ShadowsForkAction sa = new ShadowsForkAction(this, r, whole, Prefs.getThreads(), 1, 0);
+		fjp.invoke(sa);
+	}	
+	
+	
 	@Override
 	public void convolve3x3_executor(int[] kernel) 
 	{
@@ -1395,23 +1471,50 @@ public class ShortProcessor extends ImageProcessor {
         
         ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
     	
-        ExecutorService executor = Executors.newFixedThreadPool(div.numThreads);
-		for (int i = 0; i < div.numThreads; i++)
-		{
-			Runnable worker = getRunnableConvolve(div.getDivision(i));
-			executor.execute(worker);
+        Collection<Future<?>> futures = new LinkedList<Future<?>>();
+		
+		for (Division d : div.getDivisions()){
+			futures.add(executor.submit(getRunnableConvolve(d)));
 		}
 		
-		executor.shutdown();
-		while (!executor.isTerminated()) {}
+		// wait for tasks to finish
+		div.processFutures(futures);	
 		
 		//div.processThreads(executor);
 		// indicate processing is finished	
 		showProgress(1.0);
 	}
 
-
-	private Runnable getRunnableConvolve(final Division div)
+	
+	public void convolve3x3_PARATASK(int[] kernel) {
+		
+		 k1_p=0; k2_p=0; k3_p=0;  //kernel values (used for CONVOLVE only)
+         k4_p=0; k5_p=0; k6_p=0;
+         k7_p=0; k8_p=0; k9_p=0;
+         scale_p = 0;
+        
+            k1_p=kernel[0]; k2_p=kernel[1]; k3_p=kernel[2];
+            k4_p=kernel[3]; k5_p=kernel[4]; k6_p=kernel[5];
+            k7_p=kernel[6]; k8_p=kernel[7]; k9_p=kernel[8];
+            for (int i=0; i<kernel.length; i++)
+                scale_p += kernel[i];
+            if (scale_p==0) scale_p = 1;
+        
+        int inc = roiHeight/25;
+        if (inc<1) inc = 1;
+        pixelsTemp = (short[])getPixelsCopy();
+        
+        ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
+		ConcurrentLinkedQueue<Runnable> tasks = new ConcurrentLinkedQueue<Runnable>();
+		for (Division d : div.getDivisions()){
+			tasks.add(getRunnableConvolve(d));
+		}
+		div.processTasks(tasks);
+		
+	}
+	
+	@Override
+	public Runnable getRunnableConvolve(final Division div)
     {
     	return new Runnable(){
 			@Override
@@ -1462,9 +1565,5 @@ public class ShortProcessor extends ImageProcessor {
 		}; 		
     	
     }
-
-
-	
-
 }
 

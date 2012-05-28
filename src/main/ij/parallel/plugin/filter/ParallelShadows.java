@@ -29,6 +29,8 @@ public class ParallelShadows extends Shadows
 		else if (arg.equals("northSimple")) northSimple(ip);
 		else if (arg.equals("northSerial")) northSerial(ip);
 		else if (arg.equals("northExecutor")) northExecutor(ip);
+		else if (arg.equals("northParatask")) northParatask(ip);
+		else if (arg.equals("northForkJoin")) northForkJoin(ip);
 		else if (arg.equals("northeast")) northeast(ip);
 		else if (arg.equals("east")) east(ip);
 		else if (arg.equals("southeast")) southeast(ip);
@@ -40,6 +42,18 @@ public class ParallelShadows extends Shadows
 		
 	}
 	
+	public void northForkJoin(ImageProcessor ip) {
+		
+		int[] kernel = {1,2,1, 0,1,0,  -1,-2,-1};
+		ip.convolve3x3_forkJoin(kernel);
+	}
+
+	public void northParatask(ImageProcessor ip)
+	{
+		int[] kernel = {1,2,1, 0,1,0,  -1,-2,-1};
+		ip.convolve3x3_PARATASK(kernel);
+	}
+
 	public void northExecutor(ImageProcessor ip) {
 		
 		int[] kernel = {1,2,1, 0,1,0,  -1,-2,-1};

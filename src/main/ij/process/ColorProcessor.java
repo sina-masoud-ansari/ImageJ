@@ -2,14 +2,21 @@ package ij.process;
 
 import java.awt.*;
 import java.awt.image.*;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.Random;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import ij.parallel.Division;
 import ij.parallel.ImageDivision;
+import ij.parallel.fork.ShadowsForkAction;
+//import ij.parallel.pt.ParallelTask;
 import ij.process.ByteProcessor;
 import ij.ImageStack;
+import ij.Prefs;
 
 /**
 This is an 32-bit RGB image and methods that operate on that image.. Based on the ImageProcessor class from
@@ -771,21 +778,29 @@ public class ColorProcessor extends ImageProcessor {
 		setup();
 		r.noise_P_SIMPLE(range); showProgress(0.40);
 		g.noise_P_SIMPLE(range); showProgress(0.65);
-		b.noise_P_SIMPLE(range); showProgress(0.90);	
-		
-//		System.out.println("R channel start");
-//		r.noise_P_SIMPLE(range); showProgress(0.40);
-//		System.out.println("R channel done");
-//		System.out.println("G channel start");
-//		System.out.println("G channel done");
-//		System.out.println("B channel start");
-//		b.noise_P_SIMPLE(range); showProgress(0.90);
-//		System.out.println("B channel done"); 
-		
+		b.noise_P_SIMPLE(range); showProgress(0.90);			
 		finish();		
 		
 	}
 
+	@Override
+	public void noise_P_EXECUTOR(double range) {
+		setup();
+		r.noise_P_EXECUTOR(range); showProgress(0.40);
+		g.noise_P_EXECUTOR(range); showProgress(0.65);
+		b.noise_P_EXECUTOR(range); showProgress(0.90);
+		finish();
+	}
+
+	@Override
+	public void noise_P_PARATASK(double range) {
+		setup();
+		r.noise_P_SIMPLE(range); showProgress(0.40);
+		g.noise_P_SIMPLE(range); showProgress(0.65);
+		b.noise_P_SIMPLE(range); showProgress(0.90);
+		finish();
+	}	
+	
 	@Override
 	public void noise_P_FORK_JOIN(double range) {
 		// TODO Auto-generated method stub
@@ -803,39 +818,17 @@ public class ColorProcessor extends ImageProcessor {
 		r.salt_and_pepper_NONE(percent); 
 		g.salt_and_pepper_NONE(percent); 
 		b.salt_and_pepper_NONE(percent); 
-		
-//		System.out.println("R channel start");
-//		r.salt_and_pepper_NONE(percent); 
-//		System.out.println("R channel done");
-//		System.out.println("G channel start");
-//		g.salt_and_pepper_NONE(percent); 
-//		System.out.println("G channel done");
-//		System.out.println("B channel start");
-//		b.salt_and_pepper_NONE(percent); 
-//		System.out.println("B channel done");
 		finish();	
 		
 	}
 
 	@Override
 	public void salt_and_pepper_SERIAL(double percent) {
-		// TODO Auto-generated method stub
 		setup();
 		r.salt_and_pepper_SERIAL(percent); 
 		g.salt_and_pepper_SERIAL(percent); 
 		b.salt_and_pepper_SERIAL(percent); 
-		
-//		System.out.println("R channel start");
-//		r.salt_and_pepper_SERIAL(percent); 
-//		System.out.println("R channel done");
-//		System.out.println("G channel start");
-//		g.salt_and_pepper_SERIAL(percent); 
-//		System.out.println("G channel done");
-//		System.out.println("B channel start");
-//		b.salt_and_pepper_SERIAL(percent); 
-//		System.out.println("B channel done"); 
-		finish();	
-		
+		finish();		
 	}
 
 	@Override
@@ -1299,8 +1292,7 @@ public class ColorProcessor extends ImageProcessor {
 	
 	@Override
 	public void convolve3x3_simple(int[] kernel)
-	{
-		
+	{	
 		showProgress(0.01);
 		k1_p=kernel[0]; k2_p=kernel[1]; k3_p=kernel[2];
 	    k4_p=kernel[3]; k5_p=kernel[4]; k6_p=kernel[5];
@@ -1354,22 +1346,73 @@ public class ColorProcessor extends ImageProcessor {
         
  		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, width, height);
  		 
- 		ExecutorService executor = Executors.newFixedThreadPool(div.numThreads);
- 		for (int i = 0; i < div.numThreads; i++)
- 		{
- 			Runnable worker = getRunnableConvolve(div.getDivision(i));
- 			executor.execute(worker);
- 		}
- 		
- 		executor.shutdown();
- 		while (!executor.isTerminated()) {}
-     	
+ 		Collection<Future<?>> futures = new LinkedList<Future<?>>();
+		
+		for (Division d : div.getDivisions()){
+			futures.add(executor.submit(getRunnableConvolve(d)));
+		}
+		
+		// wait for tasks to finish
+		div.processFutures(futures);	
 		//div.processThreads(threads);
 		 //indicate processing is finished	
-		//showProgress(1.0);
+		showProgress(1.0);
+	}
+	
+	public void convolve3x3_PARATASK(int[] kernel) 
+	{
+		
+		k1_p=kernel[0]; k2_p=kernel[1]; k3_p=kernel[2];
+	    k4_p=kernel[3]; k5_p=kernel[4]; k6_p=kernel[5];
+		k7_p=kernel[6]; k8_p=kernel[7]; k9_p=kernel[8];
+
+		scale_p = 0;
+		for (int i=0; i<kernel.length; i++)
+			scale_p += kernel[i];
+		if (scale_p==0) scale_p = 1;
+	    inc_p = roiHeight/25;
+		if (inc_p<1) inc_p = 1;
+		
+		 pixelsTemp = (int[])getPixelsCopy();
+		
+		//rsum_p = 0; gsum_p = 0; bsum_p = 0;
+        rowOffset_p = width;
+        
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, width, height);
+		ConcurrentLinkedQueue<Runnable> tasks = new ConcurrentLinkedQueue<Runnable>();
+		for (Division d : div.getDivisions()){
+			tasks.add(getRunnableConvolve(d));
+		}
+		div.processTasks(tasks);
+		
+	}
+	
+	public void convolve3x3_forkJoin(int[] kernel) 
+	{
+		k1_p=kernel[0]; k2_p=kernel[1]; k3_p=kernel[2];
+	    k4_p=kernel[3]; k5_p=kernel[4]; k6_p=kernel[5];
+		k7_p=kernel[6]; k8_p=kernel[7]; k9_p=kernel[8];
+
+		scale_p = 0;
+		for (int i=0; i<kernel.length; i++)
+			scale_p += kernel[i];
+		if (scale_p==0) scale_p = 1;
+	    inc_p = roiHeight/25;
+		if (inc_p<1) inc_p = 1;
+		
+		 pixelsTemp = (int[])getPixelsCopy();
+		
+		//rsum_p = 0; gsum_p = 0; bsum_p = 0;
+        rowOffset_p = width;
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, 1, width, height);
+		Division whole = div.getDivisions()[0];
+		Runnable r = getRunnableConvolve( whole);
+		ShadowsForkAction sa = new ShadowsForkAction(this, r, whole, Prefs.getThreads(), 1, 0);
+		fjp.invoke(sa);
 	}
 
-	private Runnable getRunnableConvolve(final Division div)
+	@Override
+	public Runnable getRunnableConvolve(final Division div)
 	{
 		return new Runnable(){
 			int rsum_p=0, gsum_p=0,bsum_p=0;
@@ -1661,6 +1704,13 @@ public class ColorProcessor extends ImageProcessor {
 			pixels[i] = (pixels[i]&resetMask) | ((int)value<<shift);
 		}
 	}
+
+	@Override
+	public Runnable getNoiseRunnable(double range, Division div) {
+		// Handled by the ByteProcessor class
+		return null;
+	}
+
 
 
 	

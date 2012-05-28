@@ -1,5 +1,6 @@
 package ij.parallel;
 
+import ij.ImagePlus;
 import ij.process.ImageProcessor;
 
 public class TestRunner {
@@ -9,11 +10,12 @@ public class TestRunner {
 		SETUP = 0,
 		RUN = 1;
 	
-	private PerformanceTest test;
+	protected PerformanceTest test;
 	private int stage;
 	private int method;
 	private int iter;
 	private boolean doIter;
+	protected long timetaken;
 	
 	public TestRunner(PerformanceTest test, String stage, int method) {
 		this.test = test;
@@ -61,10 +63,20 @@ public class TestRunner {
 			case ImageProcessor.P_EXECUTOR:
 				test.run_P_EXECUTOR();
 				break;				
+			case ImageProcessor.P_PARATASK:
+				test.run_P_PARATASK();
+				break;
+			case ImageProcessor.P_FORK_JOIN:
+				test.run_P_FORK_JOIN();
+				break;				
 		}
 	}
 	
-	public long run() {
+	private void performSHUTDOWN(){
+		test.shutdown();
+	}
+	
+	public void run() {
 		
 		if (doIter) {
 			long timeTotal = 0L;
@@ -72,30 +84,31 @@ public class TestRunner {
 			for (int i = 0; i < iter; i++){
 				
 				if (stage == SETUP) {
-					timeStart = System.currentTimeMillis();
+					timeStart = System.nanoTime();
 					performSETUP();
 				} else {
 					performSETUP();
-					timeStart = System.currentTimeMillis();
+					timeStart = System.nanoTime();
 					performRUN();
 				}
-				timeFinish =  System.currentTimeMillis();
+				timeFinish =  System.nanoTime();
 				timeTotal += timeFinish - timeStart;
 			}
-			return timeTotal/iter;
+			timetaken = timeTotal/iter;
 		} else {
 			long timeStart; 
 			if (stage == SETUP) {
-				timeStart = System.currentTimeMillis();
+				timeStart = System.nanoTime();
 				performSETUP();
 			} else {
 				performSETUP();
-				timeStart = System.currentTimeMillis();
+				timeStart = System.nanoTime();
 				performRUN();
 			}	
-			long timeFinish =  System.currentTimeMillis();
-			return timeFinish - timeStart;
+			long timeFinish =  System.nanoTime();
+			timetaken = timeFinish - timeStart;
 		}
+		performSHUTDOWN();
 	}
 	
 }

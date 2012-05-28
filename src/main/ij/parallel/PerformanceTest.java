@@ -8,9 +8,9 @@ import ij.process.ImageProcessor;
 
 public abstract class PerformanceTest {
 
-	private File file;
-	private int threads;
-	private ImagePlus img;	
+	protected File file;
+	protected int threads;
+	protected ImagePlus img;	
 	protected ImageProcessor ip;
 	
 	public PerformanceTest(File file, int threads){
@@ -24,14 +24,18 @@ public abstract class PerformanceTest {
 		Prefs.setThreads(threads);		
 	}
 	
+	protected void shutdown(){
+		if (ip != null){
+			ip.shutdownThreadPools();
+		}
+	}
+	
 	public abstract void run_P_NONE();
 	public abstract void run_P_SERIAL();
 	public abstract void run_P_SIMPLE();
-
-	public void run_P_EXECUTOR() {
-		// TODO Auto-generated method stub
-		
-	}
+	public abstract void run_P_EXECUTOR();
+	public abstract void run_P_PARATASK();
+	public abstract void run_P_FORK_JOIN();
 	
 }
 

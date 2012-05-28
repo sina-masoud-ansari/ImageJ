@@ -1,19 +1,24 @@
 package ij.process;
 
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.Future;
 //import java.util.concurrent.ForkJoinPool;
 import java.awt.*;
 import java.awt.image.*;
-import ij.parallel.pt.ParallelTask;
+//import ij.parallel.pt.ParallelTask;
 import ij.gui.*;
 import ij.parallel.Division;
-import ij.parallel.ForkAction;
 import ij.parallel.ImageDivision;
 import ij.Prefs;
 import ij.parallel.Division;
+//import ij.parallel.ForkAction;
+import ij.parallel.fork.NoiseForkAction;
+import ij.parallel.fork.ShadowsForkAction;
 
 /**
 This is an 8-bit image and methods that operate on that image. Based on the ImageProcessor class
@@ -650,31 +655,79 @@ public class ByteProcessor extends ImageProcessor{
         
         pixelsTemp = (byte[])getPixelsCopy();
         
-        // for multiple threads
-    	ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
-    	
-    	ExecutorService executor = Executors.newFixedThreadPool(div.numThreads);
-		for (int i = 0; i < div.numThreads; i++)
-		{
-			Runnable worker = getRunnableConvolve(div.getDivision(i));
-			executor.execute(worker);
+        ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
+		
+		Collection<Future<?>> futures = new LinkedList<Future<?>>();
+				
+		for (Division d : div.getDivisions()){
+			futures.add(executor.submit(getRunnableConvolve(d)));
 		}
 		
-		executor.shutdown();
-		while (!executor.isTerminated()) {}
-		
-		//div.processThreads(executor);
-		// indicate processing is finished	
+		// wait for tasks to finish
+		div.processFutures(futures);	
 		showProgress(1.0);
     }
     
-    private Runnable getRunnableConvolve(final Division div)
+    public void convolve3x3_PARATASK(int[] kernel) {
+    	
+    	scale_p = 0;
+ 		k1_p=kernel[0]; k2_p=kernel[1]; k3_p=kernel[2];
+ 		k4_p=kernel[3]; k5_p=kernel[4]; k6_p=kernel[5];
+ 		k7_p=kernel[6]; k8_p=kernel[7]; k9_p=kernel[8];
+ 		
+ 		for (int i=0; i<kernel.length; i++)
+ 		scale_p += kernel[i];
+ 		
+ 		if (scale_p==0) scale_p = 1;
+        int inc = roiHeight/25;
+        if (inc<1) inc = 1;
+		
+		pixelsTemp = (byte[])getPixelsCopy();
+		
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
+		ConcurrentLinkedQueue<Runnable> tasks = new ConcurrentLinkedQueue<Runnable>();
+		for (Division d : div.getDivisions()){
+			tasks.add(getRunnableConvolve(d));
+		}
+		div.processTasks(tasks);
+		
+	}
+    
+    @Override
+	public void convolve3x3_forkJoin(int[] kernel) {
+    	scale_p = 0;
+ 		k1_p=kernel[0]; k2_p=kernel[1]; k3_p=kernel[2];
+ 		k4_p=kernel[3]; k5_p=kernel[4]; k6_p=kernel[5];
+ 		k7_p=kernel[6]; k8_p=kernel[7]; k9_p=kernel[8];
+ 		
+ 		for (int i=0; i<kernel.length; i++)
+ 		scale_p += kernel[i];
+ 		
+ 		if (scale_p==0) scale_p = 1;
+        int inc = roiHeight/25;
+        if (inc<1) inc = 1;
+		
+		pixelsTemp = (byte[])getPixelsCopy();
+		
+		
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, 1);
+		Division whole = div.getDivisions()[0];
+		Runnable r = getRunnableConvolve( whole);
+		ShadowsForkAction sa = new ShadowsForkAction(this, r, whole, Prefs.getThreads(), 1, 0);
+		fjp.invoke(sa);
+	}	
+    
+    @Override
+    public Runnable getRunnableConvolve(final Division div)
     {
     	
     	return new Runnable(){
+    		
 			@Override
+			
 			public void run() 
-			{	int v1_p,v2_p,v3_p,v4_p,v5_p,v6_p,v7_p,v8_p,v9_p;
+			{
+				int v1_p,v2_p,v3_p,v4_p,v5_p,v6_p,v7_p,v8_p,v9_p;
 				// for each row
 				for (int y = div.yStart; y < div.yLimit; y++)
 				{
@@ -687,13 +740,7 @@ public class ByteProcessor extends ImageProcessor{
 					int p3 = p6 - (y>0 ? width : 0); 
 					int p9 = p6 + (y<height-1 ? width : 0);
 					
-
-					v2_p = pixelsTemp[p3]&0xff;
-					
-					//System.out.println("y:"+y+"  "+"pixelsTemp[p3]:"+pixelsTemp[p3]+"  "+Integer.toBinaryString(pixelsTemp[p3])+"  "+"0xff:"+Integer.toBinaryString(0xff)+"   v2_p:"+v2_p+ " "+Integer.toBinaryString(v2_p));
-					//System.out.printf("y:%d  pixelsTemp[p3]:%d  %x  v2_p:%d  %x \n",y,pixelsTemp[p3],pixelsTemp[p3],v2_p,v2_p);
-					//System.out.println("y:"+y+"  "+"p3:"+p3+"  "+"pixelsTemp:"+pixelsTemp[p3]+"  "+"v2_p:"+v2_p);
-					//System.out.printf("hex v2_p:%x   pixelstemp[p3]:%x\n\n", v2_p,pixelsTemp[p3]);
+					v2_p = pixelsTemp[p3]&0xff;				
 					v5_p = pixelsTemp[p6]&0xff;  
 					v8_p = pixelsTemp[p9]&0xff;
 					if (roiX>0) { p3++; p6++; p9++; }
@@ -1042,7 +1089,8 @@ public class ByteProcessor extends ImageProcessor{
 		filter(MEDIAN_FILTER);
 	}
 	
-    private Runnable getNoiseRunnable(final double range, final Division div){
+	@Override
+    public Runnable getNoiseRunnable(final double range, final Division div){
 	 	
     	return new Runnable(){
 			@Override
@@ -1098,7 +1146,6 @@ public class ByteProcessor extends ImageProcessor{
 				showProgress((double)(y-roiY)/roiHeight);
 		}
 		long name = Thread.currentThread().getId();
-	   
 		showProgress(1.0);
     }
     
@@ -1122,7 +1169,7 @@ public class ByteProcessor extends ImageProcessor{
 	@Override
 	public void noise_P_SIMPLE(double range) 
 	{
-		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight,2);
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
 		Thread[] threads = new Thread[div.numThreads];
 		for (int i = 0; i < div.numThreads; i++)
 		{
@@ -1132,14 +1179,39 @@ public class ByteProcessor extends ImageProcessor{
 		div.processThreads(threads);
 		// indicate processing is finished	
 		showProgress(1.0);
-		
 	}   
 	
 	@Override
+	public void noise_P_EXECUTOR(double range){
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
+		
+		Collection<Future<?>> futures = new LinkedList<Future<?>>();
+				
+		for (Division d : div.getDivisions()){
+			futures.add(executor.submit(getNoiseRunnable(range, d)));
+		}
+		
+		// wait for tasks to finish
+		div.processFutures(futures);	
+	}
+	
+	@Override
+	public void noise_P_PARATASK(double range){
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
+		ConcurrentLinkedQueue<Runnable> tasks = new ConcurrentLinkedQueue<Runnable>();
+		for (Division d : div.getDivisions()){
+			tasks.add(getNoiseRunnable(range, d));
+		}
+		div.processTasks(tasks);
+	}	
+	
+	@Override
 	public void noise_P_FORK_JOIN(double range) {
-		// TODO Auto-generated method stub
-//		ForkJoinPool fjp = new ForkJoinPool();
-//		ForkAction fa = new ForkAction();
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, 1);
+		Division whole = div.getDivisions()[0];
+		Runnable r = getNoiseRunnable(range, whole);
+		NoiseForkAction fa = new NoiseForkAction(this, r, whole, Prefs.getThreads(), 1, range);
+		fjp.invoke(fa);
 	}	
 	
 	@Override
@@ -1159,9 +1231,7 @@ public class ByteProcessor extends ImageProcessor{
 			ry = rand(ymin, ymax, r);
 			pixels[ry*width+rx] = (byte)0;
 		}
-//		SimulateWork();
 		long name = Thread.currentThread().getId();
-	   
 	}
 	
 	@Override
@@ -1224,6 +1294,7 @@ public class ByteProcessor extends ImageProcessor{
 	
 	public void salt_and_pepper_PARATASK(double percent) {
 		
+		/*
 		ImageDivision imDiv = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
 		Random r = new Random();
 		int n = (int)(percent*roiWidth*roiHeight);
@@ -1235,6 +1306,22 @@ public class ByteProcessor extends ImageProcessor{
 		
 		ParallelTask pt = new ParallelTask();
 		pt.salt_and_pepper_PARATASK(tasks);
+		*/
+		
+		/**
+		 * Using shared code:
+		 */
+		
+		Random r = new Random();
+		int n = (int)(percent*roiWidth*roiHeight);
+		
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
+		ConcurrentLinkedQueue<Runnable> tasks = new ConcurrentLinkedQueue<Runnable>();
+		for (Division d : div.getDivisions()){
+			tasks.add(getSaltAndPepperRunnable(n, d, div.divs.length, r));
+		}
+		div.processTasks(tasks);
+				
 	}
 
 	public  void salt_and_pepper_EXECUTOR(double percent) {

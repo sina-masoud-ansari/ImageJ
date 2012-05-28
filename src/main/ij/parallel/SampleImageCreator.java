@@ -99,7 +99,7 @@ frame.setVisible(true);
                  }            
          }
          
-         String imageName = "image" + HEIGHT + "x" + WIDTH +" "+type+".tif";
+         String imageName = "image" + HEIGHT + "x" + WIDTH +"_"+type+".tif";
          //System.out.println("Writing file: "+OUTDIR +"/"+ imageName);
          com.sun.media.jai.codec.TIFFEncodeParam params = new com.sun.media.jai.codec.TIFFEncodeParam();
          FileOutputStream os = new FileOutputStream(OUTDIR +"/"+ imageName);

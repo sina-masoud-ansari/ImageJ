@@ -1,25 +1,27 @@
 <!-- Ant makefile for ImageJ -->
 <project name="ImageJ" default="test" basedir=".">
-	<property name="src.main" location="src/main"/>
-	<property name="src.test" location="src/test"/>
-	<property name="reports.test" location="reports"/>
-	<property name="build.dir" location="build"/>
-	<property name="lib.dir" location="lib"/>
-	<property name="bin.dir" location="bin"/>
-	<property name="plugins.dir" location="plugins"/>
-	<property name="macros.dir" location="macros"/>
-	<property name="sample.dir" location="${build.dir}/resources/images/sample"/>
+	<property name="src.dir" location="src" />
+	<property name="src.main" location="src/main" />
+	<property name="src.test" location="src/test" />
+	<property name="reports.test" location="reports" />
+	<property name="build.dir" location="build" />
+	<property name="lib.dir" location="lib" />
+	<property name="bin.dir" location="bin" />
+	<property name="plugins.dir" location="plugins" />
+	<property name="macros.dir" location="macros" />
+	<property name="sample.dir" location="${build.dir}/resources/images/sample" />
 	<property name="num.samples" value="10" />
-	<property name="reports.dir" location="reports"/>
-	<property name="results.dir" location="results"/>	
-	<property name="resources.build" location="resources/build"/>
+	<property name="reports.dir" location="reports" />
+	<property name="results.dir" location="results" />
+	<property name="resources.build" location="resources/build" />
 	<property name="resources.test" location="resources/test" />
 	<property name="hexa.rt" location="/usr/lib/jvm/java-1.6.0-openjdk/jre/lib/rt.jar" />
+	<property name="xboot.classpath" value="${lib.dir}/jsr166.jar:${lib.dir}/PTRuntime.jar"/>
 	<property name="memory.max" value="2048m" />
-
+	
 	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
 		<classpath>
-			<pathelement location="${lib.dir}/ant-contrib-0.6.jar"/>
+			<pathelement location="${lib.dir}/ant-contrib-0.6.jar" />
 		</classpath>
 	</taskdef>
 
@@ -32,7 +34,7 @@
 	<path id="run.classpath">
 		<fileset dir="${bin.dir}">
 			<include name="**/*.jar" />
-		</fileset>	
+		</fileset>
 	</path>
 	<!--
 	<target name="compile_test" description="Compile everything">
@@ -47,26 +49,41 @@
 	<target name="compile" description="Compile everything">
 		<!-- First, ensure the build directory exists. -->
 		<mkdir dir="${build.dir}" />
+		<!-- Run the Parallel Task source to source complier -->
+		<foreach target="PTCompile" param="file">
+			<path>
+				<fileset dir="${src.dir}">
+					<include name="**/*.ptjava" />
+				</fileset>
+			</path>
+		</foreach>
 		<!-- Build everything; add debug="on" to debug -->
 		<!-- If compiling on hexa.ece.auckland.ac.nz use bootclasspath parameter -->
 		<if>
-			<available file="${hexa.rt}"/>
+			<available file="${hexa.rt}" />
 			<then>
 				<javac destdir="${build.dir}" classpathref="build.classpath" optimize="on" source="1.6" target="1.6" debug="on" encoding="UTF-8" bootclasspath="/usr/lib/jvm/java-1.6.0-openjdk/jre/lib/rt.jar">
-					<src path="${src.main}"/>
-					<src path="${src.test}"/>
-					<compilerarg value="-Xbootclasspath/p:${lib.dir}/jsr166.jar"/>
+					<src path="${src.main}" />
+					<src path="${src.test}" />
+					<compilerarg value="-Xbootclasspath/p:${xboot.classpath}" />
 				</javac>
 			</then>
 			<else>
 				<javac destdir="${build.dir}" classpathref="build.classpath" optimize="on" source="1.6" target="1.6" debug="on" encoding="UTF-8">
-					<src path="${src.main}"/>
-					<src path="${src.test}"/>
-					<compilerarg value="-Xbootclasspath/p:${lib.dir}/jsr166.jar"/>
+					<src path="${src.main}" />
+					<src path="${src.test}" />
+					<compilerarg value="-Xbootclasspath/p:${xboot.classpath}" />
 				</javac>
 			</else>
 		</if>
 
+	</target>
+
+	<target name="PTCompile" description="Compile Parallel Task source to Java source">
+		<echo message="PTCompile: ${file}" />
+		<java classpathref="build.classpath" classname="paratask.compiler.ParaTaskParser" fork="yes">
+			<arg value="${foreach.file}" />
+		</java>
 	</target>
 
 	<target name="build" depends="compile" description="Build ij.jar.">
@@ -78,7 +95,7 @@
 		<copy file="${resources.build}/plugins/JavaScriptEvaluator.class" tofile="${build.dir}/JavaScriptEvaluator.class" />
 		<copy file="${resources.build}/plugins/MacClipboard.class" tofile="${build.dir}/MacClipboard.class" />
 		<copy todir="${build.dir}/macros">
-			<fileset dir="${resources.build}/macros"/>
+			<fileset dir="${resources.build}/macros" />
 		</copy>
 		<!-- Build ij.jar. -->
 		<mkdir dir="${bin.dir}" />
@@ -86,12 +103,12 @@
 			<fileset dir="${lib.dir}">
 				<include name="**/*.jar" />
 			</fileset>
-		</copy>	
-        <copy todir="${bin.dir}">
-                <fileset dir="${lib.dir}">
-                        <include name="**/*.jar" />
-                </fileset>
-        </copy>		
+		</copy>
+		<copy todir="${bin.dir}">
+			<fileset dir="${lib.dir}">
+				<include name="**/*.jar" />
+			</fileset>
+		</copy>
 		<jar jarfile="${bin.dir}/ij.jar" basedir="${build.dir}" manifest="MANIFEST.MF" />
 	</target>
 
@@ -114,7 +131,7 @@
 			<fileset dir="${resources.test}" />
 		</copy>
 		<junit maxmemory="${memory.max}" printsummary="withOutAndErr" haltonfailure="yes">
-			<jvmarg value="-Xbootclasspath/p:${lib.dir}/jsr166.jar" />
+			<jvmarg value="-Xbootclasspath/p:${xboot.classpath}" />
 			<classpath path="${build.dir}" />
 			<classpath refid="build.classpath" />
 			<classpath refid="run.classpath" />
@@ -143,7 +160,7 @@
 			<fileset dir="${resources.test}" />
 		</copy>
 		<junit maxmemory="${memory.max}" printsummary="withOutAndErr" haltonfailure="yes">
-			<jvmarg value="-Xbootclasspath/p:${lib.dir}/jsr166.jar" />
+			<jvmarg value="-Xbootclasspath/p:${xboot.classpath}" />
 			<jvmarg value="-Xdebug" />
 			<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000" />
 			<classpath path="${build.dir}" />
@@ -168,23 +185,24 @@
 
 	<target name="run" depends="build" description="Build and run ImageJ.">
 		<java maxmemory="${memory.max}" classpathref="run.classpath" jar="${bin.dir}/ij.jar" fork="yes">
-			<jvmarg value="-Xbootclasspath/p:${lib.dir}/jsr166.jar" />
+			<jvmarg value="-Xbootclasspath/p:${xboot.classpath}" />
+			<arg value="ij.ImageJ"/>
 		</java>
 	</target>
 
 	<target name="debug" depends="build" description="Build and debug ImageJ.">
-		<java maxmemory="${memory.max}" jar="${bin.dir}/ij.jar" fork="yes">
-			<jvmarg value="-Xbootclasspath/p:${lib.dir}/jsr166.jar" />
+		<java maxmemory="${memory.max}" classpathref="run.classpath" jar="${bin.dir}/ij.jar" fork="yes">
+			<jvmarg value="-Xbootclasspath/p:${xboot.classpath}" />
 			<jvmarg value="-Xdebug" />
 			<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000" />
 		</java>
 	</target>
 
 	<condition property="os" value="unix">
-		<os family="unix"/>
+		<os family="unix" />
 	</condition>
 	<condition property="os" value="windows">
-		<os family="windows"/>
+		<os family="windows" />
 	</condition>
 
 	<target name="performance" depends="clean, test" description="Initiate performance testing">
@@ -196,30 +214,30 @@
 			<then>
 				<!-- see http://ant.apache.org/manual/Tasks/exec.html -->
 				<exec executable="cmd">
-					<arg value="/c"/>
-					<arg value="performance.bat"/>
-					<arg value="${bin.dir}"/>
-					<arg value="${results.dir}"/>
-					<arg value="${memory.max}"/>
+					<arg value="/c" />
+					<arg value="performance.bat" />
+					<arg value="${bin.dir}" />
+					<arg value="${results.dir}" />
+					<arg value="${memory.max}" />
 				</exec>
 			</then>
 			<elseif>
 				<equals arg1="${os}" arg2="unix" />
 				<then>
 					<exec executable="bash">
-						<arg value="performance.sh"/>
-						<arg value="${bin.dir}"/>
-						<arg value="${results.dir}"/>
-						<arg value="${memory.max}"/>
-						<arg value="${sample.dir}"/>
-						<arg value="${num.samples}"/>
-						<arg value="${lib.dir}/jsr166.jar"/>
+						<arg value="performance.sh" />
+						<arg value="${bin.dir}" />
+						<arg value="${results.dir}" />
+						<arg value="${memory.max}" />
+						<arg value="${sample.dir}" />
+						<arg value="${num.samples}" />
+						<arg value="${xboot.classpath}" />
 					</exec>
 				</then>
 			</elseif>
 		</if>
 	</target>
-	
+
 	<target name="performance-small" depends="clean, test" description="Initiate performance testing">
 		<delete dir="${results.dir}" />
 		<mkdir dir="${results.dir}" />
@@ -229,30 +247,30 @@
 			<then>
 				<!-- see http://ant.apache.org/manual/Tasks/exec.html -->
 				<exec executable="cmd">
-					<arg value="/c"/>
-					<arg value="performance.bat"/>
-					<arg value="${bin.dir}"/>
-					<arg value="${results.dir}"/>
-					<arg value="${memory.max}"/>
+					<arg value="/c" />
+					<arg value="performance.bat" />
+					<arg value="${bin.dir}" />
+					<arg value="${results.dir}" />
+					<arg value="${memory.max}" />
 				</exec>
 			</then>
 			<elseif>
 				<equals arg1="${os}" arg2="unix" />
 				<then>
 					<exec executable="bash">
-						<arg value="performance.sh"/>
-						<arg value="${bin.dir}"/>
-						<arg value="${results.dir}"/>
-						<arg value="${memory.max}"/>
-						<arg value="${sample.dir}"/>
-						<arg value="2"/>
-						<arg value="${lib.dir}/jsr166.jar"/>
+						<arg value="performance.sh" />
+						<arg value="${bin.dir}" />
+						<arg value="${results.dir}" />
+						<arg value="${memory.max}" />
+						<arg value="${sample.dir}" />
+						<arg value="2" />
+						<arg value="${lib.dir}/jsr166.jar" />
 					</exec>
 				</then>
 			</elseif>
 		</if>
-	</target>	
-	
+	</target>
+
 	<target name="cluster-performance" depends="clean, build" description="Initiate performance testing on NeSI cluster">
 		<delete dir="${results.dir}" />
 		<mkdir dir="${results.dir}" />
@@ -266,20 +284,20 @@
 				<equals arg1="${os}" arg2="unix" />
 				<then>
 					<exec executable="bash">
-						<arg value="cluster-performance.sh"/>
-						<arg value="${bin.dir}"/>
-						<arg value="${results.dir}"/>
-						<arg value="${memory.max}"/>
+						<arg value="cluster-performance.sh" />
+						<arg value="${bin.dir}" />
+						<arg value="${results.dir}" />
+						<arg value="${memory.max}" />
 						<!--<arg value="${sample.dir}"/> -->
-						<arg value="../sample_images"/>
-						<arg value="${num.samples}"/>
-						<arg value="${lib.dir}/jsr166.jar"/>
+						<arg value="../sample_images" />
+						<arg value="${num.samples}" />
+						<arg value="${lib.dir}/jsr166.jar" />
 					</exec>
 				</then>
 			</elseif>
 		</if>
-	</target>	
-	
+	</target>
+
 	<target name="bestgrid-performance" depends="clean, build" description="Initiate performance testing on NeSI cluster">
 		<delete dir="${results.dir}" />
 		<mkdir dir="${results.dir}" />
@@ -293,32 +311,25 @@
 				<equals arg1="${os}" arg2="unix" />
 				<then>
 					<exec executable="bash">
-						<arg value="bestgrid-performance.sh"/>
-						<arg value="${bin.dir}"/>
-						<arg value="${results.dir}"/>
-						<arg value="${memory.max}"/>
+						<arg value="bestgrid-performance.sh" />
+						<arg value="${bin.dir}" />
+						<arg value="${results.dir}" />
+						<arg value="${memory.max}" />
 						<!--<arg value="${sample.dir}"/> -->
-						<arg value="../sample_images"/>
-						<arg value="${num.samples}"/>
-						<arg value="${lib.dir}/jsr166.jar"/>
+						<arg value="../sample_images" />
+						<arg value="${num.samples}" />
+						<arg value="${lib.dir}/jsr166.jar" />
 					</exec>
 				</then>
 			</elseif>
 		</if>
-	</target>	
+	</target>
 
 	<!-- NOT USED -->
 	<target name="javadocs" description="Build the JavaDocs.">
 		<delete dir="../api" />
 		<mkdir dir="../api" />
-		<javadoc 
-           sourcepath="."
-           packagenames="ij.*"
-           destdir="../api"
-           author="true"
-           version="true"
-           use="true"
-           windowtitle="ImageJ API">
+		<javadoc sourcepath="." packagenames="ij.*" destdir="../api" author="true" version="true" use="true" windowtitle="ImageJ API">
 		</javadoc>
 	</target>
 

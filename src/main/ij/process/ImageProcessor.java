@@ -1,9 +1,13 @@
 package ij.process;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 import java.awt.*;
 import java.awt.image.*;
 import ij.gui.*;
 import ij.util.*;
+import ij.parallel.Division;
 import ij.plugin.filter.GaussianBlur;
 import ij.plugin.Binner;
 import ij.process.AutoThresholder.Method;
@@ -69,7 +73,10 @@ public abstract class ImageProcessor implements Cloneable {
 		P_SIMPLE=2, 
 		P_FORK_JOIN=3, 
 		P_EXECUTOR=4, 
-		P_PARALLEL_TASK=5;		
+		P_PARATASK=5;		
+	
+	protected final static ExecutorService executor = Executors.newFixedThreadPool(Prefs.getThreads());
+	protected final static ForkJoinPool fjp = new ForkJoinPool();
 	
 	int fgColor = 0;
 	protected int lineWidth = 1;
@@ -1931,6 +1938,9 @@ public abstract class ImageProcessor implements Cloneable {
 	public abstract void convolve3x3_serial(int[] kernel);
 	public abstract void convolve3x3_simple(int[] kernel);
 	public abstract void convolve3x3_executor(int[] kernel);
+	public abstract void convolve3x3_PARATASK(int[] kernel);
+	public abstract void convolve3x3_forkJoin(int[] kernel);
+	public abstract Runnable getRunnableConvolve(Division div);
 	
 	/** A 3x3 filter operation, where the argument (BLUR_MORE,  FIND_EDGES, 
 	     MEDIAN_FILTER, MIN or MAX) determines the filter type. */
@@ -1942,9 +1952,12 @@ public abstract class ImageProcessor implements Cloneable {
     /** Adds random noise to the image or ROI.
     	@param range	the range of random numbers
     */
+	public abstract Runnable getNoiseRunnable(double range, Division div);
 	public abstract void noise_P_NONE(double range);
 	public abstract void noise_P_SERIAL(double range);
 	public abstract void noise_P_SIMPLE(double range);    
+	public abstract void noise_P_EXECUTOR(double range);
+	public abstract void noise_P_PARATASK(double range);
 	public abstract void noise_P_FORK_JOIN(double range);
 	
 	public abstract void salt_and_pepper_NONE(double percent);
@@ -2401,5 +2414,10 @@ public abstract class ImageProcessor implements Cloneable {
 		} catch (CloneNotSupportedException e) {
 		return null;
 		}
+	}
+	
+	public void shutdownThreadPools(){
+		executor.shutdown();
+		fjp.shutdown();
 	}
 }

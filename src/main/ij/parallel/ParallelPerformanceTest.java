@@ -4,6 +4,8 @@ import ij.process.ImageProcessor;
 
 import java.io.File;
 
+import paratask.runtime.ParaTask;
+
 public class ParallelPerformanceTest {
 
 	static final int ARGC = 6;
@@ -11,6 +13,7 @@ public class ParallelPerformanceTest {
 	static String filter;
 	static String setup;
 	static String stage;
+	static String methodString;
 	static int method;
 	static int threads;
 	static int iter;
@@ -28,7 +31,9 @@ public class ParallelPerformanceTest {
 		P_NONE_STR = "P_NONE",
 		P_SERIAL_STR = "P_SERIAL",
 		P_SIMPLE_STR = "P_SIMPLE",
-		P_EXECUTOR_STR = "P_EXECUTOR";
+		P_EXECUTOR_STR = "P_EXECUTOR",
+		P_PARATASK_STR = "P_PARATASK",
+		P_FORK_JOIN_STR = "P_FORK_JOIN";
 		// TODO: add executor etc
 	
 	static final String 
@@ -79,7 +84,13 @@ public class ParallelPerformanceTest {
 			method = ImageProcessor.P_SIMPLE;
 			return true;
 		} else if (m.equals(P_EXECUTOR_STR)) {
-			method = ImageProcessor.P_SIMPLE;
+			method = ImageProcessor.P_EXECUTOR;
+			return true;
+		} else if (m.equals(P_PARATASK_STR)) {
+			method = ImageProcessor.P_PARATASK;
+			return true;
+		} else if (m.equals(P_FORK_JOIN_STR)) {
+			method = ImageProcessor.P_FORK_JOIN;
 			return true;
 		} else {
 			return false;
@@ -111,11 +122,11 @@ public class ParallelPerformanceTest {
 		}		
 		
 		// Check for valid method
-		String methodString = args[3];
+		methodString = args[3];
 		if (methodString.isEmpty()){
 			printError("Fourth argument must be a non-empty string");
 		} else if (!validMethod(methodString)){
-			printError("Fourth argument must be one of {'"+P_NONE_STR+"','"+P_SERIAL_STR+"', '"+P_SIMPLE_STR+"', '"+P_EXECUTOR_STR+"'}");
+			printError("Fourth argument must be one of {'"+P_NONE_STR+"','"+P_SERIAL_STR+"', '"+P_SIMPLE_STR+"', '"+P_EXECUTOR_STR+"', '"+P_PARATASK_STR+"', '"+P_FORK_JOIN_STR+"'}");
 		}
 		
 		// Check for valid threads
@@ -144,7 +155,7 @@ public class ParallelPerformanceTest {
 				} else {
 					iter = Integer.parseInt(args[6]);
 				}
-				if (iter < 0) {
+				if (iter < 1) {
 					printError("Argument 'iterations' should be a positive integer");
 				}
 			}
@@ -168,8 +179,13 @@ public class ParallelPerformanceTest {
 	 * [iter]	: Optional. The number of iterations to perform on dependent setups.
 	 */
 	public static void main(String[] args) {
-	
+		ParaTask.init();
 		if (args.length < 6){
+			String s = args.length+" ARGS:";
+			for (String a : args){
+				s+=" "+a;
+			}
+			System.out.println(s);
 			printUsage();
 		} else {
 			processArgs(args);
@@ -179,12 +195,20 @@ public class ParallelPerformanceTest {
 		if (setup.equals(DEPENDENT)){
 			runner = TestRunnerFactory.createTestRunner(file, filter, stage, method, threads, iter);
 		} else if (setup.equals(INDEPENDENT)){
-			runner = TestRunnerFactory.createTestRunner(file, filter, stage, method, threads, iter);
+			runner = TestRunnerFactory.createTestRunner(file, filter, stage, method, threads);
 		}
 		if (runner == null){
 			printError("Unable to initialise test runner");
 		} else {
-			System.out.println(runner.run());
+			runner.run();
+			String fname = file.getName();
+			int nchannels = runner.test.img.getNChannels();
+			int bitdepth = runner.test.img.getBitDepth();
+			int totalPixels = runner.test.img.getWidth() * runner.test.img.getHeight();
+			long timetaken = runner.timetaken;
+			
+			// FileName, NumChannels, BitDepth, TotalPixels, Threads, Setup, Filter, Method, Stage, TimeTaken
+			System.out.printf("%s,%d,%d,%d,%d,%s,%s,%s,%s,%d\n", fname, nchannels, bitdepth, totalPixels, threads, setup, filter, methodString, stage, timetaken);
 		}
 	}
 

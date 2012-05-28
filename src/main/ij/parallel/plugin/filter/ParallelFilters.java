@@ -47,7 +47,22 @@ public class ParallelFilters extends Filters {
 		if (arg.equals("add simple")) {
 			ip.noise_P_SIMPLE(RANGE);
 			return;
-		}	 	
+		}
+		
+		if (arg.equals("add executor")) {
+			ip.noise_P_EXECUTOR(RANGE);
+			return;
+		}	
+		
+		if (arg.equals("add paratask")) {
+			ip.noise_P_PARATASK(RANGE);
+			return;
+		}	
+		
+		if (arg.equals("add fork_join")) {
+			ip.noise_P_FORK_JOIN(RANGE);
+			return;
+		}		
 
 		if (arg.equals("noise")) {
 			if (canceled)

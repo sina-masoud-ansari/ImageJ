@@ -10,7 +10,7 @@ import multiprocessing
 from subprocess import call
 
 ### Show debug output?
-debug=True
+debug=False
 
 ### Determine number of avilable processors
 cpus=multiprocessing.cpu_count()
@@ -19,7 +19,7 @@ cpus=multiprocessing.cpu_count()
 filters = ['Add Noise', 'Shadows', 'Salt and Pepper']
 
 ### List the parallel processing options
-ptype = ['NONE', 'SERIAL', 'SIMPLE' ]
+ptype = ['P_NONE', 'P_SERIAL', 'P_SIMPLE', 'P_EXECUTOR', 'P_PARATASK', 'P_FORK_JOIN']
 
 ### List possible setups
 setups = ['INDEPENDENT', 'DEPENDENT']
@@ -30,10 +30,12 @@ stages = ['SETUP', 'RUN']
 ### Arguments passed through from Ant
 
 def usage() :
+	
+	print "Incorrect number of arguments: %d" % len(sys.argv)
 	print """
 USAGE:
 
-perf.py file iterations java_cmd
+perf.py file iterations bin_dir max_mem xboot
 
 """
 
@@ -54,22 +56,25 @@ max_mem = sys.argv[4]
 xboot = sys.argv[5]
 
 ### Setup the basic command to run
-java_cmd = "java -Xmx{0} -Xbootclasspath/p:{1} -classpath {2}/ij.jar ij.parallel.SinglePerformanceTest".format(max_mem, xboot, bin_dir)
+java_cmd = "java -Xmx{0} -Xbootclasspath/p:{1} -classpath {2}/ij.jar ij.parallel.ParallelPerformanceTest".format(max_mem, xboot, bin_dir)
 
 if debug :
 	print "ImageJ performance testing\nPython version: %s" % sys.version
 	print "Using file '%s' with %s iterations" % (file, iter)
 	print "Number of CPU cores: %d" % cpus
+	print "FileName, NumChannels, BitDepth, TotalPixels, Threads, Setup, Filter, Stage, TimeTaken"
 
-for f in filters :
-	for s in setups :
-		for p in ptype 	:
-			for c in range(1, cpus+1) :
-				for t in stages :
-					if s == "DEPENDENT" :
-						print '{0} {1} "{2}" {3} {4} {5} {6} {7}'.format(java_cmd, file, f, s, p, c, t, iter)					
-   					else :
-		                                for i in range(1, int(iter)+1) :
-        		                                print '{0} {1} "{2}" {3} {4} {5} {6}'.format(java_cmd, file, f, s, p, c, t)
-                		                        #call([java_cmd, file, s, p, c, t])
-
+print "FILE: %s" % file
+#for f in filters :
+#	for s in setups :
+#		for p in ptype 	:
+#			for c in range(1, cpus+1) :
+#				for t in stages :
+#					if s == "DEPENDENT" :
+#						cmd = '{0} {1} "{2}" {3} {4} {5} {6} {7}'.format(java_cmd, file, f, s, p, c, t, iter)
+#						call(cmd, shell=True)
+#  					else :
+#		                                for i in range(1, int(iter)+1) :
+#        		                                cmd = '{0} {1} "{2}" {3} {4} {5} {6}'.format(java_cmd, file, f, s, p, c, t)
+#							call(cmd, shell=True)				
+#						
