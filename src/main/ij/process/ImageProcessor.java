@@ -1965,6 +1965,8 @@ public abstract class ImageProcessor implements Cloneable {
 	public abstract void salt_and_pepper_SIMPLE(double percent);
 	public abstract void salt_and_pepper_EXECUTOR(double percent);
 	public abstract void salt_and_pepper_PARATASK(double percent);
+	public abstract void salt_and_pepper_FORK_JOIN(double percent);
+	public abstract Runnable getSaltAndPepperRunnable(final int n, final Division div, final int numDivs, final Random r);
     
 	/** Creates a new processor containing an image
 		that corresponds to the current ROI. */

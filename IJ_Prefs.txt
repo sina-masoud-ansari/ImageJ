@@ -2,6 +2,7 @@
 ImageJ 1.46j Preferences
 #Tue May 22 12:02:19 NZST 2012
 #Thu May 24 22:15:32 NZST 2012
+#Thu May 24 23:45:08 NZST 2012
 new.fill=0
 pp.options=1
 recent09=C\:\\Users\\Rucha\\Desktop\\101MSDCF\\image_8bitcolor.tif
@@ -12,6 +13,7 @@ bcolor=\#FFFFFF
 recent05=E\:\\image4000x4000.tif
 recent04=E\:\\image7000x7000.tif
 recent03=C\:\\Users\\ArvieCarpio\\Documents\\sem1-2012\\se751\\se751_images\\E.jpg
+threads=4
 recent02=C\:\\Users\\ArvieCarpio\\Documents\\sem1-2012\\se751\\se751_images\\2N126467960EDN0000P1500L0M1.JPG
 noise.sd=25.0
 recent01=C\:\\Users\\ArvieCarpio\\Documents\\sem1-2012\\se751\\se751_images\\D.jpg
@@ -26,8 +28,8 @@ showcolor=\#00FFFF
 fps=7.0
 raw.height=512
 jpeg=85
-ij.y=91
-ij.x=643
+ij.y=97
+ij.x=726
 new.slices=1
 menu.size=14
 raw.n=1
@@ -48,5 +50,3 @@ roicolor=\#FFFF00
 ap.options=64
 dir.image=C\:\\Users\\ArvieCarpio\\Documents\\sem1-2012\\se751\\se751_images\\
 raw.type=0
-
-

@@ -838,16 +838,6 @@ public class ColorProcessor extends ImageProcessor {
 		r.salt_and_pepper_SIMPLE(percent); 
 		g.salt_and_pepper_SIMPLE(percent); 
 		b.salt_and_pepper_SIMPLE(percent); 
-		
-//		System.out.println("R channel start");
-//		r.salt_and_pepper_SIMPLE(percent); 
-//		System.out.println("R channel done");
-//		System.out.println("G channel start");
-//		g.salt_and_pepper_SIMPLE(percent); 
-//		System.out.println("G channel done");
-//		System.out.println("B channel start");
-//		b.salt_and_pepper_SIMPLE(percent); 
-//		System.out.println("B channel done"); 
 		finish();	
 		
 	}
@@ -857,16 +847,6 @@ public class ColorProcessor extends ImageProcessor {
 		r.salt_and_pepper_PARATASK(percent); 
 		g.salt_and_pepper_PARATASK(percent); 
 		b.salt_and_pepper_PARATASK(percent); 
-		
-//		System.out.println("R channel start");
-//		r.salt_and_pepper_PARATASK(percent); 
-//		System.out.println("R channel done");
-//		System.out.println("G channel start");
-//		g.salt_and_pepper_PARATASK(percent); 
-//		System.out.println("G channel done");
-//		System.out.println("B channel start");
-//		b.salt_and_pepper_PARATASK(percent); 
-//		System.out.println("B channel done"); 
 		finish();	
 	}
 	
@@ -875,18 +855,16 @@ public class ColorProcessor extends ImageProcessor {
 		r.salt_and_pepper_EXECUTOR(percent); 
 		g.salt_and_pepper_EXECUTOR(percent); 
 		b.salt_and_pepper_EXECUTOR(percent); 
-		
-//		System.out.println("R channel start");
-//		r.salt_and_pepper_EXECUTOR(percent); 
-//		System.out.println("R channel done");
-//		System.out.println("G channel start");
-//		g.salt_and_pepper_EXECUTOR(percent); 
-//		System.out.println("G channel done");
-//		System.out.println("B channel start");
-//		b.salt_and_pepper_EXECUTOR(percent); 
-//		System.out.println("B channel done"); 
 		finish();	
 		
+	}
+	
+	public void salt_and_pepper_FORK_JOIN(double percent) {
+		setup();
+		r.salt_and_pepper_FORK_JOIN(percent); 
+		g.salt_and_pepper_FORK_JOIN(percent); 
+		b.salt_and_pepper_FORK_JOIN(percent); 
+		finish();
 	}
     
 	public void medianFilter() {
@@ -1707,6 +1685,13 @@ public class ColorProcessor extends ImageProcessor {
 
 	@Override
 	public Runnable getNoiseRunnable(double range, Division div) {
+		// Handled by the ByteProcessor class
+		return null;
+	}
+
+	@Override
+	public Runnable getSaltAndPepperRunnable(int n, Division div, int numDivs,
+			Random r) {
 		// Handled by the ByteProcessor class
 		return null;
 	}

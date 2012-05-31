@@ -38,6 +38,10 @@ public class ParallelSaltAndPepper extends SaltAndPepper {
 	 		return;
 	 	}
 		
+		if (arg.equals("salt_and_pepper forkjoin")) {
+			ip.salt_and_pepper_FORK_JOIN(0.05);
+	 		return;
+	 	}
 
 	}	
 	
