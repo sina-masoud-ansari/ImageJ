@@ -19,6 +19,7 @@
 	<property name="hexa.rt" location="/usr/lib/jvm/java-1.6.0-openjdk/jre/lib/rt.jar" />
 	<property name="memory.max" value="1048m" />
 
+	
 	<condition property="classpathseparator" value=":">
 		<os family="unix" />
 	</condition>
@@ -26,7 +27,7 @@
 		<os family="windows" />
 	</condition>
 	<property name="xboot.classpath" value="${lib.dir}/jsr166.jar${classpathseparator}${lib.dir}/PTRuntime.jar"/>
-	
+
 	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
 		<classpath>
 			<pathelement location="${lib.dir}/ant-contrib-0.6.jar" />
@@ -209,6 +210,13 @@
 		</java>
 	</target>
 
+	<condition property="os" value="unix">
+		<os family="unix" />
+	</condition>
+	<condition property="os" value="windows">
+		<os family="windows" />
+	</condition>
+	
 	<target name="performance" depends="clean, test" description="Initiate performance testing">
 		<delete dir="${results.dir}" />
 		<mkdir dir="${results.dir}" />
