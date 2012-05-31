@@ -17,7 +17,7 @@
 	<property name="resources.build" location="resources/build" />
 	<property name="resources.test" location="resources/test" />
 	<property name="hexa.rt" location="/usr/lib/jvm/java-1.6.0-openjdk/jre/lib/rt.jar" />
-	<property name="memory.max" value="1048m" />
+	<property name="memory.max" value="2048m" />
 
 	
 	<condition property="classpathseparator" value=":">
@@ -300,7 +300,7 @@
 						<arg value="${bin.dir}" />
 						<arg value="${results.dir}" />
 						<arg value="${memory.max}" />
-						<arg value="${sample.dir}" />
+						<arg value="../sample_images" />
 						<arg value="${num.samples}" />
 						<arg value="${xboot.classpath}" />
 					</exec>

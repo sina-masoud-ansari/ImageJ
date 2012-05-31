@@ -9,14 +9,14 @@ XBOOT=$6
 
 ### Make samples
 
-if [ ! -d $SAMPLE_DIR ]; then
-	mkdir $SAMPLE_DIR
-fi
+#if [ ! -d $SAMPLE_DIR ]; then
+#	mkdir $SAMPLE_DIR
+#fi
 
-for (( i=1; i<=$NUM_SAMPLES; i++ )); do
-	echo "Creating image set $i ..."
-	java -Xmx$MAX_MEM -Xbootclasspath/p:$XBOOT -classpath $BIN_DIR/ij.jar:$BIN_DIR/jai_codec.jar:$BIN_DIR/jai_core.jar ij.parallel.SampleImageCreator $((1000*$i)) $SAMPLE_DIR
-done
+#for (( i=1; i<=$NUM_SAMPLES; i++ )); do
+#	echo "Creating image set $i ..."
+#	java -Xmx$MAX_MEM -Xbootclasspath/p:$XBOOT -classpath $BIN_DIR/ij.jar:$BIN_DIR/jai_codec.jar:$BIN_DIR/jai_core.jar ij.parallel.SampleImageCreator $((1000*$i)) $SAMPLE_DIR
+#done
 
 ## Create and run jobs
 
@@ -38,7 +38,7 @@ for image in $SAMPLE_DIR/*.tif; do
         echo "#@ class = default" >> $JOBFILE
         echo "#@ group = nesi" >> $JOBFILE
         echo "#@ account_no = /nz/nesi" >> $JOBFILE
-        echo "#@ wall_clock_limit = 10:00:00" >> $JOBFILE
+        echo "#@ wall_clock_limit = 24:00:00" >> $JOBFILE
         echo "#@ resources = ConsumableMemory(${MAX_MEM}b) ConsumableVirtualMemory(${MAX_MEM}b)" >> $JOBFILE
         echo "#@ job_type = serial" >> $JOBFILE
         echo "#@ initialdir = $DIR" >> $JOBFILE
@@ -47,7 +47,7 @@ for image in $SAMPLE_DIR/*.tif; do
         echo "#@ queue" >> $JOBFILE
         
         echo "cd $HOME/ImageJ" >> $JOBFILE
-        ./perf.py $image 10 $BIN_DIR $MAX_MEM $XBOOT >> $RESULTS_DIR/$csv >> $JOBFILE
+        echo "./perf.py $image 10 $BIN_DIR $MAX_MEM $XBOOT >> $RESULTS_DIR/$csv" >> $JOBFILE
     
         llsubmit $JOBFILE
         
