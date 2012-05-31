@@ -276,14 +276,14 @@
 						<arg value="${memory.max}" />
 						<arg value="${sample.dir}" />
 						<arg value="2" />
-						<arg value="${lib.dir}/jsr166.jar" />
+						<arg value="${xboot.classpath}" />
 					</exec>
 				</then>
 			</elseif>
 		</if>
 	</target>
 
-	<target name="cluster-performance" depends="clean, build" description="Initiate performance testing on NeSI cluster">
+	<target name="cluster-performance" depends="clean, test" description="Initiate performance testing on NeSI cluster">
 		<delete dir="${results.dir}" />
 		<mkdir dir="${results.dir}" />
 		<echo message="${os.name} ${os.arch}" />
@@ -300,10 +300,9 @@
 						<arg value="${bin.dir}" />
 						<arg value="${results.dir}" />
 						<arg value="${memory.max}" />
-						<!--<arg value="${sample.dir}"/> -->
-						<arg value="../sample_images" />
+						<arg value="${sample.dir}" />
 						<arg value="${num.samples}" />
-						<arg value="${lib.dir}/jsr166.jar" />
+						<arg value="${xboot.classpath}" />
 					</exec>
 				</then>
 			</elseif>

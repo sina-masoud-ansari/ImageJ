@@ -1,6 +1,6 @@
 #!/bin/bash
 
-HOST="login1.uoa.nesi.org.nz"
+HOST="login.uoa.nesi.org.nz"
 
 ant clean
 

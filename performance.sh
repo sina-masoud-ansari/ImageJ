@@ -12,6 +12,7 @@ if [ ! -d $SAMPLE_DIR ]; then
 fi
 
 for (( i=1; i<=$NUM_SAMPLES; i++ )); do
+	echo "Creating image set $i ..."
 	java -Xmx$MAX_MEM -Xbootclasspath/p:$XBOOT -classpath $BIN_DIR/ij.jar:$BIN_DIR/jai_codec.jar:$BIN_DIR/jai_core.jar ij.parallel.SampleImageCreator $((1000*$i)) $SAMPLE_DIR
 done
 
