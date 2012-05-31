@@ -1,5 +1,6 @@
 <!-- Ant makefile for ImageJ -->
 <project name="ImageJ" default="test" basedir=".">
+
 	<property name="src.dir" location="src" />
 	<property name="src.main" location="src/main" />
 	<property name="src.test" location="src/test" />
@@ -16,8 +17,15 @@
 	<property name="resources.build" location="resources/build" />
 	<property name="resources.test" location="resources/test" />
 	<property name="hexa.rt" location="/usr/lib/jvm/java-1.6.0-openjdk/jre/lib/rt.jar" />
-	<property name="xboot.classpath" value="${lib.dir}/jsr166.jar:${lib.dir}/PTRuntime.jar"/>
-	<property name="memory.max" value="2048m" />
+	<property name="memory.max" value="1048m" />
+
+	<condition property="classpathseparator" value=":">
+		<os family="unix" />
+	</condition>
+	<condition property="classpathseparator" value=";">
+		<os family="windows" />
+	</condition>
+	<property name="xboot.classpath" value="${lib.dir}/jsr166.jar${classpathseparator}${lib.dir}/PTRuntime.jar"/>
 	
 	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
 		<classpath>
@@ -36,15 +44,18 @@
 			<include name="**/*.jar" />
 		</fileset>
 	</path>
+
 	<!--
-	<target name="compile_test" description="Compile everything">
-		<mkdir dir="${build.dir}" />
-		<javac destdir="${build.dir}" classpathref="build.classpath" optimize="on" source="1.6" target="1.6" debug="on" encoding="UTF-8">
-			<src path="${src.main}"/>
-			<src path="${src.test}"/>
-		</javac>
-	</target>
--->
+	<if>
+		<equals arg1="${os}" arg2="windows" />
+		<then>
+			<echo message="XBOOT: ${xboot.classpath}" />
+		</then>
+		<else>
+			<echo message="XBOOT: ${xboot.classpath}" />
+		</else>
+	</if>
+	-->
 
 	<target name="compile" description="Compile everything">
 		<!-- First, ensure the build directory exists. -->
@@ -186,7 +197,7 @@
 	<target name="run" depends="build" description="Build and run ImageJ.">
 		<java maxmemory="${memory.max}" classpathref="run.classpath" jar="${bin.dir}/ij.jar" fork="yes">
 			<jvmarg value="-Xbootclasspath/p:${xboot.classpath}" />
-			<arg value="ij.ImageJ"/>
+			<arg value="ij.ImageJ" />
 		</java>
 	</target>
 
@@ -197,13 +208,6 @@
 			<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000" />
 		</java>
 	</target>
-
-	<condition property="os" value="unix">
-		<os family="unix" />
-	</condition>
-	<condition property="os" value="windows">
-		<os family="windows" />
-	</condition>
 
 	<target name="performance" depends="clean, test" description="Initiate performance testing">
 		<delete dir="${results.dir}" />

@@ -21,6 +21,6 @@ for image in $SAMPLE_DIR/*.tif; do
 	csv=$csv".csv"
 	echo "Processing $image @ $(date) ..."
 	echo "FileName, NumChannels, BitDepth, TotalPixels, Threads, Setup, Filter, Method, Stage, TimeTaken"
-	./perf.py $image 2 $BIN_DIR $MAX_MEM $XBOOT
-#	./perf.py $image 2 $BIN_DIR $MAX_MEM $XBOOT >> $RESULTS_DIR/$csv
+#	./perf.py $image 2 $BIN_DIR $MAX_MEM $XBOOT
+	./perf.py $image 2 $BIN_DIR $MAX_MEM $XBOOT >> $RESULTS_DIR/$csv
 done
