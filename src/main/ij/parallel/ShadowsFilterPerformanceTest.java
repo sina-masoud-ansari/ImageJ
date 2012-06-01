@@ -48,7 +48,8 @@ class ShadowsFilterPerformanceTest extends PerformanceTest {
 
 	@Override
 	public void run_P_FORK_JOIN() {
-		// TODO Auto-generated method stub
+		ParallelShadows ob= new ParallelShadows();
+		ob.northForkJoin(ip);
 		
 	}	
 }
