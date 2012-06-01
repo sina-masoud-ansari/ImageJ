@@ -16,7 +16,7 @@
 	<property name="resources.build" location="resources/build" />
 	<property name="resources.test" location="resources/test" />
 	<property name="hexa.rt" location="/usr/lib/jvm/java-1.6.0-openjdk/jre/lib/rt.jar" />
-	<property name="xboot.classpath" value="${lib.dir}/jsr166.jar:${lib.dir}/PTRuntime.jar"/>
+	<property name="xboot.classpath" value="${lib.dir}/PTRuntime.jar;${lib.dir}/jsr166.jar"/>
 	<property name="memory.max" value="2048m" />
 	
 	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
@@ -24,7 +24,7 @@
 			<pathelement location="${lib.dir}/ant-contrib-0.6.jar" />
 		</classpath>
 	</taskdef>
-
+	
 	<path id="build.classpath">
 		<fileset dir="${lib.dir}">
 			<include name="**/*.jar" />
@@ -184,6 +184,7 @@
 
 
 	<target name="run" depends="build" description="Build and run ImageJ.">
+		<echo message="${xboot.classpath}"/>
 		<java maxmemory="${memory.max}" classpathref="run.classpath" jar="${bin.dir}/ij.jar" fork="yes">
 			<jvmarg value="-Xbootclasspath/p:${xboot.classpath}" />
 			<arg value="ij.ImageJ"/>

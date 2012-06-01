@@ -1,8 +1,5 @@
 #ImageJ 1.46j Preferences
-ImageJ 1.46j Preferences
-#Tue May 22 12:02:19 NZST 2012
-#Thu May 24 22:15:32 NZST 2012
-#Thu May 24 23:45:08 NZST 2012
+#Mon May 28 20:32:10 NZST 2012
 new.fill=0
 pp.options=1
 recent09=C\:\\Users\\Rucha\\Desktop\\101MSDCF\\image_8bitcolor.tif
@@ -11,6 +8,7 @@ recent07=C\:\\Users\\Rucha\\Desktop\\101MSDCF\\image_RGBcolor.tif
 recent06=C\:\\Users\\Rucha\\Desktop\\101MSDCF\\image_8bitgray.tif
 bcolor=\#FFFFFF
 recent05=E\:\\image4000x4000.tif
+.results.height=250
 recent04=E\:\\image7000x7000.tif
 recent03=C\:\\Users\\ArvieCarpio\\Documents\\sem1-2012\\se751\\se751_images\\E.jpg
 threads=4
@@ -27,7 +25,9 @@ measurements=19
 showcolor=\#00FFFF
 fps=7.0
 raw.height=512
+.results.loc=102,16
 jpeg=85
+.results.width=400
 ij.y=97
 ij.x=726
 new.slices=1
