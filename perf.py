@@ -13,7 +13,8 @@ from subprocess import call
 debug=False
 
 ### Determine number of avilable processors
-cpus=multiprocessing.cpu_count()
+#cpus=multiprocessing.cpu_count()
+cpus=12
 
 ### List available Filters
 filters = ['Add Noise', 'Shadows', 'Salt and Pepper']
@@ -38,6 +39,36 @@ USAGE:
 perf.py file iterations bin_dir max_mem xboot
 
 """
+
+def submitJob(cmd, cores) :
+	# Create the LL job file
+	jobdesc =  """
+#!/bin/bash
+
+#@ job_name = ImageJ
+#@ job_type = parallel
+#@ total_tasks = %d
+#@ blocking = %d
+#@ class = default
+#@ group = chemistry
+#@ account_no = uoa
+#@ initialdir = $(home)/ImageJ
+#@ node_resources = ConsumableMemory(%sb) ConsumableVirtualMemory(%sb)
+#@ queue
+
+%s >> ~/RESULTS.csv
+
+""" % (cores, cores, max_mem, max_mem, cmd)	
+
+	f = open('job.ll', 'w')
+	f.write(jobdesc)
+	f.close()
+#	print "%s" % jobdesc
+	
+	submit = "llsubmit job.ll"
+#	sys.exit(0)
+	call(submit, shell=True)
+
 
 ### Check correct usage
 if len(sys.argv) != 6 :
@@ -71,9 +102,11 @@ for f in filters :
 				for t in stages :
 					if s == "DEPENDENT" :
 						cmd = '{0} {1} "{2}" {3} {4} {5} {6} {7}'.format(java_cmd, file, f, s, p, c, t, iter)
-						call(cmd, shell=True)
+						submitJob(cmd, c)
+						#call(cmd, shell=True)
   					else :
 		                                for i in range(1, int(iter)+1) :
         		                                cmd = '{0} {1} "{2}" {3} {4} {5} {6}'.format(java_cmd, file, f, s, p, c, t)
-							call(cmd, shell=True)				
-						
+							submitJob(cmd, c)
+							#call(cmd, shell=True)
+													

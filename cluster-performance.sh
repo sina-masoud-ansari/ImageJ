@@ -9,14 +9,14 @@ XBOOT=$6
 
 ### Make samples
 
-#if [ ! -d $SAMPLE_DIR ]; then
-#	mkdir $SAMPLE_DIR
-#fi
+if [ ! -d $SAMPLE_DIR ]; then
+	mkdir $SAMPLE_DIR
+fi
 
-#for (( i=1; i<=$NUM_SAMPLES; i++ )); do
-#	echo "Creating image set $i ..."
-#	java -Xmx$MAX_MEM -Xbootclasspath/p:$XBOOT -classpath $BIN_DIR/ij.jar:$BIN_DIR/jai_codec.jar:$BIN_DIR/jai_core.jar ij.parallel.SampleImageCreator $((1000*$i)) $SAMPLE_DIR
-#done
+for (( i=1; i<=$NUM_SAMPLES; i++ )); do
+	echo "Creating image set $i ..."
+	java -Xmx$MAX_MEM -Xbootclasspath/p:$XBOOT -classpath $BIN_DIR/ij.jar:$BIN_DIR/jai_codec.jar:$BIN_DIR/jai_core.jar ij.parallel.SampleImageCreator $((1000*$i)) $SAMPLE_DIR
+done
 
 ## Create and run jobs
 
@@ -40,7 +40,9 @@ for image in $SAMPLE_DIR/*.tif; do
         echo "#@ account_no = /nz/nesi" >> $JOBFILE
         echo "#@ wall_clock_limit = 24:00:00" >> $JOBFILE
         echo "#@ resources = ConsumableMemory(${MAX_MEM}b) ConsumableVirtualMemory(${MAX_MEM}b)" >> $JOBFILE
-        echo "#@ job_type = serial" >> $JOBFILE
+        echo "#@ job_type = parallel" >> $JOBFILE
+        echo "#@ total_tasks = 12" >> $JOBFILE
+        echo "#@ blocking = 12" >> $JOBFILE
         echo "#@ initialdir = $DIR" >> $JOBFILE
         echo "#@ output = $DIR/\$(job_name).\$(jobid).out" >> $JOBFILE
         echo "#@ error = $DIR/\$(job_name).\$(jobid).err" >> $JOBFILE

@@ -5,15 +5,10 @@ import ij.ImagePlus;
 import ij.plugin.filter.Shadows;
 import ij.process.ImageProcessor;
 
-import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.apache.commons.math3.stat.inference.TTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,19 +27,7 @@ public class ParallelShadowsTest {
 	CH_GRAY16 = 1,
 	CH_GRAY32 = 1;
 
-	/*private final static double
-
-		// Statistical parameters
-		RANGE = 25,
-		ALPHA = 0.05;*
-	 */
 	private final static String 
-	
-	/*P_GRAY8 = "file://C:/Users/Rucha/git/ImageJ/resources/test/images/tif/GRAY8.tif",
-	P_GRAY16 = "file://C:/Users/Rucha/git/ImageJ/resources/test/images/tif/GRAY16.tif",
-	P_GRAY32 = "file://C:/Users/Rucha/git/ImageJ/resources/test/images/tif/GRAY32.tif",
-	P_COLOR_256 = "file://C:/Users/Rucha/git/ImageJ/resources/test/images/tif/COLOR_256.tif",
-	P_COLOR_RGB = "file://C:/Users/Rucha/git/ImageJ/resources/test/images/tif/COLOR_RGB.tif";*/
 	 
 	//Example image paths for each image type
 	P_COLOR_RGB = "/resources/images/tif/COLOR_RGB.tif",
@@ -61,15 +44,6 @@ public class ParallelShadowsTest {
 	{	
 
 		url = this.getClass().getResource(s);
-		//url = null;
-		
-		/*try {
-			url = new URL(s);
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
-		 
 		
 		nChannels = n;
 		mode = m;
