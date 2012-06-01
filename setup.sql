@@ -3,13 +3,14 @@ USE imagej;
 DROP TABLE IF EXISTS performance;
 
 CREATE TABLE performance (
-  fname VARCHAR(50),
-  itype VARCHAR(20),
+  fname VARCHAR(100),
+  nchannels INT,
+  bitdepth INT,
   npixels INT,
-  proc INT, 
+  threads INT,
+  setup VARCHAR(50), 
   filter VARCHAR(100),
-  series VARCHAR(20),
-  run FLOAT, 
-  setup FLOAT,
-  ptype VARCHAR(20)
+  method VARCHAR(20),
+  stage VARCHAR(20),
+  time INT 
 );

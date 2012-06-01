@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# TABLE COLUMNS: fname nchannels, bitdepth, npixels, threads, setup, filter, method, stage, time
+
 RESULTS_DIR=$PWD/results
 QUERIES_DIR=$RESULTS_DIR/queries
 

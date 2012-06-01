@@ -4,8 +4,7 @@ BIN_DIR=$1
 RESULTS_DIR=$2
 MAX_MEM=$3
 SAMPLE_DIR=$4
-#NUM_SAMPLES=$5
-NUM_SAMPLES=1
+NUM_SAMPLES=$5
 XBOOT=$6
 
 if [ ! -d $SAMPLE_DIR ]; then
@@ -21,6 +20,6 @@ for image in $SAMPLE_DIR/*.tif; do
 	csv=$csv".csv"
 	echo "Processing $image @ $(date) ..."
 	echo "FileName, NumChannels, BitDepth, TotalPixels, Threads, Setup, Filter, Method, Stage, TimeTaken"
-	./perf.py $image 2 $BIN_DIR $MAX_MEM $XBOOT
-#	./perf.py $image 2 $BIN_DIR $MAX_MEM $XBOOT >> $RESULTS_DIR/$csv
+#	./perf.py $image 2 $BIN_DIR $MAX_MEM $XBOOT
+	./perf.py $image 2 $BIN_DIR $MAX_MEM $XBOOT >> $RESULTS_DIR/$csv
 done
