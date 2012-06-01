@@ -61,7 +61,10 @@ public class SaltAndPepperFilterPerformanceTest extends PerformanceTest {
 	@Override
 	public void run_P_FORK_JOIN() {
 		// TODO Auto-generated method stub
-		
+		ParallelSaltAndPepper parallel_sp = new ParallelSaltAndPepper();
+		parallel_sp.setup("salt_and_pepper forkjoin", null);
+		parallel_sp.run(ip);		
+		ip.salt_and_pepper_PARATASK(PERCENT);
 	}	
 
 }
