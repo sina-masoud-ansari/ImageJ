@@ -159,7 +159,7 @@ public class ParallelFiltersTest {
 				ipB.salt_and_pepper_PARATASK(PERCENT);
 				break;
 			case ImageProcessor.P_FORK_JOIN:
-				ipB.noise_P_FORK_JOIN(RANGE);
+				ipB.salt_and_pepper_FORK_JOIN(RANGE);
 				break;	
 		}
 		
