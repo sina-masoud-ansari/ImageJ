@@ -795,9 +795,9 @@ public class ColorProcessor extends ImageProcessor {
 	@Override
 	public void noise_P_PARATASK(double range) {
 		setup();
-		r.noise_P_SIMPLE(range); showProgress(0.40);
-		g.noise_P_SIMPLE(range); showProgress(0.65);
-		b.noise_P_SIMPLE(range); showProgress(0.90);
+		r.noise_P_PARATASK(range); showProgress(0.40);
+		g.noise_P_PARATASK(range); showProgress(0.65);
+		b.noise_P_PARATASK(range); showProgress(0.90);
 		finish();
 	}	
 	

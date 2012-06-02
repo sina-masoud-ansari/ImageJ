@@ -789,7 +789,7 @@ public class FloatProcessor extends ImageProcessor {
 	@Override
     public void noise_P_SIMPLE(double range) {	
 		//Divide the number of rows by the number of threads, max threads is roiHeight
-		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, roiHeight);
+		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
 	
 		Thread[] threads = new Thread[div.numThreads];
 		for (int i = 0; i < div.numThreads; i++){
