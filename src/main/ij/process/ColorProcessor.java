@@ -1690,8 +1690,7 @@ public class ColorProcessor extends ImageProcessor {
 	}
 
 	@Override
-	public Runnable getSaltAndPepperRunnable(int n, Division div, int numDivs,
-			Random r) {
+	public Runnable getSaltAndPepperRunnable(int n, Division div, Random r) {
 		// Handled by the ByteProcessor class
 		return null;
 	}
