@@ -67,19 +67,16 @@ public class ByteProcessor extends ImageProcessor{
 			icm.getBlues(blues);
 			cm = new IndexColorModel(8, mapSize, reds, greens, blues);
 		}
-		randomNumber = new Random();
 	}
 
 	/**Creates a blank ByteProcessor of the specified dimensions. */
 	public ByteProcessor(int width, int height) {
 		this(width, height, new byte[width*height], null);
-		randomNumber = new Random();
 	}
 
 	/**Creates a ByteProcessor from a byte array. */
 	public ByteProcessor(int width, int height, byte[] pixels) {
 		this(width, height, pixels, null);
-		randomNumber = new Random();
 	}
 
 	/**Creates a ByteProcessor from a pixel array and IndexColorModel. */
@@ -91,7 +88,6 @@ public class ByteProcessor extends ImageProcessor{
 		resetRoi();
 		this.pixels = pixels;
 		this.cm = cm;
-		randomNumber = new Random();
 	}
 
 	/** Creates a ByteProcessor from a TYPE_BYTE_GRAY BufferedImage. */
@@ -103,7 +99,6 @@ public class ByteProcessor extends ImageProcessor{
 		pixels = ((DataBufferByte) buffer).getData();
 		width = raster.getWidth();
 		height = raster.getHeight();
-		randomNumber = new Random();
 	}
 
 	/** Creates a ByteProcessor from an ImageProcessor. 16-bit and 32-bit
@@ -119,7 +114,6 @@ public class ByteProcessor extends ImageProcessor{
 		resetRoi();
 		this.pixels = (byte[])bp.getPixels();
 		this.cm = bp.getCurrentColorModel();
-		randomNumber = new Random();
 	}
 
 	public Image createImage() {
@@ -1221,9 +1215,12 @@ public class ByteProcessor extends ImageProcessor{
 		fjp.invoke(fa);
 	}	
 	
+	/**
+	 * Original approach for salt and pepper filter
+	 */
 	@Override
 	public void salt_and_pepper_NONE(double percent) {
-		Random r = randomNumber;
+		Random r = new Random();
 		int n = (int)(percent*roiWidth*roiHeight);
 		int xmin = roiX;
 		int xmax = roiX+roiWidth-1;
@@ -1242,42 +1239,57 @@ public class ByteProcessor extends ImageProcessor{
 		long name = Thread.currentThread().getId();
 	}
 	
+	/**
+	 * Serial approach for salt and pepper filter
+	 */
 	@Override
 	public void salt_and_pepper_SERIAL(double percent) {
 		// TODO Auto-generated method stub
 		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, 1);
 		Thread[] threads = new Thread[div.numThreads];
-		Random r = randomNumber;
 		int n = (int)(percent*roiWidth*roiHeight);
 		for (int i = 0; i < div.numThreads; i++) {
-			threads[i] = new Thread(getSaltAndPepperRunnable(n,div.getDivision(i),div.divs.length,r));
+			threads[i] = new Thread(getSaltAndPepperRunnable(n,div.getDivision(i),div.divs.length));
 		}
 		
 		div.processThreads(threads);
 		
 	}
 
+	/**
+	 * Simple approach for salt and pepper filter
+	 */
 	@Override
 	public void salt_and_pepper_SIMPLE(double percent) {
 		// TODO Auto-generated method stub
 		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
 		Thread[] threads = new Thread[div.numThreads];
-		Random r = randomNumber;
 		int n = (int)(percent*roiWidth*roiHeight);
 		for (int i = 0; i < div.numThreads; i++) {
-			threads[i] = new Thread(getSaltAndPepperRunnable(n,div.getDivision(i),div.divs.length,r));
+			threads[i] = new Thread(getSaltAndPepperRunnable(n,div.getDivision(i),div.divs.length));
 		}
 		div.processThreads(threads);
 	}
 	
+	/**
+	 * Returns the next double pseudo random number in the sequence
+	 * @param min
+	 * @param max
+	 * @param r
+	 * @return
+	 */
 	public int rand(int min, int max, Random r) {
 		return min + (int)(r.nextDouble()*(max-min));
 	}
 	
-	public Runnable getSaltAndPepperRunnable(final int n, final Division div,final int numDivs, final Random r) {
+	/**
+	 * Returns a Runnable for the salt and pepper filter
+	 */
+	public Runnable getSaltAndPepperRunnable(final int n, final Division div,final int numDivs) {
 		return new Runnable () {
 			@Override
 			public void run() {
+				Random r = new Random();
 				int rx,ry;
 				//filter is not done per pixel but per block of rows
 				//random pixel is picked to be either 255 or 0
@@ -1294,36 +1306,42 @@ public class ByteProcessor extends ImageProcessor{
 		};
 	}
 	
+	/**
+	 * ParaTask approach for salt and pepper filter
+	 */
 	public void salt_and_pepper_PARATASK(double percent) {
-		Random r = randomNumber;
 		int n = (int)(percent*roiWidth*roiHeight);
 		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
 		ConcurrentLinkedQueue<Runnable> tasks = new ConcurrentLinkedQueue<Runnable>();
 		for (Division d : div.getDivisions()){
-			tasks.add(getSaltAndPepperRunnable(n,d,div.divs.length,r));
+			tasks.add(getSaltAndPepperRunnable(n,d,div.divs.length));
 		}
 		div.processTasks(tasks);
 	}
 
+	/**
+	 * ExecutorService approach for salt and pepper filter
+	 */
 	public  void salt_and_pepper_EXECUTOR(double percent) {	
 		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
-		Random r = randomNumber;
 		int n = (int)(percent*roiWidth*roiHeight);
 		Collection<Future<?>> futures = new LinkedList<Future<?>>();
 		for (Division d : div.getDivisions()){
-			futures.add(executor.submit(getSaltAndPepperRunnable(n,d,div.divs.length,r)));
+			futures.add(executor.submit(getSaltAndPepperRunnable(n,d,div.divs.length)));
 		}
 		div.processFutures(futures);	
 	}
 	
+	/**
+	 * Fork join approach for salt and pepper filter
+	 */
 	public void salt_and_pepper_FORK_JOIN(double percent) {
 		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, 1);
 		Division whole = div.getDivisions()[0];
-		Random rand = randomNumber;
 		int n = (int)(percent*roiWidth*roiHeight);
-		Runnable runnable = getSaltAndPepperRunnable(n,whole,div.divs.length,rand);
+		Runnable runnable = getSaltAndPepperRunnable(n,whole,div.divs.length);
 		SaltAndPepperForkAction fa = new SaltAndPepperForkAction(this, runnable, 
-				whole, Prefs.getThreads(), 1, percent, n, rand);
+				whole, Prefs.getThreads(), 1, percent, n);
 		fjp.invoke(fa);
 	}
 	

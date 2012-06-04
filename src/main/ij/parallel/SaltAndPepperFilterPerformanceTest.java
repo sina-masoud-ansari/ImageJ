@@ -1,3 +1,7 @@
+/**
+ * Performance testing class for Salt and Pepper filter
+ * Author: Arvie Carpio
+ */
 package ij.parallel;
 
 import java.io.File;
