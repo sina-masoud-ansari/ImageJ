@@ -37,7 +37,7 @@ public class ImageDivision {
 	// Constructor that creates divisions with x and y boundaries
 	public ImageDivision(int roiX, int roiY, int roiWidth, int roiHeight, int width, int height) {
 		// TODO Auto-generated constructor stub
-		Prefs.setThreads(Runtime.getRuntime().availableProcessors());
+		//Prefs.setThreads(Runtime.getRuntime().availableProcessors());
 		numThreads = Math.min(Prefs.getThreads(), roiHeight);
 		ratio = roiHeight / numThreads;
 		int a = 0;
@@ -50,7 +50,7 @@ public class ImageDivision {
 	// Constructor that creates divisions with x and y boundaries, sets specific number of divisions
 	public ImageDivision(int roiX, int roiY, int roiWidth, int roiHeight, int divisions, int width, int height) {
 		// TODO Auto-generated constructor stub
-		Prefs.setThreads(Runtime.getRuntime().availableProcessors());
+		//Prefs.setThreads(Runtime.getRuntime().availableProcessors());
 		numThreads = divisions == 0 ? 1 : divisions;
 		ratio = roiHeight / numThreads;
 		mod = roiHeight % numThreads;

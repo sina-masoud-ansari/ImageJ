@@ -17,11 +17,9 @@
 	<property name="resources.build" location="resources/build" />
 	<property name="resources.test" location="resources/test" />
 	<property name="hexa.rt" location="/usr/lib/jvm/java-1.6.0-openjdk/jre/lib/rt.jar" />
-	<property name="xboot.classpath" value="${lib.dir}/PTRuntime.jar;${lib.dir}/jsr166.jar"/>
 	<property name="memory.max" value="2048m" />
 
-	<property name="memory.max" value="1048m" />
-
+	
 	<condition property="classpathseparator" value=":">
 		<os family="unix" />
 	</condition>
@@ -35,7 +33,7 @@
 			<pathelement location="${lib.dir}/ant-contrib-0.6.jar" />
 		</classpath>
 	</taskdef>
-	
+
 	<path id="build.classpath">
 		<fileset dir="${lib.dir}">
 			<include name="**/*.jar" />
@@ -198,7 +196,6 @@
 
 
 	<target name="run" depends="build" description="Build and run ImageJ.">
-		<echo message="${xboot.classpath}"/>
 		<java maxmemory="${memory.max}" classpathref="run.classpath" jar="${bin.dir}/ij.jar" fork="yes">
 			<jvmarg value="-Xbootclasspath/p:${xboot.classpath}" />
 			<arg value="ij.ImageJ" />
@@ -279,14 +276,14 @@
 						<arg value="${memory.max}" />
 						<arg value="${sample.dir}" />
 						<arg value="2" />
-						<arg value="${lib.dir}/jsr166.jar" />
+						<arg value="${xboot.classpath}" />
 					</exec>
 				</then>
 			</elseif>
 		</if>
 	</target>
 
-	<target name="cluster-performance" depends="clean, build" description="Initiate performance testing on NeSI cluster">
+	<target name="cluster-performance" depends="clean, test" description="Initiate performance testing on NeSI cluster">
 		<delete dir="${results.dir}" />
 		<mkdir dir="${results.dir}" />
 		<echo message="${os.name} ${os.arch}" />
@@ -303,10 +300,9 @@
 						<arg value="${bin.dir}" />
 						<arg value="${results.dir}" />
 						<arg value="${memory.max}" />
-						<!--<arg value="${sample.dir}"/> -->
 						<arg value="../sample_images" />
 						<arg value="${num.samples}" />
-						<arg value="${lib.dir}/jsr166.jar" />
+						<arg value="${xboot.classpath}" />
 					</exec>
 				</then>
 			</elseif>

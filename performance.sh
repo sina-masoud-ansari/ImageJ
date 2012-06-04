@@ -12,6 +12,7 @@ if [ ! -d $SAMPLE_DIR ]; then
 fi
 
 for (( i=1; i<=$NUM_SAMPLES; i++ )); do
+	echo "Creating image set $i ..."
 	java -Xmx$MAX_MEM -Xbootclasspath/p:$XBOOT -classpath $BIN_DIR/ij.jar:$BIN_DIR/jai_codec.jar:$BIN_DIR/jai_core.jar ij.parallel.SampleImageCreator $((1000*$i)) $SAMPLE_DIR
 done
 
@@ -20,6 +21,5 @@ for image in $SAMPLE_DIR/*.tif; do
 	csv=$csv".csv"
 	echo "Processing $image @ $(date) ..."
 	echo "FileName, NumChannels, BitDepth, TotalPixels, Threads, Setup, Filter, Method, Stage, TimeTaken"
-#	./perf.py $image 2 $BIN_DIR $MAX_MEM $XBOOT
-	./perf.py $image 2 $BIN_DIR $MAX_MEM $XBOOT >> $RESULTS_DIR/$csv
+	./perf.py $image 10 $BIN_DIR $MAX_MEM $XBOOT
 done

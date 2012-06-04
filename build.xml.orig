@@ -16,15 +16,17 @@
 	<property name="results.dir" location="results" />
 	<property name="resources.build" location="resources/build" />
 	<property name="resources.test" location="resources/test" />
-	<property name="hexa.rt" location="/usr/lib/jvm/java-1.6.0-openjdk/jre/lib/rt.jar" />
 <<<<<<< HEAD
+	<property name="hexa.rt" location="/usr/lib/jvm/java-1.6.0-openjdk/jre/lib/rt.jar" />
 	<property name="xboot.classpath" value="${lib.dir}/PTRuntime.jar;${lib.dir}/jsr166.jar"/>
 	<property name="memory.max" value="2048m" />
-=======
-	<property name="memory.max" value="1048m" />
 
->>>>>>> 86613795a73d63b047c2be2cbb5b0bd9c5ec00cb
-	
+	<property name="memory.max" value="1048m" />
+=======
+	<property name="hexa.rt" location="/usr/lib/jvm/java-1.6.0-openjdk/jre/lib/rt.jar" />
+	<property name="memory.max" value="2048m" />
+>>>>>>> dc7ebc7e972995eacbe87082608a0cbc5f067275
+
 	<condition property="classpathseparator" value=":">
 		<os family="unix" />
 	</condition>
@@ -282,14 +284,14 @@
 						<arg value="${memory.max}" />
 						<arg value="${sample.dir}" />
 						<arg value="2" />
-						<arg value="${lib.dir}/jsr166.jar" />
+						<arg value="${xboot.classpath}" />
 					</exec>
 				</then>
 			</elseif>
 		</if>
 	</target>
 
-	<target name="cluster-performance" depends="clean, build" description="Initiate performance testing on NeSI cluster">
+	<target name="cluster-performance" depends="clean, test" description="Initiate performance testing on NeSI cluster">
 		<delete dir="${results.dir}" />
 		<mkdir dir="${results.dir}" />
 		<echo message="${os.name} ${os.arch}" />
@@ -306,10 +308,9 @@
 						<arg value="${bin.dir}" />
 						<arg value="${results.dir}" />
 						<arg value="${memory.max}" />
-						<!--<arg value="${sample.dir}"/> -->
 						<arg value="../sample_images" />
 						<arg value="${num.samples}" />
-						<arg value="${lib.dir}/jsr166.jar" />
+						<arg value="${xboot.classpath}" />
 					</exec>
 				</then>
 			</elseif>

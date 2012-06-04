@@ -3,6 +3,8 @@ package ij.parallel;
 import ij.process.ImageProcessor;
 
 import java.io.File;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 import paratask.runtime.ParaTask;
 
@@ -206,9 +208,17 @@ public class ParallelPerformanceTest {
 			int bitdepth = runner.test.img.getBitDepth();
 			int totalPixels = runner.test.img.getWidth() * runner.test.img.getHeight();
 			long timetaken = runner.timetaken;
+			InetAddress addr = null;
+			try {
+				addr = InetAddress.getLocalHost();
+			} catch (UnknownHostException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			String hostname = addr.getHostName();
 			
 			// FileName, NumChannels, BitDepth, TotalPixels, Threads, Setup, Filter, Method, Stage, TimeTaken
-			System.out.printf("%s,%d,%d,%d,%d,%s,%s,%s,%s,%d\n", fname, nchannels, bitdepth, totalPixels, threads, setup, filter, methodString, stage, timetaken);
+			System.out.printf("%s,%s,%d,%d,%d,%d,%s,%s,%s,%s,%d\n", hostname, fname, nchannels, bitdepth, totalPixels, threads, setup, filter, methodString, stage, timetaken);
 		}
 	}
 
