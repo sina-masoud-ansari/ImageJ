@@ -1,5 +1,5 @@
 <!-- Ant makefile for ImageJ -->
-<project name="ImageJ" default="test" basedir=".">
+<project name="ImageJ" default="compile" basedir=".">
 
 	<property name="src.dir" location="src" />
 	<property name="src.main" location="src/main" />
@@ -19,7 +19,7 @@
 	<property name="hexa.rt" location="/usr/lib/jvm/java-1.6.0-openjdk/jre/lib/rt.jar" />
 	<property name="memory.max" value="2048m" />
 
-	
+
 	<condition property="classpathseparator" value=":">
 		<os family="unix" />
 	</condition>
@@ -71,24 +71,12 @@
 		</foreach>
 		<!-- Build everything; add debug="on" to debug -->
 		<!-- If compiling on hexa.ece.auckland.ac.nz use bootclasspath parameter -->
-		<if>
-			<available file="${hexa.rt}" />
-			<then>
-				<javac destdir="${build.dir}" classpathref="build.classpath" optimize="on" source="1.6" target="1.6" debug="on" encoding="UTF-8" bootclasspath="/usr/lib/jvm/java-1.6.0-openjdk/jre/lib/rt.jar">
-					<src path="${src.main}" />
-					<src path="${src.test}" />
-					<compilerarg value="-Xbootclasspath/p:${xboot.classpath}" />
-				</javac>
-			</then>
-			<else>
-				<javac destdir="${build.dir}" classpathref="build.classpath" optimize="on" source="1.6" target="1.6" debug="on" encoding="UTF-8">
-					<src path="${src.main}" />
-					<src path="${src.test}" />
-					<compilerarg value="-Xbootclasspath/p:${xboot.classpath}" />
-				</javac>
-			</else>
-		</if>
 
+		<javac destdir="${build.dir}" classpathref="build.classpath" optimize="on" source="1.6" target="1.6" debug="on" encoding="UTF-8">
+			<src path="${src.main}" />
+			<src path="${src.test}" />
+			<compilerarg value="-Xbootclasspath/p:${xboot.classpath}" />
+		</javac>
 	</target>
 
 	<target name="PTCompile" description="Compile Parallel Task source to Java source">
@@ -216,7 +204,7 @@
 	<condition property="os" value="windows">
 		<os family="windows" />
 	</condition>
-	
+
 	<target name="performance" depends="clean, test" description="Initiate performance testing">
 		<delete dir="${results.dir}" />
 		<mkdir dir="${results.dir}" />
