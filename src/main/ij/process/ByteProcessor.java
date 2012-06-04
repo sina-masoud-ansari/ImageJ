@@ -67,16 +67,19 @@ public class ByteProcessor extends ImageProcessor{
 			icm.getBlues(blues);
 			cm = new IndexColorModel(8, mapSize, reds, greens, blues);
 		}
+		randomNumber = new Random();
 	}
 
 	/**Creates a blank ByteProcessor of the specified dimensions. */
 	public ByteProcessor(int width, int height) {
 		this(width, height, new byte[width*height], null);
+		randomNumber = new Random();
 	}
 
 	/**Creates a ByteProcessor from a byte array. */
 	public ByteProcessor(int width, int height, byte[] pixels) {
 		this(width, height, pixels, null);
+		randomNumber = new Random();
 	}
 
 	/**Creates a ByteProcessor from a pixel array and IndexColorModel. */
@@ -88,6 +91,7 @@ public class ByteProcessor extends ImageProcessor{
 		resetRoi();
 		this.pixels = pixels;
 		this.cm = cm;
+		randomNumber = new Random();
 	}
 
 	/** Creates a ByteProcessor from a TYPE_BYTE_GRAY BufferedImage. */
@@ -99,6 +103,7 @@ public class ByteProcessor extends ImageProcessor{
 		pixels = ((DataBufferByte) buffer).getData();
 		width = raster.getWidth();
 		height = raster.getHeight();
+		randomNumber = new Random();
 	}
 
 	/** Creates a ByteProcessor from an ImageProcessor. 16-bit and 32-bit
@@ -114,6 +119,7 @@ public class ByteProcessor extends ImageProcessor{
 		resetRoi();
 		this.pixels = (byte[])bp.getPixels();
 		this.cm = bp.getCurrentColorModel();
+		randomNumber = new Random();
 	}
 
 	public Image createImage() {
@@ -1120,7 +1126,7 @@ public class ByteProcessor extends ImageProcessor{
 						showProgress((double)(y-roiY)/roiHeight);
 					}
 				} // end y loop
-				
+				System.out.println("Runnable. Thread Id: " + Thread.currentThread().getId());
 				
 			} 				
 		}; 		
@@ -1217,7 +1223,8 @@ public class ByteProcessor extends ImageProcessor{
 	
 	@Override
 	public void salt_and_pepper_NONE(double percent) {
-		Random r = new Random();
+		long startTime = System.nanoTime();
+		Random r = randomNumber;
 		int n = (int)(percent*roiWidth*roiHeight);
 		int xmin = roiX;
 		int xmax = roiX+roiWidth-1;
@@ -1240,16 +1247,12 @@ public class ByteProcessor extends ImageProcessor{
 		// TODO Auto-generated method stub
 		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, 1);
 		Thread[] threads = new Thread[div.numThreads];
-		
-		Random r = new Random();
+		Random r = randomNumber;
 		int n = (int)(percent*roiWidth*roiHeight);
-		
 		for (int i = 0; i < div.numThreads; i++) {
-			threads[i] = new Thread(getSaltAndPepperRunnable(n,div.getDivision(i),div.numThreads,r));
+			threads[i] = new Thread(getSaltAndPepperRunnable(n,div.getDivision(i),div.divs.length,r));
 		}
-		
 		div.processThreads(threads);
-		
 	}
 
 	@Override
@@ -1257,16 +1260,12 @@ public class ByteProcessor extends ImageProcessor{
 		// TODO Auto-generated method stub
 		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
 		Thread[] threads = new Thread[div.numThreads];
-		
-		Random r = new Random();
+		Random r = randomNumber;
 		int n = (int)(percent*roiWidth*roiHeight);
-		
 		for (int i = 0; i < div.numThreads; i++) {
 			threads[i] = new Thread(getSaltAndPepperRunnable(n,div.getDivision(i),div.divs.length,r));
 		}
-		
 		div.processThreads(threads);
-		
 	}
 	
 	public int rand(int min, int max, Random r) {
@@ -1294,37 +1293,32 @@ public class ByteProcessor extends ImageProcessor{
 	}
 	
 	public void salt_and_pepper_PARATASK(double percent) {
-		Random r = new Random();
+		long startTime = System.nanoTime();
+		Random r = randomNumber;
 		int n = (int)(percent*roiWidth*roiHeight);
-		
 		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
 		ConcurrentLinkedQueue<Runnable> tasks = new ConcurrentLinkedQueue<Runnable>();
 		for (Division d : div.getDivisions()){
 			tasks.add(getSaltAndPepperRunnable(n, d, div.divs.length, r));
 		}
 		div.processTasks(tasks);
-				
 	}
 
 	public  void salt_and_pepper_EXECUTOR(double percent) {	
 		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight);
-		Random r = new Random();
+		Random r = randomNumber;
 		int n = (int)(percent*roiWidth*roiHeight);
 		Collection<Future<?>> futures = new LinkedList<Future<?>>();
-				
 		for (Division d : div.getDivisions()){
 			futures.add(executor.submit(getSaltAndPepperRunnable(n,d,div.divs.length,r)));
 		}
-		
-		// wait for tasks to finish
 		div.processFutures(futures);	
-		
 	}
 	
 	public void salt_and_pepper_FORK_JOIN(double percent) {
 		ImageDivision div = new ImageDivision(roiX, roiY, roiWidth, roiHeight, 1);
 		Division whole = div.getDivisions()[0];
-		Random rand = new Random();
+		Random rand = randomNumber;
 		int n = (int)(percent*roiWidth*roiHeight);
 		Runnable runnable = getSaltAndPepperRunnable(n,whole,div.divs.length,rand);
 		SaltAndPepperForkAction fa = new SaltAndPepperForkAction(this, runnable, 

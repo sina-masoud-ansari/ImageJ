@@ -124,6 +124,7 @@ public abstract class ImageProcessor implements Cloneable {
 	protected SampleModel sampleModel;
 	protected static IndexColorModel defaultColorModel;
 	protected boolean minMaxSet;
+	protected Random randomNumber;
 		
 	protected void showProgress(double percentDone) {
 		if (progressBar!=null)
