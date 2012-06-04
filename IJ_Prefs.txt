@@ -1,5 +1,5 @@
 #ImageJ 1.46j Preferences
-#Mon Jun 04 14:50:38 NZST 2012
+#Mon Jun 04 17:04:23 NZST 2012
 new.fill=0
 pp.options=1
 recent09=C\:\\Users\\Rucha\\Desktop\\101MSDCF\\image_RGBcolor.tif
@@ -11,11 +11,10 @@ recent05=C\:\\Users\\ArvieCarpio\\Documents\\sem1-2012\\se751\\se751_images\\2N1
 .results.height=250
 recent04=C\:\\Users\\ArvieCarpio\\Documents\\sem1-2012\\se751\\se751_images\\D.jpg
 recent03=C\:\\Users\\ArvieCarpio\\Documents\\sem1-2012\\se751\\se751_images\\greyscale3.jpg
-threads=4
 recent02=C\:\\Users\\ArvieCarpio\\Documents\\sem1-2012\\se751\\se751_images\\B.jpg
 noise.sd=25.0
-recent01=C\:\\Users\\ArvieCarpio\\Documents\\sem1-2012\\se751\\se751_images\\E.jpg
-recent00=C\:\\Users\\ArvieCarpio\\Documents\\sem1-2012\\se751\\se751_images\\A.jpg
+recent01=C\:\\Users\\ArvieCarpio\\Documents\\sem1-2012\\se751\\se751_images\\A.jpg
+recent00=C\:\\Users\\ArvieCarpio\\Documents\\sem1-2012\\se751\\se751_images\\E.jpg
 raw.offset=0
 fcolor=\#000000
 raw.width=512

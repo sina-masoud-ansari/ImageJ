@@ -39,7 +39,7 @@ public class ByteProcessor extends ImageProcessor{
     int k1_p,k2_p,k3_p,k4_p,k5_p,k6_p,k7_p,k8_p,k9_p;
     int scale_p;
 
-	/**Creates a ByteProcessor from an AWT Image. */
+    /**Creates a ByteProcessor from an AWT Image. */
 	public ByteProcessor(Image img) {
 		width = img.getWidth(null);
 		height = img.getHeight(null);
@@ -1232,6 +1232,7 @@ public class ByteProcessor extends ImageProcessor{
 		int rx, ry;
 		for (int i=0; i<n/2; i++) {
 			rx = rand(xmin, xmax, r);
+			rx = xmin + (int)(r.nextDouble()*(xmax-xmin));
 			ry = rand(ymin, ymax, r);
 			pixels[ry*width+rx] = (byte)255;
 			rx = rand(xmin, xmax, r);
@@ -1722,6 +1723,7 @@ public class ByteProcessor extends ImageProcessor{
 	byte[] create8BitImage() {
 		return pixels;
 	}
+
 
 
 
