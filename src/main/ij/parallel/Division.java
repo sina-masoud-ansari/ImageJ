@@ -1,5 +1,9 @@
 package ij.parallel;
-
+/**
+ * This class defines a section of an image to be processed by a filter in an Image Processor
+ * @author Sina Masoud-Ansari (s.ansari@auckland.ac.nz)
+ *
+ */
 public class Division {
 
 	public final int numRows, yStart, yLimit, xStart, xEnd;	

@@ -6,7 +6,12 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import ij.Prefs;
-
+/**
+ * This class mas and image to the optimal or specifed number of threads and 
+ * privdes methods for starting and waitng for tasks to finish
+ * @author Sina Masoud-Ansari (s.ansari@auckland.ac.nz)
+ *
+ */
 public class ImageDivision {
 	
 	public final int numThreads, mod, ratio;
@@ -58,6 +63,7 @@ public class ImageDivision {
 		setDivsionsWithKernel(roiX, roiY, roiWidth,roiHeight, width, height);
 	}
 	
+	// Assign the divisions in the image
 	private void setDivsions(int roiX, int roiY, int roiWidth){
 	{
 		int numRows, yStart, yLimit, xEnd,xStart;
@@ -79,6 +85,7 @@ public class ImageDivision {
 	}
 }
 
+	// For special cases where boundary conditions need to be preserved
 	private void setDivsionsWithKernel(int roiX, int roiY, int roiWidth, int roiHeight,int width, int height){
 		int numRows, yStart, yLimit, xEnd,xStart;
 		
@@ -108,6 +115,7 @@ public class ImageDivision {
 		return divs;
 	}
 	
+	// Used in fork join implementations to recursively split a Division
 	public static Division[] splitDivision(Division div){
 		Division[] split = new Division[2];
 		
@@ -125,12 +133,11 @@ public class ImageDivision {
 		
 	}
 	
+	// Starts and waits for simple thread launching approach
 	public void processThreads(Thread[] threads){
 		
 		// start threads
 		for (Thread t : threads){
-//			long name = t.getId();
-//		    System.out.println("Thread id: " + name);
 			t.start();
 		}
 		// wait for threads to finish
@@ -143,11 +150,13 @@ public class ImageDivision {
 		}	
 	}
 	
+	// Used with the Parallel Task API to start and wait for tasks to finish
 	public void processTasks(ConcurrentLinkedQueue<Runnable> tasks){
 		PTRunner runner = new PTRunner(tasks);
 		runner.run();
 	}
 	
+	// Used for executor service implementations
 	public void processFutures(Collection<Future<?>> futures){
 		for (Future<?> future:futures) {
 		    try {
